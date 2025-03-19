@@ -10,24 +10,24 @@ from typing import Tuple, List
 array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
 class CustomPlugin(Plugin):
     def get_function_hook(self, fullname: str):
-        print(f"debug fullname {fullname}")
+        # print(f"debug fullname {fullname}")
         if fullname in array_types:
             return self.transform_array
         return None
 
     def transform_array(self, ctx: FunctionContext) -> Type:
-        print(f"DEBUG: transform_ndarray called: {ctx}")
+        # print(f"DEBUG: transform_ndarray called: {ctx}")
         
-        tensor_type = ctx.api.named_type("numpy.ndarray")
+        input_type = ctx.api.named_type("numpy.ndarray")
 
-        print(type(ctx.args[0][0]))
-        print(ctx.args[0][0])
-        print(ctx.arg_types[0][0])
-        print(ctx.arg_kinds[0][0])
-        print(ctx.arg_kinds[0])
-        print(ctx.arg_types[0][0])
-        print(ctx.context)
-        print(ctx.api)
+        # print(type(ctx.args[0][0]))
+        # print(ctx.args[0][0])
+        # print(ctx.arg_types[0][0])
+        # print(ctx.arg_kinds[0][0])
+        # print(ctx.arg_kinds[0])
+        # print(ctx.arg_types[0][0])
+        # print(ctx.context)
+        # print(ctx.api)
 
         if ctx.args and ctx.args[0]:
             
@@ -36,9 +36,13 @@ class CustomPlugin(Plugin):
             print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
             literal_dims = [LiteralType(dim, ctx.api.named_generic_type("builtins.int", [])) for dim in shape]
 
-            shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [ctx.api.named_generic_type("builtins.int", [])]))
+            shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+            # print(literal_dims)
+            print(shape_tuple)
 
-            return shape_tuple
+            ndarray_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+
+            return ndarray_type
         else:
             print("DEBUG: No arguments provided")   
             return Instance(tensor_type.node, [])

@@ -8,3 +8,6 @@ b = np.array([[1,2,3]])
 reveal_type(a)
 reveal_type(b)
 print(b.shape)
+
+c = a * b
+print(c)
