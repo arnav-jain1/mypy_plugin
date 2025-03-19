@@ -1,49 +1,68 @@
 from mypy.plugin import Plugin, FunctionContext, MethodContext
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType
-from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr
+from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
+from typing import Tuple, List
 
 
+
+array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
 class CustomPlugin(Plugin):
     def get_function_hook(self, fullname: str):
         print(f"debug fullname {fullname}")
-        if fullname == "numpy._core.multiarray.array":
+        if fullname in array_types:
             return self.transform_array
         return None
 
     def transform_array(self, ctx: FunctionContext) -> Type:
-        print("DEBUG: transform_ndarray called")
+        print(f"DEBUG: transform_ndarray called: {ctx}")
         
-        # THIS WONT WORK AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        tensor_type = ctx.api.named_type("tensor.Tensor")
-        
-        if not (isinstance(tensor_type.node, TypeInfo)):
-            print("DEBUG: Could not find tensor.Tensor")
-            return ctx.default_return_type
+        tensor_type = ctx.api.named_type("numpy.ndarray")
 
-        if ctx.arg_types and ctx.arg_types[0]:
-            data_type = ctx.arg_types[0][0]
-            print(f"DEBUG: Input data type: {data_type}")
+        print(type(ctx.args[0][0]))
+        print(ctx.args[0][0])
+        print(ctx.arg_types[0][0])
+        print(ctx.arg_kinds[0][0])
+        print(ctx.arg_kinds[0])
+        print(ctx.arg_types[0][0])
+        print(ctx.context)
+        print(ctx.api)
 
-            shape = self.infer_shape(data_type)
-            print(f"DEBUG: Inferred shape: {shape}")
+        if ctx.args and ctx.args[0]:
+            
+            shape, ranks = self.infer_shape(ctx.args[0][0])
 
-            ranks = [ctx.api.named_type("builtins.int") for _ in shape]
+            print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
+            literal_dims = [LiteralType(dim, ctx.api.named_generic_type("builtins.int", [])) for dim in shape]
 
-            shape_tuple = TupleType(ranks, ctx.api.named_generic_type("builtins.tuple", [ctx.api.named_type("builtins.int")]))
+            shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [ctx.api.named_generic_type("builtins.int", [])]))
 
-            return Instance(tensor_type.node, [shape_tuple])
+            return shape_tuple
         else:
             print("DEBUG: No arguments provided")   
             return Instance(tensor_type.node, [])
 
-    def infer_shape(self, data_type: Type) -> list[Type]:
-        if isinstance(data_type, Instance) and data_type.type.fullname == "builtins.list":
-            if data_type.args:
-                sub_shape = self.infer_shape(data_type.args[0])
-                return [1] + sub_shape
-        return []
+    def infer_shape(self, node: ListExpr) -> Tuple[List[int], int]:
+        current_nodes = [node]
+        shape = []
+        rank = 0
 
+        while True:
+            # Check if all nodes at current level are ListExpr
+            if not all(isinstance(n, ListExpr) for n in current_nodes):
+                break
+
+            rank += 1
+            first_node = current_nodes[0]
+            current_length = len(first_node.items)
+            shape.append(current_length)
+
+            # Flatten to next level of nodes
+            current_nodes = [child for n in current_nodes for child in n.items]
+
+
+
+        return shape, rank
 def plugin(version):
     return CustomPlugin

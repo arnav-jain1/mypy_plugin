@@ -1956,26 +1956,129 @@ debug fullname builtins.isinstance
 debug fullname <list-comprehension>
 debug fullname <list>
 debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
 debug fullname numpy._core.multiarray.array
 debug fullname numpy._core.multiarray.array
-DEBUG: transform_ndarray called
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "mypy\checkexpr.py", line 5903, in accept
-  File "mypy\nodes.py", line 1965, in accept
-  File "mypy\checkexpr.py", line 485, in visit_call_expr
-  File "mypy\checkexpr.py", line 619, in visit_call_expr_inner
-  File "mypy\checkexpr.py", line 1476, in check_call_expr_with_callee_type
-  File "mypy\checkexpr.py", line 1583, in check_call
-  File "mypy\checkexpr.py", line 2710, in check_overload_call
-  File "mypy\checkexpr.py", line 2871, in infer_overload_return_type
-  File "mypy\checkexpr.py", line 1572, in check_call
-  File "mypy\checkexpr.py", line 1818, in check_callable_call
-  File "mypy\checkexpr.py", line 1250, in apply_function_plugin
-  File "C:\Users\Arnav\Desktop\programming\mypy_plugin\tensor_plugin\plugin.py", line 19, in transform_array
-    tensor_type = ctx.api.named_type("tensor.Tensor")
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "mypy\checker.py", line 7116, in named_type
-  File "mypy\checker.py", line 7216, in lookup_qualified
-KeyError: 'tensor'
+DEBUG: transform_ndarray called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x000001F813EE4820>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x000001F813B8FBE0>, api=<mypy.checker.TypeChecker object at 0x000001F81C561EB0>)
+<class 'mypy.nodes.ListExpr'>
+ListExpr:6(
+  ListExpr:6(
+    IntExpr(1)
+    IntExpr(2)
+    IntExpr(3))
+  ListExpr:6(
+    IntExpr(4)
+    IntExpr(5)
+    IntExpr(6)))
+builtins.list[Any]
+ArgKind.ARG_POS
+[<ArgKind.ARG_POS: 0>]
+builtins.list[Any]
+CallExpr:6(
+  MemberExpr:6(
+    NameExpr(np [numpy])
+    array [numpy._core.multiarray.array])
+  Args(
+    ListExpr:6(
+      ListExpr:6(
+        IntExpr(1)
+        IntExpr(2)
+        IntExpr(3))
+      ListExpr:6(
+        IntExpr(4)
+        IntExpr(5)
+        IntExpr(6)))))
+<mypy.checker.TypeChecker object at 0x000001F81C561EB0>
+DEBUG: Inferred shape: [2, 3] with rank 2
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname numpy._core.multiarray.array
+debug fullname numpy._core.multiarray.array
+DEBUG: transform_ndarray called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x000001F813EE4C40>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x000001F813B8FD90>, api=<mypy.checker.TypeChecker object at 0x000001F81C561EB0>)
+<class 'mypy.nodes.ListExpr'>
+ListExpr:7(
+  ListExpr:7(
+    IntExpr(1)
+    IntExpr(2)
+    IntExpr(3)
+    IntExpr(4))
+  ListExpr:7(
+    IntExpr(4)
+    IntExpr(5)
+    IntExpr(6)
+    IntExpr(7)))
+builtins.list[Any]
+ArgKind.ARG_POS
+[<ArgKind.ARG_POS: 0>]
+builtins.list[Any]
+CallExpr:7(
+  MemberExpr:7(
+    NameExpr(np [numpy])
+    array [numpy._core.multiarray.array])
+  Args(
+    ListExpr:7(
+      ListExpr:7(
+        IntExpr(1)
+        IntExpr(2)
+        IntExpr(3)
+        IntExpr(4))
+      ListExpr:7(
+        IntExpr(4)
+        IntExpr(5)
+        IntExpr(6)
+        IntExpr(7)))))
+<mypy.checker.TypeChecker object at 0x000001F81C561EB0>
+DEBUG: Inferred shape: [2, 4] with rank 2
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname <list>
+debug fullname numpy._core.multiarray.array
+debug fullname numpy._core.multiarray.array
+DEBUG: transform_ndarray called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x000001F813EE4E20>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x000001F813B8FEB0>, api=<mypy.checker.TypeChecker object at 0x000001F81C561EB0>)
+<class 'mypy.nodes.ListExpr'>
+ListExpr:8(
+  ListExpr:8(
+    IntExpr(1)
+    IntExpr(2)
+    IntExpr(3)))
+builtins.list[Any]
+ArgKind.ARG_POS
+[<ArgKind.ARG_POS: 0>]
+builtins.list[Any]
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(np [numpy])
+    array [numpy._core.multiarray.array])
+  Args(
+    ListExpr:8(
+      ListExpr:8(
+        IntExpr(1)
+        IntExpr(2)
+        IntExpr(3)))))
+<mypy.checker.TypeChecker object at 0x000001F81C561EB0>
+DEBUG: Inferred shape: [1, 3] with rank 2
+debug fullname builtins.print
+debug fullname builtins.print
+benchmarks\test.py:7: error: Incompatible types in assignment (expression has type "tuple[Literal[2], Literal[4]]", variable has type "tuple[Literal[2], Literal[3]]")  [assignment]
+benchmarks\test.py:9: note: Revealed type is "tuple[Literal[2], Literal[3]]"
+benchmarks\test.py:10: note: Revealed type is "tuple[Literal[1], Literal[3]]"
+benchmarks\test.py:11: error: "tuple[Literal[1], Literal[3]]" has no attribute "shape"  [attr-defined]
+Found 2 errors in 1 file (checked 1 source file)
