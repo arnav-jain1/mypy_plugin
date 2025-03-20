@@ -1,18 +1,49 @@
-from typing import Callable, Dict, List, Optional, Tuple, Union, cast
-from mypy.plugin import Plugin, FunctionContext, MethodContext, MethodSigContext, AttributeContext, ClassDefContext
-from mypy.types import Type, Instance, AnyType, TypeOfAny, CallableType
-from mypy.nodes import Expression, ListExpr, TupleExpr, IntExpr, CallExpr, NameExpr, MemberExpr, RefExpr, AssignmentStmt
-from mypy.checker import TypeChecker
+from mypy.plugin import Plugin, FunctionContext, MethodContext
+from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType
+from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr
+from mypy.plugins.common import add_method_to_class
+from mypy import nodes
+from typing import Tuple, List
 
-class NumPyArrayPlugin(Plugin):
-    def __init__(self, options) -> None:
-        super().__init__(options)
-        self.vars = dict()
-    
-    
-    def infer_shape(self, node: ListExpr) -> Tuple[List[int], int]:
-        print(node)
-        """Infer the shape of a nested list expression."""
+
+
+array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
+class CustomPlugin(Plugin):
+    def get_function_hook(self, fullname: str):
+        # print(f"debug fullname {fullname}")
+        if fullname == "numpy._core.multiarray.array":
+            return self.transform_array
+        return None
+
+    def transform_array(self, ctx: FunctionContext) -> Type:
+        print(f"DEBUG: transform_ndarray called: {ctx}")
+        
+        input_type = ctx.api.named_type("numpy.ndarray")
+
+        if ctx.args and ctx.args[0] and ctx.args[0][0]:
+            
+            shape, ranks = self.infer_shape(ctx.args[0][0])
+
+            print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
+            literal_dims = [LiteralType(dim, ctx.api.named_generic_type("builtins.int", [])) for dim in shape]
+
+            shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+            # print(literal_dims)
+            # print(shape_tuple)
+
+            final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+            print(f"Type: {ndarray_type}")
+            # print(final_type.args[0])
+
+            return final_type
+        else:
+            print("DEBUG: WEIRD ERROR HAPPENED")   
+            print(ctx.args)
+            print(ctx.args[0])
+            print(ctx.args[0][0])
+            return ctx.default_return_type
+
+    def infer_shape(self, node):
         current_nodes = [node]
         shape = []
         rank = 0
@@ -31,22 +62,5 @@ class NumPyArrayPlugin(Plugin):
             current_nodes = [child for n in current_nodes for child in n.items]
 
         return shape, rank
-    
-    def get_dynamic_class_hook(self, fullname):
-        if fullname.strip() == "numpy._core.multiarray.array":
-            return self.reg_var
-        return None
-    
-    def reg_var(self, ctx):
-        shape, rank = self.infer_shape(ctx.call.args[0])
-        self.vars[ctx.name] = shape
-        self.print_vars()
-        return None
-    
-    def print_vars(self):
-        print("Current vars: ")
-        for key, val in self.vars.items():
-            print(f"\tVariable name: {key} Shape: {val}")
-
 def plugin(version):
-    return NumPyArrayPlugin
+    return CustomPlugin
