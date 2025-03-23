@@ -1,5 +1,6 @@
 import numpy as np 
-from typing import reveal_type
+from typing import reveal_type, Tuple
+from numpy.typing import NDArray
 
 # var1 = np.array([[[[1,2,3], [4,5,6]]]])
 # print(var1.shape)
@@ -10,10 +11,13 @@ from typing import reveal_type
 # reveal_type(var1)
 # reveal_type(v)
 
-a = np.array([1, 2, 3])
-b = np.array([4, 6]) 
-result = a + b
-
+a = np.array([[1, 2, 3]])
+b = np.array([[4]]) 
+c = a + b
 print(a.shape)
 print(b.shape)
-print(result.shape)
+
+print(a+b)
+
+
+# print(result.shape)

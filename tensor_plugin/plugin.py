@@ -43,6 +43,9 @@ class CustomPlugin(Plugin):
         # Otherwise they are unequal, check for broadcasting
         else:
             # Get the shapes as a list and the sizes
+            print(lhs)
+            print(lhs.args)
+            print(lhs.args[0])
             lhs_shape = lhs.args[0].items
             rhs_shape = rhs.args[0].items
             lhs_size = len(lhs_shape)
