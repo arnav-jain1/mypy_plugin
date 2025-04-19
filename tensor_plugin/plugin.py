@@ -9,20 +9,105 @@ from typing import Tuple, List, Literal
 
 array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
 class CustomPlugin(Plugin):
+    rand_names = ["numpy.random.mtrand.rand", "numpy.random.mtrand.randn"]
+    rand_other_names = ["numpy.random.mtrand.randint", "numpy.random.mtrand.uniform", 
+    "numpy.random.mtrand.normal", "numpy.random.mtrand.binomial", "numpy.random.mtrand.poisson", 
+    "numpy.random.mtrand.exponential", "numpy.random.mtrand.beta", "numpy.random.mtrand.gamma", 
+    "numpy.random.mtrand.chisquare", "numpy.random.mtrand.choice"]
     def get_function_hook(self, fullname: str):
         # print(f"debug fullname {fullname}")
         if fullname == "numpy._core.multiarray.array":
             return self.base_array
+        elif fullname in rand_names:
+            return self.rand
+        elif fullname in rand_other_names:
+            return self.rand_other
         return None
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
         if fullname == "numpy.ndarray.__add__":
             return self.add_array
+        elif fullname == "numpy._core.multiarray._ConstructorEmpty.__call__":
+            return self.constructor
         return None
+    
+    # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
+    def rand_other(self, ctx):
+        index = ctx.callee_arg_names.index("size")
+        
+        if not ctx.args[index]:
+            print(ctx.api.named_generic_type("builtins.int", []))
+            return ctx.api.named_generic_type("builtins.int", [])
+        param = ctx.args[index][0]
 
+        literal_dims = []
+
+        if isinstance(param, IntExpr):
+            literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+            literal_dims.append(literal)
+        else:
+            for elem in param.items:
+                if isinstance(elem, IntExpr):
+                    literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+                    literal_dims.append(literal)
+
+        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        # print(f"Type: {final_type}")
+            
+        return final_type
+
+    # For rand, randn
+    def rand(self, ctx):
+        params = ctx.args[0]
+        # print(params)
+        # print(type(params))
+
+        literal_dims = []
+        for param in params:
+            literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+            literal_dims.append(literal)
+
+        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        # print(f"Type: {final_type}")
+
+
+        return final_type
+
+    # For ones
+    def constructor(self, ctx):
+
+        param = ctx.args[0][0]
+        # print(param)
+        # print(type(param))
+
+        literal_dims = []
+
+        if isinstance(param, IntExpr):
+            literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+            literal_dims.append(literal)
+        else:
+            for elem in param.items:
+                if isinstance(elem, IntExpr):
+                    literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+                    literal_dims.append(literal)
+
+        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        # print(f"Type: {final_type}")
+            
+
+
+        return final_type
+
+    # For addition (broadcast and element wise)
     def add_array(self, ctx):
 
-        print(f"DEBUG: add ndarray called: {ctx}")
+        # print(f"DEBUG: add ndarray called: {ctx}")
         # Save the args
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
@@ -33,8 +118,10 @@ class CustomPlugin(Plugin):
         
         # If one or the other is just a constant
         if (rhs.type.fullname == 'builtins.int'):
+            # print(proper_lhs)
             return proper_lhs
         elif (lhs.type.fullname == 'builtins.int'):
+            # print(proper_rhs)
             return proper_rhs
         # If both are same dim
         elif proper_lhs == proper_rhs:
@@ -42,10 +129,10 @@ class CustomPlugin(Plugin):
         
         # Otherwise they are unequal, check for broadcasting
         else:
-            # Get the shapes as a list and the sizes
-            print(lhs)
-            print(lhs.args)
-            print(lhs.args[0])
+            # # Get the shapes as a list and the sizes
+            # print(lhs)
+            # print(lhs.args)
+            # print(lhs.args[0])
             lhs_shape = lhs.args[0].items
             rhs_shape = rhs.args[0].items
             lhs_size = len(lhs_shape)
@@ -78,29 +165,26 @@ class CustomPlugin(Plugin):
             # return the final typing
             shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
             final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-            print(f"Final output: {final_type}")
+            # print(f"Final output: {final_type}")
 
             return final_type
 
 
-
-
-
-
+    # For np.array
     def base_array(self, ctx: FunctionContext) -> Type:
-        print(f"DEBUG: array() called: {ctx}")
+        # print(f"DEBUG: array() called: {ctx}")
 
         if ctx.args and ctx.args[0] and ctx.args[0][0]:
             
             shape, ranks = self.infer_shape(ctx.args[0][0])
 
-            print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
+            # print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
             literal_dims = [LiteralType(dim, ctx.api.named_generic_type("builtins.int", [])) for dim in shape]
 
             shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
 
             final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-            print(f"Type: {final_type}")
+            # print(f"Type: {final_type}")
             
 
             return final_type

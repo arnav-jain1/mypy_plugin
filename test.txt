@@ -1,32 +1,3 @@
-DEBUG: array() called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x0000025D8C094760>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x0000025D8BD2FA30>, api=<mypy.checker.TypeChecker object at 0x0000025D8F170170>)
-DEBUG: Inferred shape: [3] with rank 1
-Type: numpy.ndarray[tuple[Literal[3]]]
-DEBUG: array() called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x0000025D8C094880>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x0000025D8BD2FD90>, api=<mypy.checker.TypeChecker object at 0x0000025D8F170170>)
-DEBUG: Inferred shape: [2] with rank 1
-Type: numpy.ndarray[tuple[Literal[2]]]
-DEBUG: array() called: FunctionContext(arg_types=[[builtins.list[Any]], [], [], [], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], [], [], [], []], callee_arg_names=['object', 'dtype', 'copy', 'order', 'subok', 'ndmin', 'like'], arg_names=[[None], [], [], [], [], [], []], default_return_type=numpy.ndarray[Any, numpy.dtype[Any]], args=[[<mypy.nodes.ListExpr object at 0x0000025D8C094A00>], [], [], [], [], [], []], context=<mypy.nodes.CallExpr object at 0x0000025D8BD2FEB0>, api=<mypy.checker.TypeChecker object at 0x0000025D8F170170>)
-DEBUG: Inferred shape: [3] with rank 1
-Type: numpy.ndarray[tuple[Literal[3]]]
-DEBUG: add ndarray called: MethodContext(type=numpy.ndarray[Any, numpy.dtype[numpy.object_]], arg_types=[[numpy.ndarray[tuple[Literal[3]]]]], arg_kinds=[[<ArgKind.ARG_POS: 0>]], callee_arg_names=[None], arg_names=[[None]], default_return_type=Any, args=[[<mypy.nodes.NameExpr object at 0x0000025D8C2F4900>]], context=<mypy.nodes.OpExpr object at 0x0000025D8C2FC040>, api=<mypy.checker.TypeChecker object at 0x0000025D8F170170>)
-numpy.ndarray[Any, numpy.dtype[numpy.object_]]
-(Any, numpy.dtype[numpy.object_])
-Any
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "mypy\checkexpr.py", line 5903, in accept
-  File "mypy\nodes.py", line 2108, in accept
-  File "mypy\checkexpr.py", line 3493, in visit_op_expr
-  File "mypy\checkexpr.py", line 4125, in check_op
-  File "mypy\checkexpr.py", line 4039, in check_op_reversible
-  File "mypy\checkexpr.py", line 3892, in check_method_call
-  File "mypy\checkexpr.py", line 1583, in check_call
-  File "mypy\checkexpr.py", line 2710, in check_overload_call
-  File "mypy\checkexpr.py", line 2871, in infer_overload_return_type
-  File "mypy\checkexpr.py", line 1572, in check_call
-  File "mypy\checkexpr.py", line 1818, in check_callable_call
-  File "mypy\checkexpr.py", line 1267, in apply_function_plugin
-  File "C:\Users\Arnav\Desktop\programming\mypy_plugin\tensor_plugin\plugin.py", line 49, in add_array
-    lhs_shape = lhs.args[0].items
-                ^^^^^^^^^^^^^^^^^
-AttributeError: 'AnyType' object has no attribute 'items'
+builtins.int
+numpy.ndarray[tuple[Literal[3], Literal[4]]]
+Success: no issues found in 1 source file
