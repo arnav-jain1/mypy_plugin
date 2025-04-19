@@ -14,21 +14,31 @@ from numpy.typing import NDArray
 # x = np.ones((2,3))
 # y = np.ones(2)
 
-a = np.random.rand(3, 4)
 
-b = np.random.randn(3, 4)
+a = np.array([[1, 2, 3]])
+b = np.array([[4, 2]]) 
+c = np.multiply(a, b)
+print(a.shape)
+print(b.shape)
 
-c = np.random.randint(10, 50, size=(3, 4))
+d = np.add(a, b)
+print(d)
 
-d = np.array([[2, 3, 4, 5]]) 
+# a = np.random.rand(3, 4)
 
-e = np.array([[2, 2]]) 
+# b = np.random.randn(3, 4)
 
-f = np.random.randint(10, 50)
-x = a + b
-y = c + d
-z = x + f
-m = e + a
+# c = np.random.randint(10, 50, size=(3, 4))
+
+# d = np.array([[2, 3, 4, 5]]) 
+
+# e = np.array([[2, 2]]) 
+
+# f = np.random.randint(10, 50)
+# x = a + b
+# y = c + d
+# z = x + f
+# m = e + a
 # print(np.random.uniform(5, 15, size=(3, 4)))
 
 # print(np.random.normal(loc=10, scale=2, size=(3, 4)))

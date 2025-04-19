@@ -1,3 +1,54 @@
-builtins.int
-benchmarks\test.py:31: error: Shape mismatch  [misc]
-Found 1 error in 1 file (checked 1 source file)
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname enum.auto
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname enum.auto
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname enum.auto
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname builtins.object
+debug fullname numpy._typing._add_docstring._parse_docstrings
+debug fullname numpy._pytesttester.PytestTester
+debug fullname numpy._typing._add_docstring._parse_docstrings
+debug fullname numpy._pytesttester.PytestTester
+debug fullname numpy._core.multiarray.array
+debug fullname numpy._core.multiarray.array
+debug fullname numpy.multiply
+DEBUG: add ndarray called: DynamicClassDefContext(call=<mypy.nodes.CallExpr object at 0x000001CE91A03EB0>, name='c', api=<mypy.semanal.SemanticAnalyzer object at 0x000001CE91C93BB0>)
+DEBUG: add ndarray called: <mypy.semanal.SemanticAnalyzer object at 0x000001CE91C93BB0>
+DEBUG: add ndarray called: CallExpr:20(
+  MemberExpr:20(
+    NameExpr(np [numpy])
+    multiply [numpy.multiply])
+  Args(
+    NameExpr(a [test.a])
+    NameExpr(b [test.b])))
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "mypy\semanal.py", line 7240, in accept
+  File "mypy\nodes.py", line 1345, in accept
+  File "mypy\semanal.py", line 3207, in visit_assignment_stmt
+  File "mypy\semanal.py", line 3569, in apply_dynamic_class_hook
+  File "C:\Users\Arnav\Desktop\programming\mypy_plugin\tensor_plugin\plugin.py", line 125, in add_array_direct
+    lhs = ctx.type
+          ^^^^^^^^
+AttributeError: 'DynamicClassDefContext' object has no attribute 'type'

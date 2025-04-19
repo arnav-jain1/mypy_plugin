@@ -9,11 +9,22 @@ from typing import Tuple, List, Literal
 
 array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
 class CustomPlugin(Plugin):
+
     rand_names = ["numpy.random.mtrand.rand", "numpy.random.mtrand.randn"]
     rand_other_names = ["numpy.random.mtrand.randint", "numpy.random.mtrand.uniform", 
     "numpy.random.mtrand.normal", "numpy.random.mtrand.binomial", "numpy.random.mtrand.poisson", 
     "numpy.random.mtrand.exponential", "numpy.random.mtrand.beta", "numpy.random.mtrand.gamma", 
     "numpy.random.mtrand.chisquare", "numpy.random.mtrand.choice"]
+
+    broadcasting_funcs = ["numpy.ndarray.__mul__", "numpy.ndarray.__add__"]
+    broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
+
+    def get_dynamic_class_hook(self, fullname):
+        print(f"debug fullname {fullname}")
+        if fullname in self.broadcasting_funcs_direct:
+            return self.add_array_direct
+        return None
+
     def get_function_hook(self, fullname: str):
         # print(f"debug fullname {fullname}")
         if fullname == "numpy._core.multiarray.array":
@@ -25,7 +36,7 @@ class CustomPlugin(Plugin):
         return None
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
-        if fullname == "numpy.ndarray.__add__":
+        if fullname in self.broadcasting_funcs:
             return self.add_array
         elif fullname == "numpy._core.multiarray._ConstructorEmpty.__call__":
             return self.constructor
@@ -104,7 +115,57 @@ class CustomPlugin(Plugin):
 
         return final_type
 
-    # For addition (broadcast and element wise)
+    def matmul(self, ctx):
+        lhs = ctx.type
+        rhs = ctx.arg_types[0][0]
+
+        # If one or the other is just a constant, error, use * instead
+        if (rhs.type.fullname == 'builtins.int'):
+            ctx.api.fail("Cant use scalar with matmul, use * instead", ctx.context)
+            return AnyType(TypeOfAny.from_error)
+        elif (lhs.type.fullname == 'builtins.int'):
+            # print(proper_rhs)
+            ctx.api.fail("Cant use scalar with matmul, use * instead", ctx.context)
+            return AnyType(TypeOfAny.from_error)
+
+        # # Get the shapes as a list and the sizes
+        # print(lhs)
+        # print(lhs.args)
+        # print(lhs.args[0])
+        lhs_shape = lhs.args[0].items
+        rhs_shape = rhs.args[0].items
+        lhs_size = len(lhs_shape)
+        rhs_size = len(rhs_shape)
+
+        # TODO if one or the other is of size 1
+        if lhs_size == 1 or rhs_size == 1:
+
+            return None
+
+        lhs_broadcast_shape = lhs_shape[:-2]
+        rhs_broadcast_shape = rhs_shape[:-2]
+
+        if lhs_shape[-1] != rhs_shape[-2]:
+            ctx.api.fail("matmul error (the final 2 elems)", ctx.context)
+            return AnyType(TypeOfAny.from_error)
+
+
+        # If the lhs is bigger then set this to true (for later)
+        lhs_vs_rhs = True if lhs_size > rhs_size else False
+        output = []
+
+
+        
+
+        
+
+    # For np.add and np.multiply, doesnt work rn
+    def add_array_direct(self, ctx):
+        print(f"DEBUG: add ndarray called: {ctx}")
+        print(f"DEBUG: add ndarray called: {ctx.api}")
+        print(f"DEBUG: add ndarray called: {ctx.call}")
+
+    # For addition (broadcast and element wise) called via * or +
     def add_array(self, ctx):
 
         # print(f"DEBUG: add ndarray called: {ctx}")
