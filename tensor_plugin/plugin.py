@@ -18,9 +18,9 @@ class CustomPlugin(Plugin):
         # print(f"debug fullname {fullname}")
         if fullname == "numpy._core.multiarray.array":
             return self.base_array
-        elif fullname in rand_names:
+        elif fullname in self.rand_names:
             return self.rand
-        elif fullname in rand_other_names:
+        elif fullname in self.rand_other_names:
             return self.rand_other
         return None
     def get_method_hook(self, fullname):

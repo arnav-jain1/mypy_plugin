@@ -21,6 +21,7 @@ b = np.random.randn(3, 4)
 c = np.random.randint(10, 50, size=(3, 4))
 
 d = np.array([[2, 3, 4, 5]]) 
+
 e = np.array([[2, 2]]) 
 
 f = np.random.randint(10, 50)
