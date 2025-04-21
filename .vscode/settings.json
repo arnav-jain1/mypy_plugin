@@ -1,5 +1,5 @@
 {
-    "mypy-type-checker.args": ["--config-file", "mypy.ini"],
+    "mypy-type-checker.args": ["--config-file", "mypy.ini", "--allow-untyped-globals"],
     "python.linting.mypyEnabled": true,
     "python.linting.enabled": true
 }

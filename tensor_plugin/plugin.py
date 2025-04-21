@@ -4,6 +4,7 @@ from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTabl
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
 from typing import Tuple, List, Literal
+from typing_extensions import Never
 
 
 
@@ -20,7 +21,7 @@ class CustomPlugin(Plugin):
     broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
 
     def get_dynamic_class_hook(self, fullname):
-        print(f"debug fullname {fullname}")
+        # print(f"debug fullname {fullname}")
         if fullname in self.broadcasting_funcs_direct:
             return self.add_array_direct
         return None
@@ -35,17 +36,21 @@ class CustomPlugin(Plugin):
             return self.rand_other
         return None
     def get_method_hook(self, fullname):
-        # print(f"debug fullname {fullname}")
+        print(f"debug fullname {fullname}")
         if fullname in self.broadcasting_funcs:
             return self.add_array
         elif fullname == "numpy._core.multiarray._ConstructorEmpty.__call__":
             return self.constructor
+        elif fullname == "numpy.ndarray.__matmul__":
+            return self.matmul
         return None
     
     # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
     def rand_other(self, ctx):
         index = ctx.callee_arg_names.index("size")
         
+        # If there is no "size" argument then it is just an float
+        # TODO change this to a number
         if not ctx.args[index]:
             print(ctx.api.named_generic_type("builtins.int", []))
             return ctx.api.named_generic_type("builtins.int", [])
@@ -121,12 +126,12 @@ class CustomPlugin(Plugin):
 
         # If one or the other is just a constant, error, use * instead
         if (rhs.type.fullname == 'builtins.int'):
-            ctx.api.fail("Cant use scalar with matmul, use * instead", ctx.context)
-            return AnyType(TypeOfAny.from_error)
+            ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
+            return Never()
         elif (lhs.type.fullname == 'builtins.int'):
             # print(proper_rhs)
-            ctx.api.fail("Cant use scalar with matmul, use * instead", ctx.context)
-            return AnyType(TypeOfAny.from_error)
+            ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
+            return Never()
 
         # # Get the shapes as a list and the sizes
         # print(lhs)
@@ -137,26 +142,92 @@ class CustomPlugin(Plugin):
         lhs_size = len(lhs_shape)
         rhs_size = len(rhs_shape)
 
-        # TODO if one or the other is of size 1
-        if lhs_size == 1 or rhs_size == 1:
+        output = []
 
-            return None
+        # both are one then it returns a scalar
+        # TODO find a generic number type
+        if lhs_size == 1 and rhs_size == 1:
+            return_type = ctx.api.named_generic_type("builtins.int", [])
+            print(return_type)
+            return return_type
+        elif lhs_size == 1:
+            print("lhs")
+            print(lhs_shape, rhs_shape)
+            print(lhs_size)
+            # If the lhs is a vec, essentially the second to last elem of rhs gets removed for the shape (if match)
+            if lhs_shape[0] == rhs_shape[-2]:
+                output = rhs_shape[:-2]
+                output.append(rhs_shape[-1])
 
+                shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+                final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+                print(f"Final output: {final_type}")
+                return final_type
+            else: 
+                ctx.api.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context)
+                return AnyType(TypeOfAny.from_error)
+        elif rhs_size == 1:
+            print("rhs")
+            print(lhs_shape, rhs_shape)
+            print(rhs_size)
+            # If the rhs is a vec, essentially the last elem of LHS gets removed (if match)
+            if lhs_shape[-1] == rhs_shape[0]:
+                output = lhs_shape[:-1]
+
+                shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+                final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+                print(f"Final output: {final_type}")
+                return final_type
+            else: 
+                ctx.api.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context)
+                return AnyType(TypeOfAny.from_error)
+
+            
         lhs_broadcast_shape = lhs_shape[:-2]
         rhs_broadcast_shape = rhs_shape[:-2]
 
+        # Check basic matmul rules
         if lhs_shape[-1] != rhs_shape[-2]:
             ctx.api.fail("matmul error (the final 2 elems)", ctx.context)
             return AnyType(TypeOfAny.from_error)
 
+        # Everything except the last 2 are just broadcasting so use that code
 
         # If the lhs is bigger then set this to true (for later)
         lhs_vs_rhs = True if lhs_size > rhs_size else False
-        output = []
 
 
         
+        # Go through (backwards) each element
+        for i in range(1, min(lhs_size-2, rhs_size-2)+1):
+            # If either equals 1, then put the opposite element in the output list
+            if lhs_broadcast_shape[-i].value == 1:
+                output.insert(0, rhs_broadcast_shape[-i])
+            elif rhs_broadcast_shape[-i].value == 1:
+                output.insert(0, lhs_broadcast_shape[-i])
+            # if they are both the same, put the element as well
+            elif lhs_broadcast_shape[-i] == rhs_broadcast_shape[-i]:
+                output.insert(0, lhs_broadcast_shape[-i])
+            # Otherwise, show that this is a shape mismatch error NOT DONE YETT
+            else:
+                ctx.api.fail("Shape mismatch", ctx.context)
+                return AnyType(TypeOfAny.from_error)
+        # Attach the remaining of whatever is bigger to the front
+        if lhs_vs_rhs:
+            output = lhs_shape[:len(lhs_broadcast_shape)-len(rhs_broadcast_shape)] + output
+        else:
+            output = rhs_shape[:len(rhs_broadcast_shape)-len(lhs_broadcast_shape)] + output
+        
+        # Add the m and l from m * n by n * l operation 
+        output.append(lhs_shape[-2])
+        output.append(rhs_shape[-1])
 
+        # return the final typing
+        shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        print(f"Final output: {final_type}")
+
+        return final_type
         
 
     # For np.add and np.multiply, doesnt work rn

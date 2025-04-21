@@ -1,7 +1,44 @@
-import numpy as np 
-from typing import reveal_type, Tuple
-from numpy.typing import NDArray
+import numpy as np
+from typing import reveal_type
 
+
+a1 = np.ones((5))
+b1 = np.ones((3, 2, 5,1))
+c1 = a1 @ b1
+reveal_type(c1)
+print("PASS a1 @ b1: ", c1.shape)
+
+
+a2 = np.ones((4))
+b2 = np.ones((3, 2, 5,1))
+try: 
+    c2 = a2 @ b2
+except ValueError as e:
+    print("FAIL a2 @ b2: ", e)
+    reveal_type(c1)
+
+
+a3 = np.ones((3, 2, 5,1))
+b3 = np.ones((5))
+try:
+    c3 = a3 @ b3
+except ValueError as e:
+    print("FAIL a3 @ b3: ", e)
+    reveal_type(c1)
+
+a4 = np.ones((3, 2, 5,1))
+b4 = np.ones((1))
+c4 = a4 @ b4
+reveal_type(c4)
+print("PASS a4 @ b4: ", c4.shape)
+# a2 = np.ones((4))
+# b2 = np.ones((3, 2, 5,1))
+# c2 = a2 @ b2
+# reveal_type(c)
+# print(c.shape)
+# x = np.ones((3,4))
+# y = np.ones((3,4))
+# z = x @ y
 # var1 = np.array([[[[1,2,3], [4,5,6]]]])
 # print(var1.shape)
 # var2 = np.array([[[[1,2,3], [4,5,6]]]])
@@ -15,14 +52,13 @@ from numpy.typing import NDArray
 # y = np.ones(2)
 
 
-a = np.array([[1, 2, 3]])
-b = np.array([[4, 2]]) 
-c = np.multiply(a, b)
-print(a.shape)
-print(b.shape)
+# a = np.array([[1, 2, 3]])
+# b = np.array([[4, 2]]) 
+# print(a.shape)
+# print(b.shape)
 
-d = np.add(a, b)
-print(d)
+# d = np.add(a, b)
+# print(d)
 
 # a = np.random.rand(3, 4)
 
