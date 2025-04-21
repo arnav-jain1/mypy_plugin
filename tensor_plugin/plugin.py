@@ -3,8 +3,9 @@ from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfA
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
-from typing import Tuple, List, Literal
+from typing import Tuple, List, Literal, final
 from typing_extensions import Never
+from mypy.errorcodes import ErrorCode, OVERRIDE
 
 
 
@@ -19,6 +20,9 @@ class CustomPlugin(Plugin):
 
     broadcasting_funcs = ["numpy.ndarray.__mul__", "numpy.ndarray.__add__"]
     broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
+
+    check = True
+    prev = 0
 
     def get_dynamic_class_hook(self, fullname):
         # print(f"debug fullname {fullname}")
@@ -127,11 +131,11 @@ class CustomPlugin(Plugin):
         # If one or the other is just a constant, error, use * instead
         if (rhs.type.fullname == 'builtins.int'):
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
-            return Never()
+            return AnyType(TypeOfAny.from_error)
         elif (lhs.type.fullname == 'builtins.int'):
             # print(proper_rhs)
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
-            return Never()
+            return AnyType(TypeOfAny.from_error)
 
         # # Get the shapes as a list and the sizes
         # print(lhs)
@@ -141,6 +145,15 @@ class CustomPlugin(Plugin):
         rhs_shape = rhs.args[0].items
         lhs_size = len(lhs_shape)
         rhs_size = len(rhs_shape)
+        print(lhs_shape)
+        print(rhs_shape)
+
+        # Save the lhs and check for repeat
+        if self.prev == lhs_shape:
+            ctx.api.fail("yuh", ctx.context)
+            return AnyType(TypeOfAny.from_error)
+        else:
+            self.prev = rhs_shape
 
         output = []
 
@@ -164,7 +177,7 @@ class CustomPlugin(Plugin):
                 print(f"Final output: {final_type}")
                 return final_type
             else: 
-                ctx.api.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context)
+                ctx.api.msg.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context, code=OVERRIDE)
                 return AnyType(TypeOfAny.from_error)
         elif rhs_size == 1:
             print("rhs")
@@ -179,7 +192,7 @@ class CustomPlugin(Plugin):
                 print(f"Final output: {final_type}")
                 return final_type
             else: 
-                ctx.api.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context)
+                ctx.api.msg.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context, code=OVERRIDE)
                 return AnyType(TypeOfAny.from_error)
 
             
@@ -188,7 +201,7 @@ class CustomPlugin(Plugin):
 
         # Check basic matmul rules
         if lhs_shape[-1] != rhs_shape[-2]:
-            ctx.api.fail("matmul error (the final 2 elems)", ctx.context)
+            ctx.api.msg.fail("matmul error (the final 2 elems)", ctx.context, code=OVERRIDE)
             return AnyType(TypeOfAny.from_error)
 
         # Everything except the last 2 are just broadcasting so use that code
@@ -210,7 +223,7 @@ class CustomPlugin(Plugin):
                 output.insert(0, lhs_broadcast_shape[-i])
             # Otherwise, show that this is a shape mismatch error NOT DONE YETT
             else:
-                ctx.api.fail("Shape mismatch", ctx.context)
+                ctx.api.msg.fail("Shape mismatch", ctx.context, code=OVERRIDE)
                 return AnyType(TypeOfAny.from_error)
         # Attach the remaining of whatever is bigger to the front
         if lhs_vs_rhs:
