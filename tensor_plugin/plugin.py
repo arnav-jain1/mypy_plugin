@@ -1,6 +1,6 @@
 from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInterface
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType
-from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr
+from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
 from typing import Tuple, List, Literal, final
@@ -40,14 +40,95 @@ class CustomPlugin(Plugin):
             return self.rand_other
         return None
     def get_method_hook(self, fullname):
-        print(f"debug fullname {fullname}")
+        # print(f"debug fullname {fullname}")
         if fullname in self.broadcasting_funcs:
             return self.add_array
         elif fullname == "numpy._core.multiarray._ConstructorEmpty.__call__":
             return self.constructor
         elif fullname == "numpy.ndarray.__matmul__":
             return self.matmul
+        elif fullname == "numpy.ndarray.reshape":
+            return self.reshape
         return None
+    
+    def reshape(self, ctx):
+        print(ctx)
+        args = ctx.args
+        params = []
+        for index in range(len(ctx.callee_arg_names)):
+            if ctx.callee_arg_names[index] is None:
+                params.append(args[index][0])
+        new = []
+
+        for param in params:
+            if isinstance(param, UnaryExpr):
+                new.append(-1)
+            elif isinstance(param, IntExpr):
+                new.append(param.value)
+            elif isinstance(param, TupleExpr):
+                for item in param.items:
+                    if isinstance(item, UnaryExpr):
+                        new.append(-1)
+                    elif isinstance(item, IntExpr):
+                        new.append(item.value)
+                break
+
+        # TODO make sure oldtup is nonempty
+        old_tup = ctx.type.args[0].items
+        old_total = 1
+        for dim in old_tup:
+            old_total = old_total * dim.value
+        print(old_total)
+        print(new)
+        
+        placeholder = None
+        
+        # Go through new, if it is not -1 then we are good just divide the old num
+        # Otherwise if is -1 and placeholder is none, save the index
+        # Otherwise error
+        for i, num in enumerate(new):
+            if num != -1:
+                old_total = old_total / num
+            elif num == -1 and placeholder is None:
+                placeholder = i
+            elif num == -1 and placeholder is not None:
+                ctx.api.fail("2 -1s", ctx.context)
+                return AnyType(TypeOfAny.special_form)
+
+        # If the old total is now a float we are screwed (not divable properly)
+        # TODO fix the thing to work for fp better
+        if (int(old_total) != old_total):
+            print(old_total)
+            ctx.api.fail("Bad dim", ctx.context)
+            return AnyType(TypeOfAny.special_form)
+        
+        # If there is no placeholder and the old total is not 1, again error
+        if placeholder is None and old_total != 1:
+            ctx.api.fail("Bad dim (new does not equal old)", ctx.context)
+            return AnyType(TypeOfAny.special_form)
+        
+        # The negative one is the old total
+        placeholder = old_total
+
+        output = []
+
+        for number in new:
+            if new != -1:
+                output.append(LiteralType(number, ctx.api.named_generic_type("builtins.int", [])))
+            else:
+                output.append(LiteralType(placeholder, ctx.api.named_generic_type("builtins.int", [])))
+
+            shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+            final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+            print(f"Type: {final_type}")
+            
+
+            return final_type
+
+
+
+        return AnyType(TypeOfAny.special_form)
+
     
     # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
     def rand_other(self, ctx):
@@ -80,6 +161,7 @@ class CustomPlugin(Plugin):
 
     # For rand, randn
     def rand(self, ctx):
+        # print("rand2")
         params = ctx.args[0]
         # print(params)
         # print(type(params))
@@ -99,6 +181,7 @@ class CustomPlugin(Plugin):
 
     # For ones
     def constructor(self, ctx):
+        # print("ones")
 
         param = ctx.args[0][0]
         # print(param)
@@ -115,13 +198,22 @@ class CustomPlugin(Plugin):
                     literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
                     literal_dims.append(literal)
 
-        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [AnyType(TypeOfAny.special_form)]))
 
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+
+        float64 = ctx.api.named_generic_type("numpy.float64", [])
+        dtype = ctx.api.named_generic_type("numpy.dtype", [float64])
+        
+        # Go throught the args and find the dtype if listed
+        for i, name_list in enumerate(ctx.arg_names):
+            if name_list and name_list[0] == "dtype":
+                if ctx.arg_types[i]:              
+                    dtype = ctx.arg_types[i][0]     
+                break
+        
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple, dtype])
         # print(f"Type: {final_type}")
             
-
-
         return final_type
 
     def matmul(self, ctx):
@@ -317,7 +409,7 @@ class CustomPlugin(Plugin):
 
     # For np.array
     def base_array(self, ctx: FunctionContext) -> Type:
-        # print(f"DEBUG: array() called: {ctx}")
+        print(f"DEBUG: array() called: {ctx}")
 
         if ctx.args and ctx.args[0] and ctx.args[0][0]:
             
@@ -341,6 +433,7 @@ class CustomPlugin(Plugin):
             return ctx.default_return_type
 
     def infer_shape(self, node):
+        print("Infer")
         current_nodes = [node]
         shape = []
         rank = 0

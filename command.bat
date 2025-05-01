@@ -1,1 +1,1 @@
-mypy --config-file mypy.ini -v benchmarks/test.py > test.txt
+mypy --show-traceback --config-file mypy.ini benchmarks/test.py > test.txt

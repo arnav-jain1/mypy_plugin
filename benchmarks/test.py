@@ -2,35 +2,54 @@ import numpy as np
 from typing import reveal_type
 
 
-a1 = np.ones((5))
-b1 = np.ones((3, 2, 5,1))
-c1 = a1 @ b1
-reveal_type(c1)
-print("PASS a1 @ b1: ", c1.shape)
+a = np.ones((8, 8))
+
+b = a.reshape(-1)
+
+y = a.reshape(64)
+
+c = a.reshape(2, 32)
+
+c2 = a.reshape(-1, 32)
+d = a.reshape((2, 32))
+d2 = a.reshape((-1, 32))
+z = a.reshape(2, 32, order='C', copy=None)
+
+bad1 = a.reshape(1)
+bad2 = a.reshape(10, 2)
+
+# print(b.shape)
+
+# a1 = np.ones((5))
+# b1 = np.ones((3, 2, 5,1))
+# c1 = a1 @ b1
+# reveal_type(c1)
+# print("PASS a1 @ b1: ", c1.shape)
 
 
-a2 = np.ones((4))
-b2 = np.ones((3, 2, 5,1))
-try: 
-    c2 = a2 @ b2
-except ValueError as e:
-    print("FAIL a2 @ b2: ", e)
-    reveal_type(c1)
+# a2 = np.ones((4))
+# b2 = np.ones((3, 2, 5,1))
+# try: 
+#     c2 = a2 @ b2
+# except ValueError as e:
+#     print("FAIL a2 @ b2: ", e)
+#     reveal_type(c1)
 
 
-a3 = np.ones((3, 2, 5,1))
-b3 = np.ones((5))
-try:
-    c3 = a3 @ b3
-except ValueError as e:
-    print("FAIL a3 @ b3: ", e)
-    reveal_type(c1)
+# a3 = np.ones((3, 2, 5,1))
+# b3 = np.ones((5))
+# try:
+#     c3 = a3 @ b3
+# except ValueError as e:
+#     print("FAIL a3 @ b3: ", e)
+#     reveal_type(c1)
 
-a4 = np.ones((3, 2, 5,1))
-b4 = np.ones((1))
-c4 = a4 @ b4
-reveal_type(c4)
-print("PASS a4 @ b4: ", c4.shape)
+# a4 = np.ones((3, 2, 5,1))
+# b4 = np.ones((1))
+# c4 = a4 @ b4
+# reveal_type(c4)
+# print("PASS a4 @ b4: ", c4.shape)
+
 # a2 = np.ones((4))
 # b2 = np.ones((3, 2, 5,1))
 # c2 = a2 @ b2
