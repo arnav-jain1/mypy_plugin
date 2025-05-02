@@ -8,21 +8,35 @@ from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
 
+ERROR_TYPE = AnyType(TypeOfAny.from_error)
 
-array_types = ["numpy.random.mtrand.randint", "numpy._core.multiarray.array"]
 class CustomPlugin(Plugin):
 
-    rand_names = ["numpy.random.mtrand.rand", "numpy.random.mtrand.randn"]
-    rand_other_names = ["numpy.random.mtrand.randint", "numpy.random.mtrand.uniform", 
-    "numpy.random.mtrand.normal", "numpy.random.mtrand.binomial", "numpy.random.mtrand.poisson", 
-    "numpy.random.mtrand.exponential", "numpy.random.mtrand.beta", "numpy.random.mtrand.gamma", 
-    "numpy.random.mtrand.chisquare", "numpy.random.mtrand.choice"]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.func_hooks = {
+            "numpy._core.multiarray.array": self.base_array,
+            "numpy.random.mtrand.rand": self.rand,
+            "numpy.random.mtrand.randn": self.rand,
+            "numpy.random.mtrand.randint": self.rand_other,
+            "numpy.random.mtrand.uniform": self.rand_other, 
+            "numpy.random.mtrand.normal": self.rand_other, 
+            "numpy.random.mtrand.binomial": self.rand_other,
+            "numpy.random.mtrand.poisson": self.rand_other, 
+            "numpy.random.mtrand.exponential": self.rand_other, 
+            "numpy.random.mtrand.beta": self.rand_other, 
+            "numpy.random.mtrand.gamma": self.rand_other, 
+            "numpy.random.mtrand.chisquare": self.rand_other, 
+            "numpy.random.mtrand.choice": self.rand_other }
 
-    broadcasting_funcs = ["numpy.ndarray.__mul__", "numpy.ndarray.__add__"]
-    broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
+        self.method_hooks = {
+            "numpy.ndarray.__mul__": self.add_array, 
+            "numpy.ndarray.__add__": self.add_array,
+            "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
+            "numpy.ndarray.__matmul__": self.matmul,
+            "numpy.ndarray.reshape": self.reshape}
 
-    check = True
-    prev = 0
+        self.broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
 
     def get_dynamic_class_hook(self, fullname):
         # print(f"debug fullname {fullname}")
@@ -32,27 +46,14 @@ class CustomPlugin(Plugin):
 
     def get_function_hook(self, fullname: str):
         # print(f"debug fullname {fullname}")
-        if fullname == "numpy._core.multiarray.array":
-            return self.base_array
-        elif fullname in self.rand_names:
-            return self.rand
-        elif fullname in self.rand_other_names:
-            return self.rand_other
-        return None
+        return self.func_hooks.get(fullname, None)
+
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
-        if fullname in self.broadcasting_funcs:
-            return self.add_array
-        elif fullname == "numpy._core.multiarray._ConstructorEmpty.__call__":
-            return self.constructor
-        elif fullname == "numpy.ndarray.__matmul__":
-            return self.matmul
-        elif fullname == "numpy.ndarray.reshape":
-            return self.reshape
-        return None
+        return self.method_hooks.get(fullname, None)
     
     def reshape(self, ctx):
-        print(ctx)
+        # print(f"Debug: Reshape called ctx {ctx}")
         args = ctx.args
         params = []
         for index in range(len(ctx.callee_arg_names)):
@@ -78,8 +79,6 @@ class CustomPlugin(Plugin):
         old_total = 1
         for dim in old_tup:
             old_total = old_total * dim.value
-        print(old_total)
-        print(new)
         
         placeholder = None
         
@@ -93,19 +92,13 @@ class CustomPlugin(Plugin):
                 placeholder = i
             elif num == -1 and placeholder is not None:
                 ctx.api.fail("2 -1s", ctx.context)
-                return AnyType(TypeOfAny.special_form)
+                return ERROR_TYPE
 
-        # If the old total is now a float we are screwed (not divable properly)
-        # TODO fix the thing to work for fp better
-        if (int(old_total) != old_total):
-            print(old_total)
-            ctx.api.fail("Bad dim", ctx.context)
-            return AnyType(TypeOfAny.special_form)
         
         # If there is no placeholder and the old total is not 1, again error
         if placeholder is None and old_total != 1:
             ctx.api.fail("Bad dim (new does not equal old)", ctx.context)
-            return AnyType(TypeOfAny.special_form)
+            return ERROR_TYPE 
         
         # The negative one is the old total
         placeholder = old_total
@@ -118,26 +111,20 @@ class CustomPlugin(Plugin):
             else:
                 output.append(LiteralType(placeholder, ctx.api.named_generic_type("builtins.int", [])))
 
-            shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-            final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-            print(f"Type: {final_type}")
+        final_type = self.type_creator(ctx, output)
+        # print(f"Type: {final_type}")
             
 
-            return final_type
-
-
-
-        return AnyType(TypeOfAny.special_form)
-
+        return final_type
     
     # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
     def rand_other(self, ctx):
         index = ctx.callee_arg_names.index("size")
         
         # If there is no "size" argument then it is just an float
-        # TODO change this to a number
+        # TODO change this to a number like float
         if not ctx.args[index]:
-            print(ctx.api.named_generic_type("builtins.int", []))
+            # print(ctx.api.named_generic_type("builtins.int", []))
             return ctx.api.named_generic_type("builtins.int", [])
         param = ctx.args[index][0]
 
@@ -152,9 +139,7 @@ class CustomPlugin(Plugin):
                     literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
                     literal_dims.append(literal)
 
-        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        final_type = self.type_creator(ctx, final_type)
         # print(f"Type: {final_type}")
             
         return final_type
@@ -171,9 +156,7 @@ class CustomPlugin(Plugin):
             literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
             literal_dims.append(literal)
 
-        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        final_type = self.type_creator(ctx, literal_dims)
         # print(f"Type: {final_type}")
 
 
@@ -198,21 +181,8 @@ class CustomPlugin(Plugin):
                     literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
                     literal_dims.append(literal)
 
-        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [AnyType(TypeOfAny.special_form)]))
-
-
-        float64 = ctx.api.named_generic_type("numpy.float64", [])
-        dtype = ctx.api.named_generic_type("numpy.dtype", [float64])
-        
-        # Go throught the args and find the dtype if listed
-        for i, name_list in enumerate(ctx.arg_names):
-            if name_list and name_list[0] == "dtype":
-                if ctx.arg_types[i]:              
-                    dtype = ctx.arg_types[i][0]     
-                break
-        
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple, dtype])
         # print(f"Type: {final_type}")
+        final_type = self.type_creator(ctx, literal_dims)
             
         return final_type
 
@@ -223,29 +193,19 @@ class CustomPlugin(Plugin):
         # If one or the other is just a constant, error, use * instead
         if (rhs.type.fullname == 'builtins.int'):
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
-            return AnyType(TypeOfAny.from_error)
+            return ERROR_TYPE
         elif (lhs.type.fullname == 'builtins.int'):
             # print(proper_rhs)
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
-            return AnyType(TypeOfAny.from_error)
+            return ERROR_TYPE
 
         # # Get the shapes as a list and the sizes
-        # print(lhs)
-        # print(lhs.args)
-        # print(lhs.args[0])
         lhs_shape = lhs.args[0].items
         rhs_shape = rhs.args[0].items
         lhs_size = len(lhs_shape)
         rhs_size = len(rhs_shape)
-        print(lhs_shape)
-        print(rhs_shape)
-
-        # Save the lhs and check for repeat
-        if self.prev == lhs_shape:
-            ctx.api.fail("yuh", ctx.context)
-            return AnyType(TypeOfAny.from_error)
-        else:
-            self.prev = rhs_shape
+        # print(lhs_shape)
+        # print(rhs_shape)
 
         output = []
 
@@ -253,39 +213,30 @@ class CustomPlugin(Plugin):
         # TODO find a generic number type
         if lhs_size == 1 and rhs_size == 1:
             return_type = ctx.api.named_generic_type("builtins.int", [])
-            print(return_type)
             return return_type
         elif lhs_size == 1:
-            print("lhs")
-            print(lhs_shape, rhs_shape)
-            print(lhs_size)
             # If the lhs is a vec, essentially the second to last elem of rhs gets removed for the shape (if match)
             if lhs_shape[0] == rhs_shape[-2]:
                 output = rhs_shape[:-2]
                 output.append(rhs_shape[-1])
 
-                shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-                final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-                print(f"Final output: {final_type}")
+                final_type = self.type_creator(ctx, output)
+                # print(f"Final output: {final_type}")
                 return final_type
             else: 
                 ctx.api.msg.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context, code=OVERRIDE)
-                return AnyType(TypeOfAny.from_error)
+                return ERROR_TYPE
         elif rhs_size == 1:
-            print("rhs")
-            print(lhs_shape, rhs_shape)
-            print(rhs_size)
             # If the rhs is a vec, essentially the last elem of LHS gets removed (if match)
             if lhs_shape[-1] == rhs_shape[0]:
                 output = lhs_shape[:-1]
 
-                shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-                final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-                print(f"Final output: {final_type}")
+                final_type = self.type_creator(ctx, output)
+                # print(f"Final output: {final_type}")
                 return final_type
             else: 
                 ctx.api.msg.fail("Shape mismatch (vector so LHS prepends 1 for dim and gets removed later)", ctx.context, code=OVERRIDE)
-                return AnyType(TypeOfAny.from_error)
+                return ERROR_TYPE
 
             
         lhs_broadcast_shape = lhs_shape[:-2]
@@ -294,7 +245,7 @@ class CustomPlugin(Plugin):
         # Check basic matmul rules
         if lhs_shape[-1] != rhs_shape[-2]:
             ctx.api.msg.fail("matmul error (the final 2 elems)", ctx.context, code=OVERRIDE)
-            return AnyType(TypeOfAny.from_error)
+            return ERROR_TYPE
 
         # Everything except the last 2 are just broadcasting so use that code
 
@@ -316,7 +267,7 @@ class CustomPlugin(Plugin):
             # Otherwise, show that this is a shape mismatch error NOT DONE YETT
             else:
                 ctx.api.msg.fail("Shape mismatch", ctx.context, code=OVERRIDE)
-                return AnyType(TypeOfAny.from_error)
+                return ERROR_TYPE
         # Attach the remaining of whatever is bigger to the front
         if lhs_vs_rhs:
             output = lhs_shape[:len(lhs_broadcast_shape)-len(rhs_broadcast_shape)] + output
@@ -328,9 +279,8 @@ class CustomPlugin(Plugin):
         output.append(rhs_shape[-1])
 
         # return the final typing
-        shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-        print(f"Final output: {final_type}")
+        final_type = self.type_creator(ctx, output)
+        # print(f"Final output: {final_type}")
 
         return final_type
         
@@ -343,8 +293,8 @@ class CustomPlugin(Plugin):
 
     # For addition (broadcast and element wise) called via * or +
     def add_array(self, ctx):
-
         # print(f"DEBUG: add ndarray called: {ctx}")
+
         # Save the args
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
@@ -389,10 +339,10 @@ class CustomPlugin(Plugin):
                 # if they are both the same, put the element as well
                 elif lhs_shape[-i] == rhs_shape[-i]:
                     output.insert(0, lhs_shape[-i])
-                # Otherwise, show that this is a shape mismatch error NOT DONE YETT
+                # Otherwise, show that this is a shape mismatch error
                 else:
                     ctx.api.fail("Shape mismatch", ctx.context)
-                    return AnyType(TypeOfAny.from_error)
+                    return ERROR_TYPE
             # Attach the remaining of whatever is bigger to the front
             if lhs_vs_rhs:
                 output = lhs_shape[:lhs_size-rhs_size] + output
@@ -400,30 +350,27 @@ class CustomPlugin(Plugin):
                 output = rhs_shape[:rhs_size-lhs_size] + output
             
             # return the final typing
-            shape_tuple = TupleType(output, fallback=ctx.api.named_generic_type("builtins.tuple", []))
-            final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
-            # print(f"Final output: {final_type}")
+            final_type = self.type_creator(ctx, output)
 
+            # print(f"Final output: {final_type}")
             return final_type
 
 
     # For np.array
     def base_array(self, ctx: FunctionContext) -> Type:
-        print(f"DEBUG: array() called: {ctx}")
+        # print(f"DEBUG: array() called: {ctx}")
 
         if ctx.args and ctx.args[0] and ctx.args[0][0]:
             
+            # Get the info and then return the final tyep
             shape, ranks = self.infer_shape(ctx.args[0][0])
 
             # print(f"DEBUG: Inferred shape: {shape} with rank {ranks}")
             literal_dims = [LiteralType(dim, ctx.api.named_generic_type("builtins.int", [])) for dim in shape]
 
-            shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", []))
+            final_type = self.type_creator(ctx, literal_dims)
 
-            final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
             # print(f"Type: {final_type}")
-            
-
             return final_type
         else:
             print("DEBUG: WEIRD ERROR HAPPENED")   
@@ -432,8 +379,27 @@ class CustomPlugin(Plugin):
             print(ctx.args[0][0])
             return ctx.default_return_type
 
+    def type_creator(self, ctx, literal_dims):
+        shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [AnyType(TypeOfAny.special_form)]))
+
+
+        # Default type
+        float64 = ctx.api.named_generic_type("numpy.float64", [])
+        dtype = ctx.api.named_generic_type("numpy.dtype", [float64])
+        
+        # Go throught the args and find the dtype if listed
+        for i, name_list in enumerate(ctx.arg_names):
+            if name_list and name_list[0] == "dtype":
+                if ctx.arg_types[i]:              
+                    dtype = ctx.arg_types[i][0]     
+                break
+        
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple, dtype])
+        return final_type
+
+
     def infer_shape(self, node):
-        print("Infer")
+        # print("DEBUG: infer shape")
         current_nodes = [node]
         shape = []
         rank = 0

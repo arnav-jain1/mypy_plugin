@@ -1,15 +1,12 @@
-* matmul
 * Zeros, empty
 * **SLICING**
-* reshape
 * figure out what to do with errors
 
 Todo soon: 
-  test the shit out of reshape
-  refactor make it better
-  Add the builtin numpy thingy
   test cases (big)
+  test case
   Figureout the backup thing
+  error messages
 
 
 

@@ -2,21 +2,6 @@ import numpy as np
 from typing import reveal_type
 
 
-a = np.ones((8, 8))
-
-b = a.reshape(-1)
-
-y = a.reshape(64)
-
-c = a.reshape(2, 32)
-
-c2 = a.reshape(-1, 32)
-d = a.reshape((2, 32))
-d2 = a.reshape((-1, 32))
-z = a.reshape(2, 32, order='C', copy=None)
-
-bad1 = a.reshape(1)
-bad2 = a.reshape(10, 2)
 
 # print(b.shape)
 

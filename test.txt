@@ -1,104 +1,16 @@
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[-1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.UnaryExpr object at 0x000002145C80D850>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80700>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[-1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[()], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.UnaryExpr object at 0x000002145C80D850>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80700>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[-1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[builtins.int, numpy.dtype[numpy.float64]], args=[[<mypy.nodes.UnaryExpr object at 0x000002145C80D850>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80700>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[-1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.UnaryExpr object at 0x000002145C80D850>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80700>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[64]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5420>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80820>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[64]
-Type: numpy.ndarray[tuple[Literal[64]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[64]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[()], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5420>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80820>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[64]
-Type: numpy.ndarray[tuple[Literal[64]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[64]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[builtins.int, numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5420>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80820>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[64]
-Type: numpy.ndarray[tuple[Literal[64]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[64]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5420>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80820>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[64]
-Type: numpy.ndarray[tuple[Literal[64]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[2]?], [Literal[32]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, None, 'order', 'copy'], arg_names=[[None], [None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5480>], [<mypy.nodes.IntExpr object at 0x000002145C7E54E0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80940>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[2, 32]
-Type: numpy.ndarray[tuple[Literal[2]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[-1]?], [Literal[32]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, None, 'order', 'copy'], arg_names=[[None], [None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.UnaryExpr object at 0x000002145C80D8C0>], [<mypy.nodes.IntExpr object at 0x000002145C7E55A0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80A60>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1, 32]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[2]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E56C0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80B80>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[2, 32]
-Type: numpy.ndarray[tuple[Literal[2]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[2]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[()], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E56C0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80B80>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[2, 32]
-Type: numpy.ndarray[tuple[Literal[2]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[2]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E56C0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80B80>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[2, 32]
-Type: numpy.ndarray[tuple[Literal[2]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[-1]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E57E0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80CA0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1, 32]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[-1]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[()], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E57E0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80CA0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1, 32]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[tuple[Literal[-1]?, Literal[32]?]], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.TupleExpr object at 0x000002145C7E57E0>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80CA0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[-1, 32]
-Type: numpy.ndarray[tuple[Literal[-1]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[2]?], [Literal[32]?], [Literal['C']], [None]], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_NAMED: 3>], [<ArgKind.ARG_NAMED: 3>]], callee_arg_names=[None, None, 'order', 'copy'], arg_names=[[None], [None], ['order'], ['copy']], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5840>], [<mypy.nodes.IntExpr object at 0x000002145C7E58A0>], [<mypy.nodes.StrExpr object at 0x000002145C7E5900>], [<mypy.nodes.NameExpr object at 0x000002145C7EFF60>]], context=<mypy.nodes.CallExpr object at 0x000002145CA80DC0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[2, 32]
-Type: numpy.ndarray[tuple[Literal[2]]]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[()], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[builtins.int, numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], [], []], callee_arg_names=[None, 'shape', 'order', 'copy'], arg_names=[[None], [], [], []], default_return_type=numpy.ndarray[builtins.tuple[builtins.int, ...], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[builtins.tuple[builtins.int, ...], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[1]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'order', 'copy'], arg_names=[[None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E5960>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA80EE0>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[1]
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[10]?], [Literal[2]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, None, 'order', 'copy'], arg_names=[[None], [None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E59C0>], [<mypy.nodes.IntExpr object at 0x000002145C7E5A20>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA81000>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[10, 2]
-3.2
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[10]?], [Literal[2]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, 'shape', 'order', 'copy'], arg_names=[[None], [None], [], []], default_return_type=numpy.ndarray[builtins.tuple[builtins.int, ...], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E59C0>], [<mypy.nodes.IntExpr object at 0x000002145C7E5A20>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA81000>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[10]
-6.4
-MethodContext(type=numpy.ndarray[tuple[Literal[8], Literal[8]], numpy.dtype[numpy.float64]], arg_types=[[Literal[10]?], [Literal[2]?], [], []], arg_kinds=[[<ArgKind.ARG_POS: 0>], [<ArgKind.ARG_POS: 0>], [], []], callee_arg_names=[None, None, 'order', 'copy'], arg_names=[[None], [None], [], []], default_return_type=numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[numpy.float64]], args=[[<mypy.nodes.IntExpr object at 0x000002145C7E59C0>], [<mypy.nodes.IntExpr object at 0x000002145C7E5A20>], [], []], context=<mypy.nodes.CallExpr object at 0x000002145CA81000>, api=<mypy.checker.TypeChecker object at 0x0000021463F215B0>)
-64
-[10, 2]
-3.2
-benchmarks\test.py:18: error: Bad dim (new does not equal old)  [misc]
-benchmarks\test.py:19: error: Bad dim  [misc]
-Found 2 errors in 1 file (checked 1 source file)
+Traceback (most recent call last):
+  File "C:\Users\Nav\AppData\Local\Programs\Python\Python312\Lib\site-packages\mypy\__main__.py", line 15, in console_entry
+    main()
+  File "mypy\main.py", line 119, in main
+  File "mypy\main.py", line 203, in run_build
+  File "mypy\build.py", line 191, in build
+  File "mypy\build.py", line 267, in _build
+  File "mypy\build.py", line 2937, in dispatch
+  File "mypy\build.py", line 3335, in process_graph
+  File "mypy\build.py", line 3440, in process_stale_scc
+  File "mypy\build.py", line 2367, in finish_passes
+  File "C:\Users\Nav\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 141, in __exit__
+    def __exit__(self, typ, value, traceback):
+    
+KeyboardInterrupt
+Interrupted
