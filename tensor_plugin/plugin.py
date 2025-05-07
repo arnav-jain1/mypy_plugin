@@ -1,6 +1,6 @@
-from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInterface
-from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType
-from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr
+from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInterface, DynamicClassDefContext, SemanticAnalyzerPluginInterface
+from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType, NoneType
+from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
 from typing import Tuple, List, Literal, final
@@ -8,7 +8,7 @@ from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
 
-ERROR_TYPE = AnyType(TypeOfAny.from_error)
+ERROR_TYPE = NoneType()
 
 class CustomPlugin(Plugin):
 
@@ -34,7 +34,9 @@ class CustomPlugin(Plugin):
             "numpy.ndarray.__add__": self.add_array,
             "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
             "numpy.ndarray.__matmul__": self.matmul,
-            "numpy.ndarray.reshape": self.reshape}
+            "numpy.ndarray.reshape": self.reshape,
+            "numpy.ndarray.__truediv__": self.add_array
+            }
 
         self.broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
 
@@ -42,16 +44,73 @@ class CustomPlugin(Plugin):
         # print(f"debug fullname {fullname}")
         if fullname in self.broadcasting_funcs_direct:
             return self.add_array_direct
+        elif fullname == "numpy.maximum":
+            return self.maximum
         return None
 
+
     def get_function_hook(self, fullname: str):
-        # print(f"debug fullname {fullname}")
+        # print(f"DEBUG fullname: {fullname}")
         return self.func_hooks.get(fullname, None)
 
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
         return self.method_hooks.get(fullname, None)
     
+    #     # --- attribute access hooks ---
+    # def get_attribute_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # def get_class_attribute_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # # --- class‐decorator hooks (two phases) ---
+    # def get_class_decorator_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # def get_class_decorator_hook_2(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # # --- metaclass / base‐class / MRO hooks ---
+    # def get_metaclass_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # def get_base_class_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # def get_customize_class_mro(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # --- “type”‐analyze hook (e.g. for typing.Annotated) ---
+    def get_type_analyze_hook(self, fullname):
+        print(f"DEBUG fullname: {fullname}")
+        return None
+
+    # # --- signature‐altering hooks ---
+    # def get_function_signature_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    # def get_method_signature_hook(self, fullname):
+    #     print(f"DEBUG fullname: {fullname}")
+    #     return None
+
+    
+    def maximum(self, ctx):
+        name = ctx.call.args[0].name
+        print(name)
+        print("MARKER")
+        print(ctx)
+        
+    
+    # reshape
     def reshape(self, ctx):
         # print(f"Debug: Reshape called ctx {ctx}")
         args = ctx.args
@@ -62,6 +121,8 @@ class CustomPlugin(Plugin):
         new = []
 
         for param in params:
+            print("MARKER")
+            print(param)
             if isinstance(param, UnaryExpr):
                 new.append(-1)
             elif isinstance(param, IntExpr):
@@ -100,19 +161,29 @@ class CustomPlugin(Plugin):
             ctx.api.fail("Bad dim (new does not equal old)", ctx.context)
             return ERROR_TYPE 
         
-        # The negative one is the old total
+        # The -1 is the old total
         placeholder = old_total
+
+        # Make sure -1 will become an int
+        if placeholder == int(placeholder):
+            placeholder = int(placeholder)
+        else: 
+            ctx.api.fail("Bad dim, -1 does not become a whole number", ctx.context)
+            return ERROR_TYPE
+
+        print(placeholder)
 
         output = []
 
         for number in new:
-            if new != -1:
+            if number != -1:
                 output.append(LiteralType(number, ctx.api.named_generic_type("builtins.int", [])))
             else:
+                print("HALLO", placeholder)
                 output.append(LiteralType(placeholder, ctx.api.named_generic_type("builtins.int", [])))
 
         final_type = self.type_creator(ctx, output)
-        # print(f"Type: {final_type}")
+        print(f"Type: {final_type}")
             
 
         return final_type
@@ -139,7 +210,7 @@ class CustomPlugin(Plugin):
                     literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
                     literal_dims.append(literal)
 
-        final_type = self.type_creator(ctx, final_type)
+        final_type = self.type_creator(ctx, literal_dims)
         # print(f"Type: {final_type}")
             
         return final_type
@@ -164,7 +235,7 @@ class CustomPlugin(Plugin):
 
     # For ones
     def constructor(self, ctx):
-        # print("ones")
+        # print("DEBUG: ones/zeros/empty")
 
         param = ctx.args[0][0]
         # print(param)
@@ -191,6 +262,7 @@ class CustomPlugin(Plugin):
         rhs = ctx.arg_types[0][0]
 
         # If one or the other is just a constant, error, use * instead
+        # TODO NOT JUST INTS
         if (rhs.type.fullname == 'builtins.int'):
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
             return ERROR_TYPE
@@ -304,10 +376,11 @@ class CustomPlugin(Plugin):
 
         
         # If one or the other is just a constant
-        if (rhs.type.fullname == 'builtins.int'):
+        # print(lhs.type.fullname)
+        if (rhs.type.fullname != 'numpy.ndarray'):
             # print(proper_lhs)
             return proper_lhs
-        elif (lhs.type.fullname == 'builtins.int'):
+        elif (lhs.type.fullname != 'numpy.ndarray'):
             # print(proper_rhs)
             return proper_rhs
         # If both are same dim
