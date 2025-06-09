@@ -3,6 +3,9 @@ from typing import reveal_type
 
 
 
+a = np.zeros((3,2))
+b = np.zeros((2,2))
+c = a @ b
 
 # print(b.shape)
 
@@ -10,8 +13,10 @@ a1 = np.zeros((5))
 b1 = np.zeros((3, 2, 5,1))
 a2 = np.empty((5))
 b2 = np.empty((3, 2, 5,1))
-# c1 = a1 @ b1
-# reveal_type(c1)
+reveal_type(a1)
+reveal_type(b1)
+c1 = a1 @ b1
+reveal_type(c1)
 # print("PASS a1 @ b1: ", c1.shape)
 
 

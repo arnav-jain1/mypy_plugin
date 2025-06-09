@@ -3,7 +3,7 @@ from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfA
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
-from typing import Tuple, List, Literal, final
+from typing import Tuple, List, Literal, final, Any
 from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
@@ -16,6 +16,8 @@ class CustomPlugin(Plugin):
         super().__init__(*args, **kwargs)
         self.func_hooks = {
             "numpy._core.multiarray.array": self.base_array,
+            "numpy._core.multiarray.zeros": self.constructor,
+            "numpy._core.multiarray.empty": self.constructor,
             "numpy.random.mtrand.rand": self.rand,
             "numpy.random.mtrand.randn": self.rand,
             "numpy.random.mtrand.randint": self.rand_other,
@@ -50,58 +52,67 @@ class CustomPlugin(Plugin):
 
 
     def get_function_hook(self, fullname: str):
-        # print(f"DEBUG fullname: {fullname}")
+        # print(f"DEBUG func: {fullname}")
+        if fullname == "test3.func":
+            return self.test
         return self.func_hooks.get(fullname, None)
 
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
         return self.method_hooks.get(fullname, None)
     
-    #     # --- attribute access hooks ---
-    # def get_attribute_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+        # --- attribute access hooks ---
+    def get_attribute_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # def get_class_attribute_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_class_attribute_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # # --- class‐decorator hooks (two phases) ---
-    # def get_class_decorator_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    # --- class‐decorator hooks (two phases) ---
+    def get_class_decorator_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # def get_class_decorator_hook_2(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_class_decorator_hook_2(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # # --- metaclass / base‐class / MRO hooks ---
-    # def get_metaclass_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    # --- metaclass / base‐class / MRO hooks ---
+    def get_metaclass_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # def get_base_class_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_base_class_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
-    # def get_customize_class_mro(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_customize_class_mro(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
     # --- “type”‐analyze hook (e.g. for typing.Annotated) ---
     def get_type_analyze_hook(self, fullname):
-        print(f"DEBUG fullname: {fullname}")
+        # print(f"DEBUG type analyze: {fullname}")
         return None
 
     # # --- signature‐altering hooks ---
-    # def get_function_signature_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_function_signature_hook(self, fullname):
+        # print(f"DEBUG func sig: {fullname}")
+        # if fullname == 'test3.func':
+        #     return self.test
+        return None
 
-    # def get_method_signature_hook(self, fullname):
-    #     print(f"DEBUG fullname: {fullname}")
-    #     return None
+    def get_method_signature_hook(self, fullname):
+        # print(f"DEBUG fullname: {fullname}")
+        return None
 
+    def test(self, ctx):
+        print(ctx)
+        # print(ctx.context_node)
+        # print(ctx.context_node)
+        return ERROR_TYPE
     
     def maximum(self, ctx):
         name = ctx.call.args[0].name
@@ -258,8 +269,17 @@ class CustomPlugin(Plugin):
         return final_type
 
     def matmul(self, ctx):
+        print(ctx)
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
+        lhs_func_check = lhs.args
+        rhs_func_check = rhs.args
+
+        for arg in lhs_func_check: 
+            if isinstance(arg, AnyType):
+
+
+
 
         # If one or the other is just a constant, error, use * instead
         # TODO NOT JUST INTS
@@ -457,8 +477,8 @@ class CustomPlugin(Plugin):
 
 
         # Default type
-        float64 = ctx.api.named_generic_type("numpy.float64", [])
-        dtype = ctx.api.named_generic_type("numpy.dtype", [float64])
+        # float64 = ctx.api.named_generic_type("numpy.float64", [])
+        # dtype = ctx.api.named_generic_type("numpy.dtype", [float64])
         
         # Go throught the args and find the dtype if listed
         for i, name_list in enumerate(ctx.arg_names):
@@ -467,7 +487,7 @@ class CustomPlugin(Plugin):
                     dtype = ctx.arg_types[i][0]     
                 break
         
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple, dtype])
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
         return final_type
 
 
