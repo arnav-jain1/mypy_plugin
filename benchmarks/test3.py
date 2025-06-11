@@ -12,7 +12,8 @@ def func(x: np.ndarray):
     reveal_type(c)
     return c
 
-x = np.zeros((3,2))
-y = np.zeros((4,4))
+x = np.zeros((3))
+y = np.zeros((4))
+print(x @ y)
 # a = func(x)
 # z = x @ y

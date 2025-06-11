@@ -275,8 +275,8 @@ class CustomPlugin(Plugin):
         lhs_func_check = lhs.args
         rhs_func_check = rhs.args
 
-        for arg in lhs_func_check: 
-            if isinstance(arg, AnyType):
+        # for arg in lhs_func_check: 
+            # if isinstance(arg, AnyType):
 
 
 

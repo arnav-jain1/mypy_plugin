@@ -16,10 +16,43 @@ class MatMulRHSKnown:
             rank = lhs_rank if lhs_rank else len(self.lhs)
         else:
             rank = lhs_rank if lhs_rank else self.rhs_rank
+        
+        if self.rhs_rank == 1 and rank == 1:
+            lhs, output = self.solve1x1()
+        else:
+            lhs, output = self.solve_ndim(rank)
 
-        lhs, output = self.solve_ndim(rank)
     
         return lhs, output
+    
+    def solve1x1(self):
+        s = Solver()
+
+        # Init the solver
+        lhs_vars = [Int(f"lhs_0")]
+        s.add([d > 0 for d in lhs_vars])
+
+        if self.lhs:
+            for i, elem in enumerate(self.lhs):
+                if isinstance(elem, int):
+                    s.add(lhs_vars[i] == elem)
+                elif (isinstance(elem, tuple)):
+                    or_clauses = [lhs_vars[i] == val for val in elem]
+                    s.add(Or(or_clauses))
+
+
+
+        # Split the shape
+        M, N = lhs_vars[-1], self.rhs[-1]
+
+        s.add(M == N)
+
+        if s.check() == sat:
+            output = [int]
+            lhs = self.summarize_nd_lhs(s, 1)
+            return lhs, output
+
+        return None, None
 
     def solve_ndim(self, lhs_rank):
 
@@ -49,8 +82,11 @@ class MatMulRHSKnown:
 
         s.add(K == Kr)
 
-        broadcasting_constraints, output = self.broadcasting(lhs_broadcasting_vars, rhs_broadcasting_vars)
-        output.append(int)
+        broadcasting_constraints, output = self._broadcasting(lhs_broadcasting_vars, rhs_broadcasting_vars)
+        if self.lhs and self.lhs[-2]:
+            output.append(self.lhs[-2])
+        else: 
+            output.append(int)
         output.append(N)
         s.add(broadcasting_constraints)
 
@@ -60,8 +96,8 @@ class MatMulRHSKnown:
         if s.check() == sat:
             # print(s)
             # print(broadcasting_constraints)
-            lhs = self.summarize_nd_lhs(s, lhs_rank, output, lhs_broadcasting_vars, rhs_broadcasting_vars, Kr, N)
-            print(f"output: {output}")
+            lhs = self.summarize_nd_lhs(s, lhs_rank)
+            # print(f"output: {output}")
         else:
             lhs = None
             output = None
@@ -69,7 +105,7 @@ class MatMulRHSKnown:
         return lhs, output
     
 
-    def broadcasting(self, lhs_broadcasting, rhs_broadcasting):
+    def _broadcasting(self, lhs_broadcasting, rhs_broadcasting):
         constraints = []
         output = []
 
@@ -85,13 +121,19 @@ class MatMulRHSKnown:
                 lhs_d = lhs_broadcasting[lhs_idx]
                 rhs_d = rhs_broadcasting[rhs_idx]
                 if rhs_d == 1:
-                    output.append(int)
+                    if self.lhs:
+                        output.append(self.lhs[lhs_idx])
+                    else:
+                        output.append(int)
                 else:
                     constraints.append(Or(lhs_d == 1, lhs_d == rhs_d))
                     output.append(rhs_d)
             elif lhs_idx >= 0:
                 # This is the scenario where the LHS is bigger than the rhs, can be anything so we append anything
-                output.append(int)
+                if self.lhs:
+                    output.append(self.lhs[lhs_idx])
+                else:
+                    output.append(int)
             elif rhs_idx >= 0:
                 output.append(rhs_broadcasting[rhs_idx])
         
@@ -99,12 +141,12 @@ class MatMulRHSKnown:
         # reverse the output 
         return constraints, output[::-1]
 
-    def summarize_nd_lhs(self, s, lhs_rank, output, lhs_broadcasting, rhs_broadcasting, Kr, N):
+    def summarize_nd_lhs(self, s, lhs_rank):
         constraints = s.assertions()
         # print(constraints)
 
         # Lowkey from Chatgpt, just turns the constraints into usable output 
-        results = [None for _ in range(lhs_rank)]
+        lhs_output = [None for _ in range(lhs_rank)]
         for c in constraints:
             # Handle the special 'Or' case first
             if is_or(c):
@@ -125,8 +167,8 @@ class MatMulRHSKnown:
                 
                 # Store all options as a tuple in the results 
                 # make sure that the thing is not more specific
-                if not isinstance(results[index], int):
-                    results[index] = tuple(options)
+                if not isinstance(lhs_output[index], int):
+                    lhs_output[index] = tuple(options)
 
             # Handle simple binary expressions like '>' or '=='
             else:
@@ -142,17 +184,22 @@ class MatMulRHSKnown:
 
                 # Apply your rules
                 if operation == '=':
-                    results[index] = value_node.as_long()
+                    lhs_output[index] = value_node.as_long()
                 elif operation == '>' and value_node.as_long() == 0:
                     # We only update if a more specific rule (like '==' or 'Or')
                     # hasn't already filled the spot.
-                    if results[index] is None:
-                        results[index] = int
-        print(f"LHS: {results}")
-        return results
+                    if lhs_output[index] is None:
+                        lhs_output[index] = int
+        # print(f"LHS: {lhs_output}")
+        return lhs_output
 
 
 
+x_shape = [int]
+y_shape = [6]
+inference = MatMulRHSKnown(None, y_shape)
+lhs, output = inference.solve()
+print(f"{x_shape} @ {y_shape} = {output} and lhs (should be y_shape): {lhs}")
 
 
 # print("--- Test Case 1: Standard Case (Same Rank) ---")
@@ -163,16 +210,16 @@ class MatMulRHSKnown:
 # # Expected Output: [2, <class 'int'>, 4]
 
 
-print("--- Test Case 2: Standard Case (RHS Rank > LHS Rank) ---")
-print("RHS: (10, 8, 5, 6), solving for a compatible LHS of Rank 2")
-inference2 = MatMulRHSKnown(None, (10, 8, 5, 6))
-# We explicitly ask to find a compatible LHS of rank 2
-lhs1, out1 = inference2.solve(5)
+# print("--- Test Case 2: Standard Case (RHS Rank > LHS Rank) ---")
+# print("RHS: (10, 8, 5, 6), solving for a compatible LHS of Rank 2")
+# inference2 = MatMulRHSKnown(None, (10, 8, 5, 6))
+# # We explicitly ask to find a compatible LHS of rank 2
+# lhs1, out1 = inference2.solve(5)
 # Expected LHS: [<class 'int'>, 5]
 # Expected Output: [10, 8, <class 'int'>, 6]
 
-inference3 = MatMulRHSKnown(out1, (10, 8, 6, 10))
-inference3.solve()
+# inference3 = MatMulRHSKnown(out1, (10, 8, 6, 10))
+# inference3.solve()
 
 
 # print("--- Test Case 3: Standard Case (LHS Rank > RHS Rank) ---")
@@ -199,3 +246,96 @@ inference3.solve()
 # inference5.solve()
 # # Expected LHS: [<class 'int'>, 5]
 # # Expected Output: [<class 'int'>, 6]
+
+
+# # 1
+# x1 = (5, 3)
+# y1 = (2, 3, 5, 4)
+
+# # 2
+# x2 = (4, 3, 2)
+# y2 = (5, 2, 6)
+
+# # 3
+# x3 = (2, 3, 4, 5)
+# y3 = (4, 1, 5, 6)
+
+# # 4
+# x4 = (2, 2, 2, 3, 4)
+# y4 = (2, 3, 5)
+
+# # 5
+# x5 = (4, 6, 3)
+# y5 = (2, 5)
+
+# # 6
+# x6 = (2, 1, 4, 2, 3)
+# y6 = (3, 2, 1, 3, 6)
+
+# # 7
+# x7 = (3, 4)
+# y7 = (4, 3, 2)
+
+# # 8
+# x8 = (3, 4)
+# y8 = (3, 3)
+
+# # 11
+# x11 = (3, 4)
+# y11 = (4, 2)
+
+# # 12
+# x12 = (5, 3, 4)
+# y12 = (5, 4, 2)
+
+# # 13
+# x13 = (1, 2, 3, 6)
+# y13 = (5, 2, 6, 4)
+
+# # 14
+# x14 = (4, 6)
+# y14 = (1, 6, 5)
+
+# # 15
+# x15 = (3, 6, 7)
+# y15 = (7, 2)
+
+# # 16
+# x16 = (2, 1, 4, 2, 3)
+# y16 = (2, 3, 1, 3, 6)
+
+# # 17
+# x17 = (3, 1, 2, 8)
+# y17 = (1, 8, 4)
+
+# # 18
+# x18 = (2, 5, 3)
+# y18 = (1, 2, 3, 6)
+
+# # 19
+# x19 = (1, 1, 3, 4, 7)
+# y19 = (7, 5)
+
+# # 20
+# x20 = (1, 9, 6)
+# y20 = (2, 3, 1, 6, 10)
+
+# test_cases = [
+    # # failing
+    # (x1, y1), (x2, y2), (x3, y3), (x4, y4),
+    # (x5, y5), (x6, y6), (x7, y7), (x8, y8),
+
+    # # passing
+    # (x11, y11), (x12, y12), (x13, y13), (x14, y14),
+    # (x15, y15), (x16, y16), (x17, y17), (x18, y18),
+    # (x19, y19), (x20, y20),
+# ]
+
+# for x_shape, y_shape in test_cases:
+    # inference = MatMulRHSKnown(x_shape, y_shape)
+    # lhs, output = inference.solve()
+    # print(f"{x_shape} @ {y_shape} = {output} and lhs (should be y_shape): {lhs}")
+
+# inference = MatMulRHSKnown((int, 4,6), (1,6,5))
+# lhs, output = inference.solve()
+# print(f"{(int, 4, 6)} @ {(1, 6, 5)} = {output} and lhs (should be y_shape): {lhs}")
