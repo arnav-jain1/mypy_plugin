@@ -1,6 +1,6 @@
 import numpy as np
 from typing_extensions import reveal_type
-from typing import Any
+from typing import *
 
 
 def func(x: np.ndarray):
@@ -12,8 +12,13 @@ def func(x: np.ndarray):
     reveal_type(c)
     return c
 
-x = np.zeros((3))
-y = np.zeros((4))
-print(x @ y)
+t = np.zeros((5,4))
+t2 = func(t)
+print(t2.shape)
+reveal_type(t2)
+t3 = np.zeros((4,3))
+t4 = t2 @ t3
+reveal_type(t4)
+
 # a = func(x)
 # z = x @ y

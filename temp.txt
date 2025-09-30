@@ -1,0 +1,23 @@
+numpy.ndarray[Any, Any]
+numpy.ndarray[tuple[Literal[4], Literal[4]]]
+['__add__', '__annotations__', '__class__', '__class_getitem__', '__contains__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__match_args__', '__module__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmul__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '_asdict', '_field_defaults', '_fields', '_make', '_replace', 'api', 'arg_kinds', 'arg_names', 'arg_types', 'args', 'callee_arg_names', 'context', 'count', 'default_return_type', 'index']
+('arg_types', 'arg_kinds', 'callee_arg_names', 'arg_names', 'default_return_type', 'args', 'context', 'api')
+CallExpr:16(
+  NameExpr(func [test3.func])
+  Args(
+    NameExpr(t [test3.t])))
+Any
+benchmarks\test3.py:11: note: Revealed type is "numpy.ndarray[tuple[Literal[4], Literal[4]]]"
+benchmarks\test3.py:12: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "mypy\checkexpr.py", line 5903, in accept
+  File "mypy\nodes.py", line 1965, in accept
+  File "mypy\checkexpr.py", line 485, in visit_call_expr
+  File "mypy\checkexpr.py", line 619, in visit_call_expr_inner
+  File "mypy\checkexpr.py", line 1476, in check_call_expr_with_callee_type
+  File "mypy\checkexpr.py", line 1572, in check_call
+  File "mypy\checkexpr.py", line 1818, in check_callable_call
+  File "mypy\checkexpr.py", line 1250, in apply_function_plugin
+TypeError: mypy.types.Type object expected; got None
