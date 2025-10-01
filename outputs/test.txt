@@ -1,24 +1,14 @@
-numpy.ndarray[Any, Any]
-numpy.ndarray[tuple[Literal[4], Literal[4]]]
-Final output: numpy.ndarray[tuple[builtins.int, Literal[4]]]
-['__add__', '__annotations__', '__class__', '__class_getitem__', '__contains__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__match_args__', '__module__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmul__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '_asdict', '_field_defaults', '_fields', '_make', '_replace', 'api', 'args', 'context', 'count', 'default_signature', 'index']
-('args', 'default_signature', 'context', 'api')
-CallExpr:16(
+CallExpr:18(
   NameExpr(func [test3.func])
   Args(
     NameExpr(t [test3.t])))
-def (x: numpy.ndarray[Any, Any]) -> Any
-Hi1
-Hi1
-Hi1
-Hi1
-Hi1
-Hi1
 Hi
-c
+def (x: numpy.ndarray[tuple[builtins.int, Literal[4]]]) -> Any
 benchmarks\test3.py:11: note: Revealed type is "numpy.ndarray[tuple[Literal[4], Literal[4]]]"
 benchmarks\test3.py:12: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
-benchmarks\test3.py:16: note: Function returns variable named: 'c'
-benchmarks\test3.py:18: note: Revealed type is "Any"
-benchmarks\test3.py:21: note: Revealed type is "Any"
-Success: no issues found in 1 source file
+benchmarks\test3.py:16: note: Revealed type is "numpy.ndarray[tuple[Literal[5], Literal[2]]]"
+benchmarks\test3.py:17: note: Revealed type is "def (x: numpy.ndarray[Any, Any]) -> Any"
+benchmarks\test3.py:18: error: Argument 1 to "func" has incompatible type "ndarray[tuple[Literal[5], Literal[2]]]"; expected "ndarray[tuple[int, Literal[4]]]"  [arg-type]
+benchmarks\test3.py:21: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
+benchmarks\test3.py:25: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[3]]]"
+Found 1 error in 1 file (checked 1 source file)

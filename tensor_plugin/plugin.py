@@ -40,11 +40,14 @@ class CustomPlugin(Plugin):
             "numpy.ndarray.__add__": self.broadcast,
             "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
             "numpy.ndarray.__matmul__": self.matmul,
+            "numpy.ndarray.__rmatmul__": self.fail,
             # "numpy.ndarray.reshape": self.reshape,
             "numpy.ndarray.__truediv__": self.broadcast
             }
 
         self.broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
+
+        self.context = dict()
 
 # region important_hooks
     def get_dynamic_class_hook(self, fullname):
@@ -58,7 +61,7 @@ class CustomPlugin(Plugin):
     def get_function_hook(self, fullname: str):
         # print(f"DEBUG func: {fullname}")
         if ".func" in fullname:
-            return self.test
+            return self.custom_func
         return self.func_hooks.get(fullname, None)
 
     def get_method_hook(self, fullname):
@@ -99,9 +102,7 @@ class CustomPlugin(Plugin):
     def get_function_signature_hook(self, fullname):
         # print(f"DEBUG func sig: {fullname}")
         if ".func" in fullname:
-            return self.test2
-        # if fullname == 'test3.func':
-        #     return self.test
+            return self.custom_func_sig
         return None
     def get_method_signature_hook(self, fullname):
         # print(f"DEBUG fullname: {fullname}")
@@ -191,11 +192,15 @@ class CustomPlugin(Plugin):
             return final_type
 # endregion
     def matmul(self, ctx):
-        # print(ctx)
+        func_name = self.get_func_name(ctx)
+        
+        if func_name not in self.context:
+            self.context[func_name] = dict()
+
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
-        print(lhs)
-        print(rhs)
+        lhs_name = ctx.context.left.name
+        rhs_name = ctx.context.right.name
 
         # If one or the other is just a constant, error, use * instead
         # TODO NOT JUST INTS
@@ -207,19 +212,32 @@ class CustomPlugin(Plugin):
             ctx.api.msg.note("Cant use scalar with matmul, use * instead", ctx.context)
             return ERROR_TYPE
 
-        # # Get the shapes as a list and the sizes
-        lhs_shape = self.get_shape(lhs.args[0])
-        rhs_shape = self.get_shape(rhs.args[0])
+        # Get the shapes as a list and the sizes, if its in the context use that
+        # When adding input for dim and the dtype, will require replumbing
+        if lhs_name in self.context[func_name]:
+            lhs_shape = self.get_shape(self.context[lhs_name])
+        else:
+            lhs_shape = self.get_shape(lhs.args[0])
+        if rhs_name in self.context[func_name]:
+            rhs_shape = self.get_shape(self.context[rhs_name])
+        else:
+            rhs_shape = self.get_shape(rhs.args[0])
 
         solver = NumpySolver(lhs_shape, rhs_shape)
         lhs_new, rhs_new, output = solver.solve_matmul()
 
         if output == None:
+            ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
             return ERROR_TYPE
 
+        # This sets the context for the lhs and rhs
+        lhs_new_type = self.type_creator(ctx, lhs_new, False)
+        rhs_new_type = self.type_creator(ctx, rhs_new, False)
+        self.context[func_name][lhs_name] = lhs_new_type
+        self.context[func_name][rhs_name] = rhs_new_type
 
         final_type = self.type_creator(ctx, output, False)
-        print(f"Final output: {final_type}")
+        # print(f"Final output: {final_type}")
         return final_type
 
     def broadcast(self, ctx):
@@ -260,29 +278,41 @@ class CustomPlugin(Plugin):
         # print(f"Final output: {final_type}")
         return final_type
 
-    def test(self, ctx):
+    def custom_func(self, ctx):
         func_def_node = ctx.context.callee.node
 
         for stmt in func_def_node.body.body:
-            if isinstance(stmt, ReturnStmt):
-                if isinstance(stmt.expr, NameExpr):
-                    variable_name = stmt.expr.name
+            if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
+                    var_node = stmt.expr.node.type
                     
-                    print(variable_name)
-                    ctx.api.msg.note(f"Function returns variable named: '{variable_name}'", ctx.context)
-                    
-        return ctx.default_return_type
+        return var_node
 
-    def test2(self, ctx):
-        print(dir(ctx))
+    def custom_func_sig(self, ctx):
+        func_name = ctx.context.callee.name
         
-        print(ctx._fields)
-        print(ctx.context)
-        print(ctx.default_signature)
-        return ctx.default_signature
+        # If we encounter a func that we havent seen before, it likely doesnt use numpy so unchange
+        cur = ctx.default_signature
+        if func_name not in self.context:
+            return cur
+
+        new_types = []
+        for name, cur_type in zip(cur.arg_names, cur.arg_types):
+            if name in self.context[func_name]:
+                new_types.append(self.context[func_name][name])
+            else:
+                new_types.append(cur_type)
+        new_sig = cur.copy_modified(arg_types=new_types)
+
+        # Reset the context bc we are out of a func
+        self.context[func_name] = dict()
+        return new_sig
 
 
 # region tools
+    def fail(self, ctx):
+        ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
+        return ERROR_TYPE
+
     def type_creator(self, ctx, shape, is_literal=True):
         if not is_literal:
             literal_dims = []
@@ -297,7 +327,6 @@ class CustomPlugin(Plugin):
             literal_dims = shape
 
         shape_tuple = TupleType(literal_dims, fallback=ctx.api.named_generic_type("builtins.tuple", [AnyType(TypeOfAny.special_form)]))
-
 
         # TODO Default type (add the flaot type thing)
         # float64 = ctx.api.named_generic_type("numpy.float64", [])
@@ -335,12 +364,27 @@ class CustomPlugin(Plugin):
         return shape, rank
 
     def get_shape(self, shape):
+        # If no input, assume a 2x2 matrix
         if isinstance(shape, AnyType):
-            return []
+            return [int, int]
         shape = shape.items
-        shape_output = [dim.value for dim in shape]
+        shape_output = []
+        for dim in shape:
+            if isinstance(dim, Instance):
+                shape_output.append(int)
+            elif isinstance(dim, LiteralType):
+                shape_output.append(dim.value)
+            elif isinstance(dim, UnionType):
+                shape_output.output(tuple(d.value for d in dim.items))
 
         return shape_output
+    
+    def get_func_name(self, ctx):
+        func = ctx.api.scope.current_function()
+        if func:
+            return func.name
+        else:
+            return "global"
 # endregion
 
 def plugin(version):

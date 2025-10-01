@@ -12,12 +12,15 @@ def func(x: np.ndarray):
     reveal_type(c)
     return c
 
-t = np.zeros((5,4))
+t = np.zeros((5,2))
+reveal_type(t)
 t2 = func(t)
 print(t2.shape)
+
 reveal_type(t2)
 t3 = np.zeros((4,3))
 t4 = t2 @ t3
+
 reveal_type(t4)
 
 # a = func(x)
