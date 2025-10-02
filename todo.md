@@ -1,6 +1,7 @@
-* Zeros, empty
+* empty
 * **SLICING**
 * figure out what to do with errors
+* Branching
 
 Todo soon: 
   test cases (big)

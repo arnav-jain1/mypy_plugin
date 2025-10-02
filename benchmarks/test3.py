@@ -4,24 +4,28 @@ from typing import *
 
 
 def func(x: np.ndarray):
-    a = np.zeros((2,3))
     b = np.zeros((4,4))
     c = x @ b
-    # reveal_type(x)
-    reveal_type(b)
     reveal_type(c)
     return c
 
-t = np.zeros((5,2))
-reveal_type(t)
-t2 = func(t)
-print(t2.shape)
+valid_arg = np.zeros((3,4))
+invalid_arg = np.zeros((3,9))
 
-reveal_type(t2)
-t3 = np.zeros((4,3))
-t4 = t2 @ t3
+valid = func(valid_arg)
+invalid = func(invalid_arg)
 
-reveal_type(t4)
+new_valid = np.zeros((4,3))
+new_invalid = np.zeros((10,3))
+
+reveal_type(valid)
+x = valid @ new_valid
+reveal_type(x)
+
+reveal_type(valid)
+y = valid @ new_invalid
+reveal_type(y)
+
 
 # a = func(x)
 # z = x @ y

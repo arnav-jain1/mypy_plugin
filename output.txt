@@ -1,0 +1,8 @@
+benchmarks\test3.py:13: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
+benchmarks\test3.py:20: error: Argument 1 to "func" has incompatible type "ndarray[tuple[Literal[3], Literal[9]]]"; expected "ndarray[tuple[int, Literal[4]]]"  [arg-type]
+benchmarks\test3.py:25: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
+benchmarks\test3.py:27: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[3]]]"
+benchmarks\test3.py:29: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
+benchmarks\test3.py:30: error: Mismatch  [override]
+benchmarks\test3.py:31: note: Revealed type is "Any"
+Found 2 errors in 1 file (checked 1 source file)

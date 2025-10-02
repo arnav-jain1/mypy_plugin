@@ -215,11 +215,11 @@ class CustomPlugin(Plugin):
         # Get the shapes as a list and the sizes, if its in the context use that
         # When adding input for dim and the dtype, will require replumbing
         if lhs_name in self.context[func_name]:
-            lhs_shape = self.get_shape(self.context[lhs_name])
+            lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
         else:
             lhs_shape = self.get_shape(lhs.args[0])
         if rhs_name in self.context[func_name]:
-            rhs_shape = self.get_shape(self.context[rhs_name])
+            rhs_shape = self.get_shape(self.context[func_name][rhs_name].args[0])
         else:
             rhs_shape = self.get_shape(rhs.args[0])
 
@@ -303,8 +303,6 @@ class CustomPlugin(Plugin):
                 new_types.append(cur_type)
         new_sig = cur.copy_modified(arg_types=new_types)
 
-        # Reset the context bc we are out of a func
-        self.context[func_name] = dict()
         return new_sig
 
 
@@ -365,7 +363,7 @@ class CustomPlugin(Plugin):
 
     def get_shape(self, shape):
         # If no input, assume a 2x2 matrix
-        if isinstance(shape, AnyType):
+        if isinstance(shape, AnyType) or isinstance(shape, Instance):
             return [int, int]
         shape = shape.items
         shape_output = []
