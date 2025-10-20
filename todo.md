@@ -1,13 +1,15 @@
 * empty
 * **SLICING**
 * figure out what to do with errors
-* Branching
+
+
 
 Todo soon: 
   test cases (big)
-  test case
-  Figureout the backup thing
   error messages
+  .dot (easy peasy)
+  reshape (less easy)
+  S L I C I N G (wheel c? Maybe something hacky for now)
 
 
 
