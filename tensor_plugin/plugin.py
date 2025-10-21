@@ -8,6 +8,7 @@ from mypy import nodes
 from typing import Tuple, List, Literal, final, Any
 from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
+import numpy 
 
 from z3_solver import NumpySolver
 
@@ -33,7 +34,11 @@ class CustomPlugin(Plugin):
             "numpy.random.mtrand.beta": self.rand_other, 
             "numpy.random.mtrand.gamma": self.rand_other, 
             "numpy.random.mtrand.chisquare": self.rand_other, 
-            "numpy.random.mtrand.choice": self.rand_other }
+            "numpy.random.mtrand.choice": self.rand_other,
+            "numpy._core.multiarray.arange": self.arange,
+            "numpy._core.multiarray.repeat": self.repeat,
+            "numpy.lib._function_base_impl.insert": self.insert,
+            }
 
         self.method_hooks = {
             "numpy.ndarray.__mul__": self.broadcast, 
@@ -49,6 +54,8 @@ class CustomPlugin(Plugin):
 
         self.context = dict()
 
+        self.file = None
+
 # region important_hooks
     def get_dynamic_class_hook(self, fullname):
         # print(f"debug fullname {fullname}")
@@ -60,7 +67,9 @@ class CustomPlugin(Plugin):
 
     def get_function_hook(self, fullname: str):
         # print(f"DEBUG func: {fullname}")
-        if ".func" in fullname:
+        if not self.file:
+            self.file = next(iter(self._modules))
+        if self.file in fullname:
             return self.custom_func
         return self.func_hooks.get(fullname, None)
 
@@ -101,15 +110,45 @@ class CustomPlugin(Plugin):
     # # --- signature‐altering hooks ---
     def get_function_signature_hook(self, fullname):
         # print(f"DEBUG func sig: {fullname}")
-        if ".func" in fullname:
-            return self.custom_func_sig
+        # if self._is_local_function(fullname):
+        #     return self.custom_func_sig
         return None
+    
+
     def get_method_signature_hook(self, fullname):
         # print(f"DEBUG fullname: {fullname}")
         return None
 # endregion
 
 # region array_creation
+    def arange(self, ctx):
+        output = [int]
+        final_type = self.type_creator(ctx, output, False)
+
+        return final_type
+    def repeat(self, ctx):
+        output = [int]
+        final_type = self.type_creator(ctx, output, False)
+
+        return final_type
+    
+    def insert(self, ctx):
+        arg = ctx.args
+        if len(arg) == 3:
+            shape = [int]
+        else:
+            input_mat = ctx.arg_types[0][0]
+            shape = self.get_shape(input_mat.args[0])
+            dim = str(ctx.arg_types[-1][0])
+            axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
+
+            shape[axis] = int
+
+        final_type = self.type_creator(ctx, shape, False)
+
+        return final_type
+        # print(arg[0][0])
+
     # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
     def rand_other(self, ctx):
         index = ctx.callee_arg_names.index("size")
@@ -168,6 +207,9 @@ class CustomPlugin(Plugin):
         if isinstance(param, IntExpr):
             literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
             literal_dims.append(literal)
+        elif isinstance(param, NameExpr):
+            typ = param.node.type
+
         else:
             for elem in param.items:
                 if isinstance(elem, IntExpr):
@@ -280,18 +322,20 @@ class CustomPlugin(Plugin):
 
     def custom_func(self, ctx):
         func_def_node = ctx.context.callee.node
+        # print(func_def_node)
 
-        for stmt in func_def_node.body.body:
-            if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
-                    var_node = stmt.expr.node.type
+        # for stmt in func_def_node.body.body:
+        #     if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
+        #             var_node = stmt.expr.node.type
                     
-        return var_node
+        return ctx.default_return_type
 
     def custom_func_sig(self, ctx):
         func_name = ctx.context.callee.name
         
         # If we encounter a func that we havent seen before, it likely doesnt use numpy so unchange
         cur = ctx.default_signature
+        print(cur)
         if func_name not in self.context:
             return cur
 
@@ -337,7 +381,8 @@ class CustomPlugin(Plugin):
                     dtype = ctx.arg_types[i][0]     
                 break
         
-        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple])
+        dtype = ctx.api.named_generic_type("numpy.dtype", [AnyType(TypeOfAny.special_form)])
+        final_type = ctx.api.named_generic_type("numpy.ndarray", [shape_tuple, dtype])
         return final_type
 
     def infer_shape(self, node):
@@ -364,6 +409,7 @@ class CustomPlugin(Plugin):
     def get_shape(self, shape):
         # If no input, assume a 2x2 matrix
         if isinstance(shape, AnyType) or isinstance(shape, Instance):
+            print("hi")
             return [int, int]
         shape = shape.items
         shape_output = []

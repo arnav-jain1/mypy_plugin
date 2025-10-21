@@ -1,8 +1,14 @@
-benchmarks\test3.py:13: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
-benchmarks\test3.py:20: error: Argument 1 to "func" has incompatible type "ndarray[tuple[Literal[3], Literal[9]]]"; expected "ndarray[tuple[int, Literal[4]]]"  [arg-type]
-benchmarks\test3.py:25: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
-benchmarks\test3.py:27: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[3]]]"
-benchmarks\test3.py:29: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[4]]]"
-benchmarks\test3.py:30: error: Mismatch  [override]
-benchmarks\test3.py:31: note: Revealed type is "Any"
-Found 2 errors in 1 file (checked 1 source file)
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tuple[builtins.int, builtins.int, builtins.int] | tuple[builtins.int, builtins.int, builtins.int, builtins.int]
+tensor_plugin\test.py:39: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+tensor_plugin\test.py:46: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+tensor_plugin\test.py:258: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[Any]]"
+tensor_plugin\test.py:352: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+tensor_plugin\test.py:353: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+tensor_plugin\test.py:356: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+tensor_plugin\test.py:449: error: Incompatible types in assignment (expression has type "tuple[int, Any, Any, Any]", variable has type "tuple[int, Any, Any]")  [assignment]
+Found 1 error in 1 file (checked 1 source file)
