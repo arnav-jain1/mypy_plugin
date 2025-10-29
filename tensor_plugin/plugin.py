@@ -1,7 +1,7 @@
 from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInterface, DynamicClassDefContext, SemanticAnalyzerPluginInterface
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType, NoneType, UnionType
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
-from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr
+from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr
 from mypy.nodes import FuncDef, AssignmentStmt, OpExpr, NameExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
@@ -11,6 +11,7 @@ from mypy.errorcodes import ErrorCode, OVERRIDE
 import numpy 
 
 from z3_solver import NumpySolver
+from slicing import slice_output
 
 ERROR_TYPE = NoneType()
 
@@ -75,6 +76,8 @@ class CustomPlugin(Plugin):
 
     def get_method_hook(self, fullname):
         # print(f"debug fullname {fullname}")
+        if fullname == 'numpy.ndarray.__getitem__':
+            return self.slicing
         return self.method_hooks.get(fullname, None)
 # endregion
     
@@ -283,41 +286,79 @@ class CustomPlugin(Plugin):
         return final_type
 
     def broadcast(self, ctx):
-        # print(f"DEBUG: add ndarray called: {ctx}")
+        func_name = self.get_func_name(ctx)
+        
+        if func_name not in self.context:
+            self.context[func_name] = dict()
 
-        # Save the args
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
+        lhs_name = ctx.context.left.name
+        rhs_name = ctx.context.right.name
 
-        proper_lhs = get_proper_type(lhs)
-        proper_rhs = get_proper_type(rhs)
+        # If one or the other is just a constant, then it is just the opposite one
+        if (rhs.type.fullname == 'builtins.int'):
+            return lhs
+        elif (lhs.type.fullname == 'builtins.int'):
+            return rhs
 
-        
-        # If one or the other is just a constant
-        # print(lhs.type.fullname)
-        if (rhs.type.fullname != 'numpy.ndarray'):
-            # print(proper_lhs)
-            return proper_lhs
-        elif (lhs.type.fullname != 'numpy.ndarray'):
-            # print(proper_rhs)
-            return proper_rhs
-        # If both are same dim
-        elif proper_lhs == proper_rhs:
-            return proper_lhs
-        
-        # Otherwise they are unequal, check for broadcasting
-        # # Get the shapes as a list and the sizes
-        lhs_shape = self.get_shape(lhs.args[0])
-        rhs_shape = self.get_shape(rhs.args[0])
+        # Get the shapes as a list and the sizes, if its in the context use that
+        # When adding input for dim and the dtype, will require replumbing
+        if lhs_name in self.context[func_name]:
+            lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
+        else:
+            lhs_shape = self.get_shape(lhs.args[0])
+        if rhs_name in self.context[func_name]:
+            rhs_shape = self.get_shape(self.context[func_name][rhs_name].args[0])
+        else:
+            rhs_shape = self.get_shape(rhs.args[0])
 
-        solver = NumpySolver()
-        lhs_new, rhs_new, output = solver.solve_broadcast(lhs_shape, rhs_shape)
+        solver = NumpySolver(lhs_shape, rhs_shape)
+        lhs_new, rhs_new, output = solver.solve_broadcast()
 
         if output == None:
+            ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
             return ERROR_TYPE
+
+        # This sets the context for the lhs and rhs
+        lhs_new_type = self.type_creator(ctx, lhs_new, False)
+        rhs_new_type = self.type_creator(ctx, rhs_new, False)
+        self.context[func_name][lhs_name] = lhs_new_type
+        self.context[func_name][rhs_name] = rhs_new_type
 
         final_type = self.type_creator(ctx, output, False)
         # print(f"Final output: {final_type}")
+        return final_type
+
+    def slicing(self, ctx):
+        func_name = self.get_func_name(ctx)
+        if func_name not in self.context:
+            self.context[func_name] = dict()
+
+        slicing_raw = ctx.args[0][0]
+        lhs = ctx.type
+        lhs_name = ctx.context.base.name
+
+        if lhs_name in self.context[func_name]:
+            lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
+        else:
+            lhs_shape = self.get_shape(lhs.args[0])
+
+        slicing = []
+        slicing_raw = slicing_raw.items if isinstance(slicing_raw, TupleExpr) else [slicing_raw]
+        for elem in slicing_raw:
+            if isinstance(elem, IntExpr):
+                slicing.append(elem.value)
+            elif isinstance(elem, SliceExpr):
+                slicing.append(slice(elem.begin_index, elem.end_index, elem.stride))
+            elif isinstance(elem, EllipsisExpr):
+                slicing.append(Ellipsis)
+        print(slicing)
+        print(lhs_shape)
+        output = slice_output(lhs_shape, tuple(slicing))
+        if output == int:
+            return ctx.api.named_generic_type("builtins.int", [])
+        final_type = self.type_creator(ctx, output, False)
         return final_type
 
     def custom_func(self, ctx):
