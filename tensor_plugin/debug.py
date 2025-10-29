@@ -11,3 +11,9 @@ class DebugPlugin(Plugin):
 
 def plugin(version):
     return DebugPlugin
+
+import builtins
+t = builtins.slice(builtins.int, builtins.int, None)
+
+print(t)  # <class 'types.GenericAlias'>
+print(t.start)     # (<class 'int'>, <class 'int'>, None)

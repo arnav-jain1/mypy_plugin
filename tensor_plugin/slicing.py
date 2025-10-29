@@ -50,18 +50,25 @@ def handle_int(input_shape, input_slice):
             elif isinstance(current_slice, slice):
                 output_template.append(int)
         
+        elif current_slice == int:
+            pass
         # Change when adding None
         elif current_dim is not None:
 
-            new_shape.append(current_dim)
-            new_slice.append(current_slice)
-            
-            # If the slice is a slice, then skip over it for now
-            if isinstance(current_slice, slice):
-                output_template.append('PLACEHOLDER')
-            elif isinstance(current_slice, int):
-                pass
+            if isinstance(current_slice, slice) and (current_slice.start == int or current_slice.stop == int or current_slice.step == int):
+                output_template.append(int)
+            else: 
+                new_shape.append(current_dim)
+                new_slice.append(current_slice)
+                
+                # If the slice is a slice, then skip over it for now
+                if isinstance(current_slice, slice):
+                    output_template.append('PLACEHOLDER')
+                elif isinstance(current_slice, int):
+                    pass
         
+        elif current_slice is None:
+            raise IndexError("None/np.newaxis not yet supported")
         
         shape_idx += 1
         if current_slice is not None:
@@ -101,8 +108,8 @@ def combine_shapes(shapes):
     return output
 
 def slice_output(input_shape, slice_tuple):
-    print(slice_tuple)
-    print(input_shape)
+    # print(slice_tuple)
+    # print(input_shape)
     
     # Make sure it is a tuple
     slice_tuple = slice_tuple if isinstance(slice_tuple, tuple) else (slice_tuple,)

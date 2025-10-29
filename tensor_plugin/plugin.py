@@ -5,10 +5,11 @@ from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, Ellip
 from mypy.nodes import FuncDef, AssignmentStmt, OpExpr, NameExpr
 from mypy.plugins.common import add_method_to_class
 from mypy import nodes
-from typing import Tuple, List, Literal, final, Any
+from typing import Tuple, List, Literal, final, Any, get_origin
 from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
 import numpy 
+import builtins
 
 from z3_solver import NumpySolver
 from slicing import slice_output
@@ -346,15 +347,22 @@ class CustomPlugin(Plugin):
 
         slicing = []
         slicing_raw = slicing_raw.items if isinstance(slicing_raw, TupleExpr) else [slicing_raw]
-        for elem in slicing_raw:
+        arg_types = ctx.arg_types[0][0].items if isinstance(ctx.arg_types[0][0], TupleType) else [ctx.arg_types[0][0]]
+
+        for i, elem in enumerate(slicing_raw):
             if isinstance(elem, IntExpr):
                 slicing.append(elem.value)
             elif isinstance(elem, SliceExpr):
-                slicing.append(slice(elem.begin_index, elem.end_index, elem.stride))
+                start = self.args_of_slice(elem.begin_index, arg_types, i, 0)
+                stop = self.args_of_slice(elem.end_index, arg_types, i, 1)
+                stride = self.args_of_slice(elem.stride, arg_types, i, 2)
+
+                slicing.append(slice(start, stop, stride))
             elif isinstance(elem, EllipsisExpr):
                 slicing.append(Ellipsis)
-        print(slicing)
-        print(lhs_shape)
+            else:
+                # Append int if its an int, otherwise it is a literal so append the value
+                slicing.append(int if ctx.arg_types[0][0].type.fullname == "builtins.int" else arg_types[i].value)
         output = slice_output(lhs_shape, tuple(slicing))
         if output == int:
             return ctx.api.named_generic_type("builtins.int", [])
@@ -392,6 +400,16 @@ class CustomPlugin(Plugin):
 
 
 # region tools
+    def args_of_slice(self, index, arg_types, i, elem):
+        if index is None:
+            output = None
+        elif isinstance(index, IntExpr):
+            output = index.value
+        elif isinstance(index, NameExpr):
+            output = arg_types[i].args[elem].value if isinstance(arg_types[i].args[elem], LiteralType) else int 
+
+        
+        return output
     def fail(self, ctx):
         ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
         return ERROR_TYPE
@@ -450,7 +468,6 @@ class CustomPlugin(Plugin):
     def get_shape(self, shape):
         # If no input, assume a 2x2 matrix
         if isinstance(shape, AnyType) or isinstance(shape, Instance):
-            print("hi")
             return [int, int]
         shape = shape.items
         shape_output = []
