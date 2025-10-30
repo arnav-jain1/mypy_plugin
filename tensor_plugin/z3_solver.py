@@ -14,6 +14,8 @@ class NumpySolver:
         self.rhs_rank = rhs_rank if rhs_rank else len(rhs)
         
         self.solver = Solver()
+
+        self.SOLUTION_LIMIT = 5
     
     def solve_matmul(self):
         # This is for vectors, essentially we add a dim that works and remove it later
@@ -348,7 +350,6 @@ class NumpySolver:
         First find all sols
         Format the sols into an output for the user
         """
-        SOLUTION_LIMIT = 5
 
 
 
@@ -376,7 +377,7 @@ class NumpySolver:
                 blocking_clauses.append(var != val)
 
                 # If more than the limit then add to unconstrained
-                if len(lhs_solutions[i]) > SOLUTION_LIMIT:
+                if len(lhs_solutions[i]) > self.SOLUTION_LIMIT:
                     unconstrained_vars.add(var)
 
             # Process RHS variables (same way)
@@ -388,7 +389,7 @@ class NumpySolver:
                 rhs_solutions[i].add(val)
                 blocking_clauses.append(var != val)
                 
-                if len(rhs_solutions[i]) > SOLUTION_LIMIT:
+                if len(rhs_solutions[i]) > self.SOLUTION_LIMIT:
                     unconstrained_vars.add(var)
 
             self.solver.add(Or(blocking_clauses))
@@ -422,3 +423,176 @@ class NumpySolver:
                 
         return lhs_output, rhs_output
     
+
+    def solve_reshape(self):
+        self.lhs_rank = len(self.lhs)
+        self.rhs_rank = len(self.rhs)
+
+        self.lhs_vars = [Int(f"lhs_{i}") for i in range(self.lhs_rank)]
+        self.rhs_vars = [Int(f"rhs_{i}") for i in range(self.rhs_rank)]
+        
+        self._solve_reshape()
+
+        if self.solver.check() == sat:
+            lhs = self._reshape_sols(self.lhs_vars)
+            rhs = self._reshape_sols(self.rhs_vars)
+            
+            return lhs, rhs
+        else:
+            return None, None
+
+    def _solve_reshape(self):
+        lhs_prod = Int("lhs_prod")
+        rhs_prod = Int("rhs_prod")
+
+        lhs_product = 1
+        for i in range(self.lhs_rank):
+            dim = self.lhs[i]
+            var = self.lhs_vars[i]
+            self.solver.add(var > 0) 
+
+            if isinstance(dim, int):
+                self.solver.add(var == dim)
+            elif isinstance(dim, tuple):
+                or_clauses = [var == val for val in dim]
+                self.solver.add(Or(or_clauses))
+            elif dim == int:
+                pass # Fully unknown
+            
+            lhs_product *= var
+        
+        self.solver.add(lhs_prod == lhs_product)
+
+        rhs_product = 1
+        for i in range(self.rhs_rank):
+            dim = self.rhs[i]
+            var = self.rhs_vars[i]
+            self.solver.add(var > 0) 
+
+            if isinstance(dim, int):
+                self.solver.add(var == dim)
+            elif dim == int:
+                pass
+            # No tups on rhs
+            
+            rhs_product *= var
+
+        self.solver.add(rhs_prod == rhs_product)
+        
+        self.solver.add(lhs_prod == rhs_prod)
+
+    def _reshape_sols(self, var_list):
+        solutions = [set() for _ in range(len(var_list))]
+        unconstrained_vars = set()
+        
+        # Save current state
+        self.solver.push() 
+
+        try:
+            while self.solver.check() == sat:
+                model = self.solver.model()
+                blockers = []
+
+                for i, var in enumerate(var_list):
+                    if var in unconstrained_vars:
+                        continue
+                    
+                    val = model.eval(var, model_completion=True).as_long()
+                    solutions[i].add(val)
+                    blockers.append(var != val)
+
+                    if len(solutions[i]) > self.SOLUTION_LIMIT:
+                        unconstrained_vars.add(var)
+                
+                self.solver.add(Or(blockers))
+        finally:
+            # Removes blockers
+            self.solver.pop() 
+
+        output = [None] * len(var_list)
+        for i in range(len(var_list)):
+            var = var_list[i]
+            sol = solutions[i]
+            if var in unconstrained_vars or not sol:
+                output[i] = int
+            elif len(sol) == 1:
+                output[i] = sol.pop()
+            else:
+                output[i] = tuple(sorted(list(sol)))
+        
+        return output
+
+
+
+def run_test(name, lhs_shape, rhs_shape, expected_sat=True):
+    """Helper function to run and print a test case."""
+    print(f"--- Test: {name} ---")
+    print(f"Input:   {lhs_shape}")
+    print(f"Target:  {rhs_shape}")
+    
+    try:
+        solver = NumpySolver(lhs=lhs_shape, rhs=rhs_shape)
+        lhs, rhs = solver.solve_reshape()
+        
+        if lhs is not None:
+            print(f"Status:  SAT")
+            print(f"Solved LHS: {lhs}")
+            print(f"Solved RHS: {rhs}")
+            if not expected_sat:
+                print("!!! FAIL: Expected UNSAT, but got SAT !!!")
+        else:
+            print(f"Status:  UNSAT")
+            if expected_sat:
+                print("!!! FAIL: Expected SAT, but got UNSAT !!!")
+                
+    except Exception as e:
+        print(f"!!! ERROR: {e} !!!")
+    
+    print("-" * (len(name) + 14) + "\n")
+
+
+if __name__ == "__main__":
+    
+    # --- 15 Passing (SAT) Test Cases ---
+
+    run_test("Pass 1: Simple known reshape", [2, 10], [5, 4])
+    run_test("Pass 2: Simple RHS 'int'", [2, 10], [5, int]) 
+    run_test("Pass 3: 'int' inference to scalar", [5, 4], [int]) 
+    run_test("Pass 4: Scalar to array with 'int'", [1], [1, 1, int]) 
+    
+    run_test("Pass 5: LHS 'int' (unknown)", [int, 4], [2, 8])
+    run_test("Pass 6: LHS 'int' with RHS 'int'", [int, 4], [8, int]) 
+    
+    run_test("Pass 7: RHS 'int' (unknown)", [6, 6], [int, 18])
+    run_test("Pass 8: Both 'int' (unknown)", [int, 10], [5, int])
+    
+    run_test("Pass 9: LHS 'tuple' RHS 'int'", [(2, 4), 5], [10, int]) 
+    run_test("Pass 10: RHS 'int'", [3, 8], [2, int]) 
+    run_test("Pass 11: Multi RHS 'int'", [30], [2, int, int]) 
+
+    run_test("Pass 12: LHS 'tuple' RHS 'int'", [(2, 3), 10], [6, int]) 
+    
+    # New tests replacing the zero-based ones
+    run_test("Pass 13: LHS 'int' solves RHS 'int'", [int, 6], [2, int]) 
+    run_test("Pass 14: RHS 'int' solves LHS 'tuple'", [(10, 20), 2], [4, int])
+    run_test("Pass 15: 'int' on LHS and RHS", [int, 6], [int, 3]) 
+
+    # --- New tests with multiple ints/tuples ---
+    run_test("Pass 16: Multi 'int' simple", [int, int, 2], [4, int])
+    run_test("Pass 17: Multi 'int' with RHS 'int'", [int, 5, int], [10, int]) 
+    run_test("Pass 18: Multi 'tuple' LHS RHS 'int'", [(2, 4), (1, 3)], [6, int]) 
+    run_test("Pass 19: Multi 'tuple' LHS RHS 'int'", [(2, 3), (4, 6)], [12, int]) 
+    run_test("Pass 20: Multi 'int' and 'tuple' LHS", [int, (2, 4)], [int, 8]) 
+
+
+    # --- 5 Failing (UNSAT) Test Cases ---
+
+    run_test("Fail 1: Mismatched known product", [2, 3], [5, 1], expected_sat=False)
+    run_test("Fail 2: Indivisible 'int'", [5, 3], [2, int], expected_sat=False) 
+    run_test("Fail 3: Mismatched 'int'", [2, 3], [7, int], expected_sat=False) 
+    run_test("Fail 4: Mismatched 'tuple' and 'int'", [(2, 3), 5], [7, int], expected_sat=False) # Replaced Fail 4
+    
+    # New test replacing the zero-based one
+    run_test("Fail 5: 'tuple' and 'int' mismatch", [2, 7], [3, int], expected_sat=False) 
+        # --- New failing test ---
+    run_test("Fail 6: Multi 'tuple' indivisible 'int'", [(2, 3), (5, 7)], [11, int], expected_sat=False) 
