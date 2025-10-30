@@ -48,7 +48,7 @@ class CustomPlugin(Plugin):
             "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
             "numpy.ndarray.__matmul__": self.matmul,
             "numpy.ndarray.__rmatmul__": self.fail,
-            # "numpy.ndarray.reshape": self.reshape,
+            "numpy.ndarray.reshape": self.reshape,
             "numpy.ndarray.__truediv__": self.broadcast
             }
 
@@ -362,12 +362,81 @@ class CustomPlugin(Plugin):
                 slicing.append(Ellipsis)
             else:
                 # Append int if its an int, otherwise it is a literal so append the value
-                slicing.append(int if ctx.arg_types[0][0].type.fullname == "builtins.int" else arg_types[i].value)
-        output = slice_output(lhs_shape, tuple(slicing))
+                # print(arg_types[i])
+                arg = arg_types[i]
+                if isinstance(arg, LiteralType):
+                    slicing.append(arg.value)
+                else:
+                    slicing.append(int)
+
+        try:
+            output = slice_output(lhs_shape, tuple(slicing))
+        except TabError:
+            ctx.api.fail("Ellipses Error", ctx.context, code=OVERRIDE)
+            return ERROR_TYPE
+        except IndexError:
+            ctx.api.fail("Slicing Error", ctx.context, code=OVERRIDE)
+            return ERROR_TYPE
+
+        
+
         if output == int:
             return ctx.api.named_generic_type("builtins.int", [])
         final_type = self.type_creator(ctx, output, False)
         return final_type
+
+    def reshape(self, ctx):
+        func_name = self.get_func_name(ctx)
+        if func_name not in self.context:
+            self.context[func_name] = dict()
+
+        rhs = ctx.args[0][0]
+        lhs = ctx.type
+        lhs_name = ctx.context.callee.expr.name
+    
+
+        if lhs_name in self.context[func_name]:
+            lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
+        else:
+            lhs_shape = self.get_shape(lhs.args[0])
+        
+        rhs_shape = []
+        arg_types = ctx.arg_types[0][0].items if isinstance(ctx.arg_types[0][0], TupleType) else [ctx.arg_types[0][0]]
+        minus_1 = False
+        for i, item in enumerate(rhs.items):
+            if isinstance(item, IntExpr):
+                rhs_shape.append(item.value)
+            elif isinstance(item, NameExpr):
+                arg = arg_types[i]
+                if isinstance(arg, LiteralType):
+                    rhs_shape.append(arg.value)
+                else:
+                    rhs_shape.append(int)
+            elif isinstance(item, UnaryExpr):
+                if minus_1:
+                    ctx.api.fail("2 -1s when reshaping", ctx.context, code=OVERRIDE)
+                    return ERROR_TYPE
+                minus_1 = True
+                rhs_shape.append(int)
+            else:
+                print("ERROR reshape for loop")
+                print(item)
+            
+        solver = NumpySolver(lhs_shape, rhs_shape)
+        lhs_new, rhs_new = solver.solve_reshape()
+        
+        if rhs_new == None:
+            ctx.api.fail("Invalid reshape", ctx.context, code=OVERRIDE)
+            return ERROR_TYPE
+        
+        lhs_new_type = self.type_creator(ctx, lhs_new, False)
+        self.context[func_name][lhs_name] = lhs_new_type
+
+        final_type = self.type_creator(ctx, rhs_new, False)
+        # print(f"Final output: {final_type}")
+        return final_type
+
+
 
     def custom_func(self, ctx):
         func_def_node = ctx.context.callee.node

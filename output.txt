@@ -1,2 +1,76 @@
-tensor_plugin\test.py:9: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-Success: no issues found in 1 source file
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+CallExpr:8(
+  MemberExpr:8(
+    NameExpr(x [tensor_plugin.test.x])
+    reshape)
+  Args(
+    TupleExpr:8(
+      IntExpr(5)
+      UnaryExpr:8(
+        -
+        IntExpr(1)))))
+tensor_plugin\test.py:8: error: Invalid reshape  [override]
+tensor_plugin\test.py:8: error: Argument 1 to "reshape" of "ndarray" has incompatible type "tuple[int, int]"; expected "Sequence[Never]"  [arg-type]
+tensor_plugin\test.py:9: note: Revealed type is "None"
+tensor_plugin\test.py:10: error: "None" has no attribute "shape"  [attr-defined]
+tensor_plugin\test.py:11: note: Revealed type is "None"
+Found 3 errors in 1 file (checked 1 source file)

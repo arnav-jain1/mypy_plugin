@@ -37,7 +37,7 @@ def handle_int(input_shape, input_slice):
 
         # Remove this when supporting None or np.newaxis
         if shape_idx >= len(input_shape):
-            raise IndexError("Slice bigger than shape (None not yet supported)")
+            raise TabError("Slice bigger than shape (None not yet supported)")
         
         current_dim = input_shape[shape_idx] 
         # This is the case if the shape is bigger than the slice, keep the unsliced dims the same
