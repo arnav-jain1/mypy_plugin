@@ -44,7 +44,9 @@ class CustomPlugin(Plugin):
 
         self.method_hooks = {
             "numpy.ndarray.__mul__": self.broadcast, 
+            "numpy.ndarray.__rmul__": self.fail,
             "numpy.ndarray.__add__": self.broadcast,
+            "numpy.ndarray.__radd__": self.fail,
             "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
             "numpy.ndarray.__matmul__": self.matmul,
             "numpy.ndarray.__rmatmul__": self.fail,
@@ -76,7 +78,7 @@ class CustomPlugin(Plugin):
         return self.func_hooks.get(fullname, None)
 
     def get_method_hook(self, fullname):
-        # print(f"debug fullname {fullname}")
+        print(f"debug fullname {fullname}")
         if fullname == 'numpy.ndarray.__getitem__':
             return self.slicing
         return self.method_hooks.get(fullname, None)
@@ -435,8 +437,6 @@ class CustomPlugin(Plugin):
         final_type = self.type_creator(ctx, rhs_new, False)
         # print(f"Final output: {final_type}")
         return final_type
-
-
 
     def custom_func(self, ctx):
         func_def_node = ctx.context.callee.node

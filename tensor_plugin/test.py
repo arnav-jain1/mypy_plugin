@@ -4,8 +4,10 @@ import typing
 
 x = np.array([1, 2, 3, 4, 5, 6])
 
-c = 2
-y = x.reshape((3,-1))
-reveal_type(y)
-print(y.shape)
+y = x.reshape((2,3))
+z = x.reshape((3,2))
+
+a = y * z
+reveal_type(a)
+print(a)
 reveal_type(y)
