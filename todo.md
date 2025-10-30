@@ -24,3 +24,5 @@ DEBUG: add ndarray called: CallExpr:20(
     NameExpr(a [test.a])
     NameExpr(b [test.b])))
 
+
+No .T, instead must use np.transpose

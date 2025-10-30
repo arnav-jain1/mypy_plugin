@@ -17,3 +17,6 @@ Comment out
 if ".func" in fullname:
     return self.custom_func
 ```
+
+
+Tested with https://github.com/j0sephsasson/numpy-NN/blob/main/model/model.py
