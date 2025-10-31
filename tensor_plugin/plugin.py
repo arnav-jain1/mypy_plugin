@@ -41,7 +41,9 @@ class CustomPlugin(Plugin):
             "numpy.lib._function_base_impl.insert": self.insert,
             "numpy._core.fromnumeric.sum": self.numpy_sum,
             "numpy._core.multiarray.dot": self.dot_prod,
-            "numpy._core.fromnumeric.transpose": self.transpose
+            "numpy._core.fromnumeric.transpose": self.transpose,
+            "numpy.lib._type_check_impl.nan_to_num": self.nan_to_none,
+            "numpy._core.fromnumeric.prod": self.prod
             }
 
         self.method_hooks = {
@@ -251,6 +253,7 @@ class CustomPlugin(Plugin):
                 shape = self.get_shape(ctx.arg_types[0][0].args[0])
             else:
                 shape, ranks = self.infer_shape(ctx.args[0][0])
+            print(shape)
             # print(f"DEBUG: Inferred shape: {shape}")
 
             final_type = self.type_creator(ctx, shape, False)
@@ -523,6 +526,27 @@ class CustomPlugin(Plugin):
         # When neither are ints, broadcast them
         raise NotImplementedError
 
+    def prod(self, ctx):
+        lhs = ctx.arg_types[0][0]
+        if ctx.arg_names[1] and ctx.arg_names[1][0] == 'axis':
+            dim = str(ctx.arg_types[1][0])
+            axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
+        else:
+            return ctx.api.named_generic_type("builtins.float", [])
+        
+        lhs_shape = self.get_shape(lhs.args[0])
+        output = lhs_shape[0:axis] + lhs_shape[axis+1:]
+
+        if ctx.arg_types[4]:
+            keep_dim = str(ctx.arg_types[4][0])
+            keep_dim = bool(keep_dim.replace('Literal[', '').rstrip('?').rstrip(']'))
+            if keep_dim:
+                output = lhs_shape[0:axis] + [1] + lhs_shape[axis+1:]
+
+        final_type = self.type_creator(ctx, output, False)
+        # print(f"Final output: {final_type}")
+        return final_type
+
     def exp(self, ctx):
         lhs = ctx.call.args[0]
         if isinstance(lhs, NameExpr):
@@ -627,6 +651,10 @@ class CustomPlugin(Plugin):
 
         return lhs_new_type
 
+    def nan_to_none(self,ctx):
+        lhs = ctx.arg_types[0][0]
+        print(lhs)
+        return lhs
 
 
 # region tools
@@ -682,7 +710,7 @@ class CustomPlugin(Plugin):
 
         while current_nodes:
             # Check if all nodes at current level are ListExpr
-            if not all(isinstance(n, ListExpr) for n in current_nodes):
+            if not all(isinstance(n, (ListExpr, TupleExpr)) for n in current_nodes):
                 break
 
             rank += 1

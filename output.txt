@@ -4233,8 +4233,6 @@ DEBUG method sig: builtins.str.__eq__
 Method_hook: builtins.str.__eq__
 DEBUG method sig: builtins.str.__eq__
 Method_hook: builtins.str.__eq__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
 Func_hook: <list>
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
@@ -4379,32 +4377,6 @@ DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.str.__eq__
-Method_hook: builtins.str.__eq__
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.str.__eq__
-Method_hook: builtins.str.__eq__
-DEBUG method sig: builtins.str.__eq__
-Method_hook: builtins.str.__eq__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-Func_hook: typing.final
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing.type_check_only
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.str.__ne__
-Method_hook: builtins.str.__ne__
-DEBUG method sig: builtins.str.__eq__
-Method_hook: builtins.str.__eq__
 Func_hook: <list>
 Func_hook: <list>
 DEBUG method sig: builtins.object.__init_subclass__
@@ -4448,6 +4420,32 @@ Func_hook: <list>
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
 Func_hook: typing.runtime_checkable
+DEBUG method sig: builtins.str.__eq__
+Method_hook: builtins.str.__eq__
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.str.__eq__
+Method_hook: builtins.str.__eq__
+DEBUG method sig: builtins.str.__eq__
+Method_hook: builtins.str.__eq__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+Func_hook: typing.final
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.str.__ne__
+Method_hook: builtins.str.__ne__
+DEBUG method sig: builtins.str.__eq__
+Method_hook: builtins.str.__eq__
 DEBUG method sig: builtins.int.__neg__
 Method_hook: builtins.int.__neg__
 Method_hook: builtins.int.__neg__
@@ -4685,6 +4683,93 @@ DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
 Func_hook: typing.type_check_only
 Func_hook: <list>
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
 Func_hook: <list>
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
@@ -4859,6 +4944,101 @@ DEBUG method sig: sys._version_info.__ge__
 Method_hook: sys._version_info.__ge__
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.type_check_only
+Func_hook: typing.final
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing.final
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+Func_hook: typing.type_check_only
+Func_hook: typing.final
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG func sig: typing_extensions.deprecated
+Func_hook: typing_extensions.deprecated
+DEBUG method sig: typing_extensions.deprecated.__call__
+Method_hook: typing_extensions.deprecated.__call__
+DEBUG func sig: typing_extensions.deprecated
+Func_hook: typing_extensions.deprecated
+DEBUG method sig: typing_extensions.deprecated.__call__
+Method_hook: typing_extensions.deprecated.__call__
+DEBUG method sig: sys._version_info.__ge__
+Method_hook: sys._version_info.__ge__
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+Func_hook: typing_extensions.disjoint_base
 Func_hook: <list>
 DEBUG method sig: sys._version_info.__ge__
 Method_hook: sys._version_info.__ge__
@@ -4874,101 +5054,180 @@ DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
 DEBUG method sig: sys._version_info.__ge__
 Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
+Class_hook: self.count
+Func_hook: <dict>
+DEBUG method sig: builtins.str.__add__
+Method_hook: builtins.str.__add__
+DEBUG func sig: builtins.str
+Func_hook: builtins.str
+Func_hook: builtins.str
+DEBUG method sig: builtins.str.__add__
+DEBUG func sig: builtins.str
+Func_hook: builtins.str
+Func_hook: builtins.str
+Method_hook: builtins.str.__add__
+DEBUG method sig: builtins.str.__add__
+Method_hook: builtins.str.__add__
+DEBUG func sig: builtins.str
+Func_hook: builtins.str
+DEBUG method sig: builtins.str.__add__
+DEBUG func sig: builtins.str
+Func_hook: builtins.str
+Method_hook: builtins.str.__add__
+DEBUG method sig: builtins.str.__add__
+Method_hook: builtins.str.__add__
+DEBUG func sig: builtins.str
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
+Func_hook: builtins.str
+DEBUG method sig: builtins.str.__add__
+DEBUG func sig: builtins.str
+Func_hook: builtins.str
+Method_hook: builtins.str.__add__
+DEBUG method sig: builtins.str.__add__
+Method_hook: builtins.str.__add__
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
+DEBUG method sig: builtins.dict.__contains__
+Method_hook: builtins.dict.__contains__
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: rl_models.tiles.tiles3.IHT.count
+Method_hook: rl_models.tiles.tiles3.IHT.count
+DEBUG method sig: builtins.int.__eq__
+Method_hook: builtins.int.__eq__
+DEBUG func sig: builtins.print
+Func_hook: builtins.print
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG func sig: rl_models.tiles.tiles3.basehash
+Func_hook: rl_models.tiles.tiles3.basehash
+DEBUG method sig: builtins.dict.__setitem__
+Method_hook: builtins.dict.__setitem__
 DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
-Func_hook: typing.type_check_only
-Func_hook: typing.final
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing.final
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-Func_hook: typing.type_check_only
-Func_hook: typing.final
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG func sig: typing_extensions.deprecated
-Func_hook: typing_extensions.deprecated
-DEBUG method sig: typing_extensions.deprecated.__call__
-Method_hook: typing_extensions.deprecated.__call__
-DEBUG func sig: typing_extensions.deprecated
-Func_hook: typing_extensions.deprecated
-DEBUG method sig: typing_extensions.deprecated.__call__
-Method_hook: typing_extensions.deprecated.__call__
-DEBUG method sig: sys._version_info.__ge__
-Method_hook: sys._version_info.__ge__
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-Func_hook: typing_extensions.disjoint_base
+DEBUG func sig: builtins.type
+Func_hook: builtins.type
+Method_hook: __eq__ of object
+DEBUG method sig: rl_models.tiles.tiles3.IHT.getindex
+DEBUG func sig: builtins.tuple
+Func_hook: builtins.tuple
+Method_hook: rl_models.tiles.tiles3.IHT.getindex
+DEBUG func sig: builtins.type
+Func_hook: builtins.type
+Method_hook: __eq__ of object
+DEBUG func sig: rl_models.tiles.tiles3.basehash
+DEBUG func sig: builtins.tuple
+Func_hook: builtins.tuple
+Func_hook: rl_models.tiles.tiles3.basehash
+DEBUG method sig: builtins.int.__mod__
+Method_hook: builtins.int.__mod__
+Func_hook: <list>
+DEBUG func sig: math.floor
+Func_hook: math.floor
+Func_hook: math.floor
+DEBUG func sig: math.floor
+Func_hook: math.floor
+Func_hook: math.floor
+Func_hook: <list-comprehension>
+Func_hook: <list>
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: builtins.int.__mul__
+Method_hook: builtins.int.__mul__
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG method sig: builtins.list.extend
+Method_hook: builtins.list.extend
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+DEBUG method sig: builtins.list.append
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__mul__
+Method_hook: builtins.int.__mul__
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG method sig: builtins.list.extend
+Method_hook: builtins.list.extend
+DEBUG method sig: builtins.list.append
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+Method_hook: builtins.list.append
+Func_hook: <list>
+DEBUG func sig: math.floor
+Func_hook: math.floor
+Func_hook: math.floor
+DEBUG func sig: math.floor
+Func_hook: math.floor
+Func_hook: math.floor
+Func_hook: <list-comprehension>
+Func_hook: <list>
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: builtins.int.__mul__
+Method_hook: builtins.int.__mul__
+DEBUG func sig: itertools.zip_longest
+Func_hook: itertools.zip_longest
+DEBUG method sig: itertools.zip_longest.__iter__
+Method_hook: itertools.zip_longest.__iter__
+DEBUG method sig: itertools.zip_longest.__next__
+Method_hook: itertools.zip_longest.__next__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG method sig: builtins.list.extend
+Method_hook: builtins.list.extend
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+DEBUG method sig: builtins.list.append
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__mul__
+Method_hook: builtins.int.__mul__
+DEBUG func sig: itertools.zip_longest
+Func_hook: itertools.zip_longest
+DEBUG method sig: itertools.zip_longest.__iter__
+Method_hook: itertools.zip_longest.__iter__
+DEBUG method sig: itertools.zip_longest.__next__
+Method_hook: itertools.zip_longest.__next__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG method sig: builtins.list.extend
+Method_hook: builtins.list.extend
+DEBUG method sig: builtins.list.append
+DEBUG func sig: rl_models.tiles.tiles3.hashcoords
+Func_hook: rl_models.tiles.tiles3.hashcoords
+Method_hook: builtins.list.append
 DEBUG method sig: builtins.int.__neg__
 Method_hook: builtins.int.__neg__
 Method_hook: builtins.int.__neg__
@@ -6850,800 +7109,3017 @@ DEBUG method sig: builtins.object.__init_subclass__
 Method_hook: builtins.object.__init_subclass__
 Func_hook: <list>
 Func_hook: <list>
-Class_hook: numpy.maximum
-Class_hook: numpy.exp
+Class_hook: time.time
+Class_hook: time.time
+Class_hook: self._train_episode
+Class_hook: time.time
+Class_hook: self._train_episode
+Class_hook: time.time
+Class_hook: self._train_episode
+Class_hook: rl_models.trainer.Trainer.plt.subplots
+Class_hook: numpy._core.multiarray.arange
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <list>
+Func_hook: <dict>
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG func sig: builtins.dir
+Func_hook: builtins.dir
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG method sig: builtins.float.__sub__
+Method_hook: builtins.float.__sub__
+DEBUG func sig: numpy.random.mtrand.seed
+Func_hook: numpy.random.mtrand.seed
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: rl_models.trainer.Trainer._train_episode
+Method_hook: rl_models.trainer.Trainer._train_episode
+DEBUG method sig: builtins.int.__eq__
+Method_hook: builtins.int.__eq__
+DEBUG func sig: builtins.ImportError
+Func_hook: builtins.ImportError
+DEBUG func sig: numpy._core.multiarray.arange
+DEBUG func sig: builtins.len
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: builtins.len
+DEBUG func sig: builtins.len
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: builtins.len
+Func_hook: numpy._core.multiarray.arange
+Func_hook: numpy._core.multiarray.arange
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG func sig: builtins.min
+Func_hook: builtins.min
+DEBUG func sig: builtins.max
+Func_hook: builtins.max
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG func sig: numpy.random.mtrand.seed
+Func_hook: numpy.random.mtrand.seed
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: rl_models.trainer.Trainer._train_episode
+Method_hook: rl_models.trainer.Trainer._train_episode
+DEBUG method sig: builtins.int.__eq__
+Method_hook: builtins.int.__eq__
+DEBUG func sig: numpy.random.mtrand.seed
+Func_hook: numpy.random.mtrand.seed
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: rl_models.trainer.Trainer._train_episode
+Method_hook: rl_models.trainer.Trainer._train_episode
+DEBUG method sig: builtins.int.__eq__
+Method_hook: builtins.int.__eq__
+DEBUG method sig: builtins.str.__add__
+Method_hook: builtins.str.__add__
+DEBUG func sig: builtins.print
+DEBUG method sig: builtins.str.format
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+Func_hook: builtins.print
+DEBUG method sig: builtins.int.__add__
+Method_hook: builtins.int.__add__
+DEBUG method sig: builtins.int.__mod__
+Method_hook: builtins.int.__mod__
+Func_hook: __rmod__ of float
+DEBUG method sig: builtins.int.__eq__
+Method_hook: builtins.int.__eq__
+DEBUG func sig: builtins.print
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+Func_hook: builtins.print
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG func sig: time.time
+Func_hook: time.time
+DEBUG method sig: builtins.float.__sub__
+Method_hook: builtins.float.__sub__
+DEBUG method sig: builtins.int.__rtruediv__
+Method_hook: builtins.int.__rtruediv__
+DEBUG method sig: builtins.float.__truediv__
+Method_hook: builtins.float.__truediv__
+DEBUG func sig: builtins.print
+DEBUG method sig: builtins.str.format
+DEBUG func sig: numpy._core.fromnumeric.mean
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: numpy._core.fromnumeric.mean
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: numpy._core.fromnumeric.mean
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: numpy._core.fromnumeric.mean
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Func_hook: numpy._core.fromnumeric.mean
+DEBUG method sig: builtins.dict.__getitem__
+Method_hook: builtins.dict.__getitem__
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+Func_hook: builtins.print
+DEBUG func sig: builtins.print
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+DEBUG method sig: builtins.str.format
+Method_hook: builtins.str.format
+Func_hook: builtins.print
+DEBUG method sig: rl_models.trainer.Trainer.plot_rewards
+Method_hook: rl_models.trainer.Trainer.plot_rewards
+benchmarks\rl_models\trainer.py:75: error: Cannot determine type of "smooth_tot"  [has-type]
+Class_hook: collections.defaultdict
+Class_hook: builtins.list
 Class_hook: numpy._core.fromnumeric.sum
-Class_hook: numpy._core.multiarray.array
-Class_hook: numpy._core.fromnumeric.transpose
-Class_hook: numpy._core.multiarray.dot
-Class_hook: self.relu
-Class_hook: self.softmax
-Class_hook: numpy._core.fromnumeric.transpose
-Class_hook: numpy._core.multiarray.dot
-Class_hook: numpy._core.fromnumeric.sum
-Class_hook: numpy._core.multiarray.dot
-Class_hook: self.relu_derivative
-Class_hook: numpy._core.fromnumeric.transpose
-Class_hook: numpy._core.multiarray.dot
-Class_hook: numpy._core.fromnumeric.sum
-Class_hook: numpy._core.multiarray.dot
+Class_hook: numpy._core.multiarray.concatenate
+Class_hook: numpy._core.multiarray.concatenate
+Class_hook: numpy._core.fromnumeric.prod
+Class_hook: rl_models.tiles.tiles3.IHT
+Class_hook: scale_obs
+Class_hook: builtins.isinstance
+Class_hook: builtins.isinstance
+Class_hook: rl_models.rl_utils.is_tuple
+Class_hook: builtins.all
+Class_hook: builtins.isinstance
+Class_hook: builtins.all
+Class_hook: builtins.isinstance
 Class_hook: builtins.len
-Class_hook: layer.backward
+Class_hook: builtins.list
 Class_hook: builtins.len
-Class_hook: self._forwardprop
-DEBUG method sig: numpy._typing._ufunc._UFunc_Nin2_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin2_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin2_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin2_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin2_Nout1.__call__
-DEBUG method sig: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
-Method_hook: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
+Class_hook: builtins.list
+Class_hook: rl_models.rl_utils.is_multidimensional
+Class_hook: rl_models.rl_utils.is_continuous
+Class_hook: rl_models.rl_utils.action_stats
+Class_hook: rl_models.rl_utils.obs_stats
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
+DEBUG func sig: _warnings.warn
+Func_hook: _warnings.warn
+Func_hook: __init__ of object
+DEBUG func sig: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG func sig: collections.defaultdict
+Func_hook: collections.defaultdict
+Func_hook: collections.defaultdict
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.__setitem__
+Method_hook: collections.defaultdict.__setitem__
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: rl_models.rl_utils.EnvModel.state_action_pairs
+Method_hook: rl_models.rl_utils.EnvModel.state_action_pairs
+Method_hook: rl_models.rl_utils.EnvModel.state_action_pairs
+DEBUG method sig: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+DEBUG func sig: builtins.list
+DEBUG method sig: collections.defaultdict.keys
+Method_hook: collections.defaultdict.keys
+DEBUG method sig: collections.defaultdict.keys
+Method_hook: collections.defaultdict.keys
+Func_hook: builtins.list
+DEBUG func sig: builtins.list
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.keys
+Method_hook: collections.defaultdict.keys
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.keys
+Method_hook: collections.defaultdict.keys
+Func_hook: builtins.list
+DEBUG func sig: builtins.list
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.items
+Method_hook: collections.defaultdict.items
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.items
+Method_hook: collections.defaultdict.items
+DEBUG method sig: collections.defaultdict.__getitem__
+Method_hook: collections.defaultdict.__getitem__
+DEBUG method sig: collections.defaultdict.items
+Method_hook: collections.defaultdict.items
+Func_hook: builtins.list
 DEBUG func sig: numpy._core.fromnumeric.sum
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
 Func_hook: numpy._core.fromnumeric.sum
 Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-DEBUG method sig: numpy.ndarray.__truediv__
-Method_hook: numpy.ndarray.__truediv__
-Method_hook: numpy.ndarray.__truediv__
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG method sig: builtins.int.__truediv__
+Method_hook: builtins.int.__truediv__
+DEBUG method sig: builtins.int.__truediv__
+Method_hook: builtins.int.__truediv__
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+DEBUG func sig: builtins.list
+DEBUG func sig: builtins.zip
+Func_hook: builtins.zip
+DEBUG func sig: builtins.zip
+Func_hook: builtins.zip
+Func_hook: builtins.list
+Func_hook: <list>
+DEBUG method sig: rl_models.rl_utils.EnvModel.state_action_pairs
+Method_hook: rl_models.rl_utils.EnvModel.state_action_pairs
+Method_hook: rl_models.rl_utils.EnvModel.state_action_pairs
+DEBUG method sig: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Method_hook: rl_models.rl_utils.EnvModel.reward_outcome_pairs
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG method sig: builtins.list.append
+Method_hook: builtins.list.append
+DEBUG method sig: builtins.object.__init_subclass__
+Method_hook: builtins.object.__init_subclass__
 DEBUG func sig: numpy._core.multiarray.array
 Func_hook: numpy._core.multiarray.array
 Func_hook: numpy._core.multiarray.array
+[2]
 Func_hook: numpy._core.multiarray.array
 Func_hook: numpy._core.multiarray.array
-DEBUG method sig: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG func sig: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-DEBUG func sig: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-DEBUG method sig: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-Method_hook: numpy.ndarray.__add__
-DEBUG method sig: model.DenseLayer.relu
-Method_hook: model.DenseLayer.relu
-Method_hook: model.DenseLayer.relu
-DEBUG method sig: model.DenseLayer.softmax
-Method_hook: model.DenseLayer.softmax
-Method_hook: model.DenseLayer.softmax
-DEBUG func sig: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-DEBUG func sig: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-DEBUG func sig: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-DEBUG func sig: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-DEBUG method sig: model.DenseLayer.relu_derivative
-Method_hook: model.DenseLayer.relu_derivative
-Method_hook: model.DenseLayer.relu_derivative
-DEBUG func sig: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-Func_hook: numpy._core.fromnumeric.transpose
-DEBUG func sig: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-DEBUG func sig: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-DEBUG func sig: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-Func_hook: numpy._core.multiarray.dot
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
+[2]
+DEBUG func sig: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+DEBUG func sig: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Func_hook: numpy.lib._type_check_impl.nan_to_num
+Any
+Func_hook: <list-comprehension>
+Func_hook: <list>
+DEBUG func sig: numpy._core.multiarray.concatenate
 Func_hook: <list>
 Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
 Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+DEBUG func sig: numpy._core.multiarray.concatenate
 Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+DEBUG func sig: numpy._core.multiarray.concatenate
+DEBUG func sig: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+DEBUG func sig: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+DEBUG func sig: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
 Func_hook: <list>
+DEBUG func sig: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
+DEBUG func sig: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: numpy._core.numeric.zeros_like
+Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+DEBUG func sig: numpy._core.multiarray.concatenate
+Func_hook: <list>
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+Func_hook: numpy._core.multiarray.concatenate
+DEBUG method sig: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+Method_hook: numpy.ndarray.__sub__
+DEBUG method sig: builtins.float.__sub__
+Method_hook: builtins.float.__sub__
+Func_hook: __rsub__ of ndarray
+Func_hook: __rsub__ of ndarray
+Func_hook: __rsub__ of ndarray
+Func_hook: __rsub__ of ndarray
+Func_hook: __rsub__ of ndarray
+Func_hook: __rsub__ of float
+DEBUG method sig: builtins.float.__truediv__
+Method_hook: builtins.float.__truediv__
+Func_hook: __rtruediv__ of ndarray
+Func_hook: __rtruediv__ of float
+DEBUG func sig: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG func sig: numpy._core.fromnumeric.prod
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG method sig: builtins.range.__iter__
+Method_hook: builtins.range.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+Func_hook: <list-comprehension>
+Func_hook: numpy._core.fromnumeric.prod
+Func_hook: numpy._core.fromnumeric.prod
+DEBUG func sig: rl_models.tiles.tiles3.IHT
+Func_hook: rl_models.tiles.tiles3.IHT
+DEBUG func sig: scale_obs
+Func_hook: scale_obs
+DEBUG func sig: builtins.tuple
+DEBUG func sig: rl_models.tiles.tiles3.tiles
+Func_hook: rl_models.tiles.tiles3.tiles
+Func_hook: builtins.tuple
+Func_hook: <list-comprehension>
+Func_hook: <list>
+DEBUG func sig: builtins.print
+Func_hook: builtins.print
+DEBUG func sig: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
 DEBUG method sig: builtins.list.append
+DEBUG func sig: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
 Method_hook: builtins.list.append
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-DEBUG method sig: builtins.enumerate.__iter__
-Method_hook: builtins.enumerate.__iter__
-DEBUG method sig: builtins.enumerate.__next__
-Method_hook: builtins.enumerate.__next__
-DEBUG method sig: builtins.int.__eq__
-Method_hook: builtins.int.__eq__
+DEBUG func sig: builtins.print
+Func_hook: builtins.print
 DEBUG method sig: builtins.list.append
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Func_hook: <dict>
+DEBUG func sig: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
+Func_hook: rl_models.rl_utils.env_stats
 Method_hook: builtins.list.append
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+DEBUG func sig: rl_models.rl_utils.is_tuple
+Func_hook: rl_models.rl_utils.is_tuple
+Func_hook: rl_models.rl_utils.is_tuple
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
 DEBUG method sig: builtins.int.__gt__
 Method_hook: builtins.int.__gt__
+DEBUG func sig: builtins.dir
+Func_hook: builtins.dir
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
 DEBUG func sig: builtins.len
 Func_hook: builtins.len
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-DEBUG method sig: builtins.int.__lt__
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: builtins.int.__lt__
-DEBUG method sig: builtins.list.append
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Func_hook: <dict>
-Method_hook: builtins.list.append
-DEBUG method sig: builtins.list.append
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Func_hook: <dict>
-Method_hook: builtins.list.append
-DEBUG method sig: model.Network._compile
-Method_hook: model.Network._compile
-Method_hook: model.Network._compile
-DEBUG func sig: numpy.random.mtrand.seed
-Func_hook: numpy.random.mtrand.seed
+DEBUG method sig: builtins.int.__gt__
+Method_hook: builtins.int.__gt__
+DEBUG func sig: builtins.all
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+Func_hook: <generator>
+Func_hook: builtins.all
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+DEBUG func sig: builtins.all
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
+Func_hook: <generator>
+Func_hook: builtins.all
+DEBUG func sig: builtins.isinstance
+Func_hook: builtins.isinstance
 DEBUG func sig: builtins.range
-DEBUG func sig: builtins.len
-Func_hook: builtins.len
-DEBUG func sig: builtins.len
-Func_hook: builtins.len
 Func_hook: builtins.range
 DEBUG method sig: builtins.range.__iter__
 Method_hook: builtins.range.__iter__
 DEBUG method sig: typing.Iterator.__next__
 Method_hook: typing.Iterator.__next__
-DEBUG method sig: builtins.list.append
-DEBUG func sig: numpy.random.mtrand.uniform
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Func_hook: numpy.random.mtrand.uniform
-Func_hook: numpy.random.mtrand.uniform
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Func_hook: numpy.random.mtrand.uniform
-Func_hook: numpy.random.mtrand.uniform
-DEBUG method sig: numpy._core.multiarray._ConstructorEmpty.__call__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Method_hook: numpy._core.multiarray._ConstructorEmpty.__call__
-Func_hook: <dict>
-Method_hook: builtins.list.append
-DEBUG func sig: builtins.range
-DEBUG func sig: builtins.len
-Func_hook: builtins.len
-DEBUG func sig: builtins.len
-Func_hook: builtins.len
-Func_hook: builtins.range
-DEBUG method sig: builtins.range.__iter__
-Method_hook: builtins.range.__iter__
+Func_hook: <list-comprehension>
+DEBUG func sig: builtins.hasattr
+Func_hook: builtins.hasattr
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.list
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
 DEBUG method sig: typing.Iterator.__next__
 Method_hook: typing.Iterator.__next__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.append
-Func_hook: <dict>
-Method_hook: builtins.list.append
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+Func_hook: builtins.list
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+Func_hook: builtins.list
 DEBUG func sig: builtins.len
 Func_hook: builtins.len
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: builtins.int.__sub__
-Method_hook: builtins.int.__sub__
-Method_hook: numpy.ndarray.__setitem__
-DEBUG method sig: numpy.ndarray.__truediv__
-Method_hook: numpy.ndarray.__truediv__
-Method_hook: numpy.ndarray.__truediv__
-DEBUG func sig: builtins.reversed
-DEBUG func sig: builtins.list
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-Func_hook: builtins.list
-DEBUG func sig: builtins.list
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-Func_hook: builtins.list
-DEBUG func sig: builtins.list
-Func_hook: builtins.list
-Func_hook: builtins.reversed
-DEBUG func sig: builtins.list
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-Func_hook: builtins.list
-DEBUG func sig: builtins.list
-Func_hook: builtins.list
-Func_hook: builtins.reversed
-DEBUG method sig: builtins.reversed.__iter__
-Method_hook: builtins.reversed.__iter__
-DEBUG method sig: builtins.reversed.__next__
-Method_hook: builtins.reversed.__next__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.append
-Func_hook: <dict>
-Method_hook: builtins.list.append
-DEBUG func sig: builtins.enumerate
-Func_hook: builtins.enumerate
-DEBUG method sig: builtins.enumerate.__iter__
-Method_hook: builtins.enumerate.__iter__
-DEBUG method sig: builtins.enumerate.__next__
-Method_hook: builtins.enumerate.__next__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG func sig: builtins.list
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.list
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG func sig: builtins.list
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-DEBUG func sig: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.reversed
-Func_hook: builtins.list
-DEBUG method sig: builtins.list.__getitem__
-Method_hook: builtins.list.__getitem__
-DEBUG func sig: numpy._core.fromnumeric.mean
-DEBUG func sig: numpy._core.fromnumeric.argmax
-Func_hook: numpy._core.fromnumeric.argmax
-Func_hook: numpy._core.fromnumeric.argmax
-Func_hook: numpy._core.fromnumeric.mean
-Func_hook: numpy._core.fromnumeric.mean
-Func_hook: numpy._core.fromnumeric.mean
-Func_hook: numpy._core.fromnumeric.mean
-DEBUG func sig: builtins.len
-Func_hook: builtins.len
-DEBUG method sig: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-DEBUG method sig: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy.ndarray.__getitem__
-Method_hook: numpy.ndarray.__getitem__
-[<class 'int'>, <class 'int'>]
-[<class 'int'>, <class 'int'>]
-Method_hook: numpy._typing._ufunc._UFunc_Nin1_Nout1.__call__
-DEBUG func sig: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-Func_hook: numpy._core.fromnumeric.sum
-DEBUG method sig: builtins.int.__truediv__
-Method_hook: builtins.int.__truediv__
 Func_hook: <list>
-Func_hook: <list>
-DEBUG method sig: model.Network._init_weights
-Method_hook: model.Network._init_weights
-Method_hook: model.Network._init_weights
+DEBUG func sig: builtins.list
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
+Func_hook: builtins.list
+DEBUG func sig: builtins.list
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
 DEBUG func sig: builtins.range
 Func_hook: builtins.range
 DEBUG method sig: builtins.range.__iter__
 Method_hook: builtins.range.__iter__
 DEBUG method sig: typing.Iterator.__next__
 Method_hook: typing.Iterator.__next__
-DEBUG method sig: model.Network._forwardprop
-Method_hook: model.Network._forwardprop
-Method_hook: model.Network._forwardprop
-DEBUG method sig: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-DEBUG method sig: builtins.list.append
-DEBUG method sig: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-Method_hook: builtins.list.append
-DEBUG method sig: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-DEBUG method sig: builtins.list.append
-DEBUG method sig: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-Method_hook: builtins.list.append
-DEBUG method sig: model.Network._backprop
-Method_hook: model.Network._backprop
-Method_hook: model.Network._backprop
-DEBUG method sig: model.Network._update
-Method_hook: model.Network._update
-Method_hook: model.Network._update
-DEBUG method sig: builtins.int.__mod__
-Method_hook: builtins.int.__mod__
-DEBUG method sig: builtins.int.__eq__
-Method_hook: builtins.int.__eq__
-DEBUG method sig: builtins.str.format
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
+Func_hook: <list-comprehension>
+DEBUG func sig: builtins.hasattr
+Func_hook: builtins.hasattr
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.list
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+Func_hook: builtins.list
+DEBUG func sig: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+DEBUG method sig: builtins.list.__iter__
+Method_hook: builtins.list.__iter__
+DEBUG method sig: typing.Iterator.__next__
+Method_hook: typing.Iterator.__next__
+DEBUG func sig: builtins.range
+Func_hook: builtins.range
+Func_hook: <list-comprehension>
+Func_hook: itertools.product
+Func_hook: builtins.list
+DEBUG func sig: builtins.len
+Func_hook: builtins.len
+Func_hook: <list>
+DEBUG func sig: builtins.list
+DEBUG func sig: builtins.range
 DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
 Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
 DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
 Method_hook: builtins.list.__getitem__
-Method_hook: builtins.str.format
-DEBUG func sig: builtins.print
-Func_hook: builtins.print
-DEBUG method sig: model.Network._forwardprop
-Method_hook: model.Network._forwardprop
-Method_hook: model.Network._forwardprop
-DEBUG method sig: builtins.list.append
-DEBUG method sig: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-Method_hook: model.Network._get_accuracy
-Method_hook: builtins.list.append
-DEBUG method sig: builtins.list.append
-DEBUG method sig: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-Method_hook: model.Network._calculate_loss
-Method_hook: builtins.list.append
-DEBUG method sig: model.Network._backprop
-Method_hook: model.Network._backprop
-Method_hook: model.Network._backprop
-DEBUG method sig: model.Network._update
-Method_hook: model.Network._update
-Method_hook: model.Network._update
-DEBUG method sig: builtins.int.__mod__
-Method_hook: builtins.int.__mod__
-DEBUG method sig: builtins.int.__eq__
-Method_hook: builtins.int.__eq__
-DEBUG method sig: builtins.str.format
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
+Func_hook: builtins.range
 DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
 Method_hook: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
+DEBUG func sig: builtins.range
 DEBUG method sig: builtins.list.__getitem__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-DEBUG method sig: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
-Method_hook: builtins.int.__neg__
 Method_hook: builtins.list.__getitem__
-Method_hook: builtins.str.format
-DEBUG func sig: builtins.print
-Func_hook: builtins.print
-DEBUG method sig: builtins.object.__init_subclass__
-Method_hook: builtins.object.__init_subclass__
-benchmarks\model.py:12: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:17: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:19: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[1]], numpy.dtype[Any]]"
-benchmarks\model.py:21: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:26: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:28: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:33: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:35: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:37: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:43: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:55: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:61: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:62: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:63: note: Revealed type is "numpy.ndarray[tuple[Literal[1], builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:102: note: Revealed type is "builtins.list[Any]"
-benchmarks\model.py:116: note: Revealed type is "Any"
-benchmarks\model.py:117: note: Revealed type is "def (self: model.DenseLayer, inputs: numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]], weights: numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]], bias: numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]], activation: Any) -> Any"
-benchmarks\model.py:118: note: Revealed type is "def (self: model.DenseLayer, dA: numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]], Z: Any) -> numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:119: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:120: note: Revealed type is "Any"
-benchmarks\model.py:130: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:132: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\model.py:147: note: Revealed type is "Any"
-benchmarks\model.py:148: note: Revealed type is "Any"
-benchmarks\model.py:149: note: Revealed type is "Any"
-benchmarks\model.py:165: note: Revealed type is "builtins.float"
-benchmarks\model.py:177: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-Success: no issues found in 1 source file
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
+Func_hook: builtins.list
+DEBUG func sig: builtins.list
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
+DEBUG func sig: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.range
+DEBUG method sig: builtins.list.__getitem__
+Method_hook: builtins.list.__getitem__
+Func_hook: builtins.list
+DEBUG func sig: rl_models.rl_utils.is_multidimensional
+Func_hook: rl_models.rl_utils.is_multidimensional
+Func_hook: rl_models.rl_utils.is_multidimensional
+DEBUG func sig: rl_models.rl_utils.is_continuous
+Func_hook: rl_models.rl_utils.is_continuous
+Func_hook: rl_models.rl_utils.is_continuous
+DEBUG func sig: rl_models.rl_utils.action_stats
+Func_hook: rl_models.rl_utils.action_stats
+Func_hook: rl_models.rl_utils.action_stats
+DEBUG func sig: rl_models.rl_utils.obs_stats
+Func_hook: rl_models.rl_utils.obs_stats
+Func_hook: rl_models.rl_utils.obs_stats
+DEBUG func sig: builtins.dir
+Func_hook: builtins.dir
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.bool
+Func_hook: builtins.bool
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.bool
+Func_hook: builtins.bool
+DEBUG method sig: builtins.list.__contains__
+Method_hook: builtins.list.__contains__
+DEBUG func sig: builtins.bool
+Func_hook: builtins.bool
+Func_hook: <dict>
+benchmarks\rl_models\rl_utils.py:66: error: Missing positional arguments "s", "a" in call to "reward_outcome_pairs"  [call-arg]
+benchmarks\rl_models\rl_utils.py:177: note: Revealed type is "Any | numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]] | builtins.float"
+benchmarks\rl_models\rl_utils.py:178: note: Revealed type is "Any | numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]] | builtins.float"
+benchmarks\rl_models\rl_utils.py:189: note: Revealed type is "Any"
+benchmarks\rl_models\rl_utils.py:190: note: Revealed type is "Any"
+benchmarks\rl_models\rl_utils.py:198: note: Revealed type is "numpy.ndarray[tuple[Literal[2]], numpy.dtype[Any]]"
+benchmarks\rl_models\rl_utils.py:200: note: Revealed type is "Any"
+benchmarks\rl_models\rl_utils.py:383: error: No overload variant of "range" matches argument type "float"  [call-overload]
+benchmarks\rl_models\rl_utils.py:383: note: Possible overload variants:
+benchmarks\rl_models\rl_utils.py:383: note:     def __new__(cls, SupportsIndex, /) -> range
+benchmarks\rl_models\rl_utils.py:383: note:     def __new__(cls, SupportsIndex, SupportsIndex, SupportsIndex = ..., /) -> range
+benchmarks\rl_models\rl_utils.py:389: error: No overload variant of "range" matches argument type "float"  [call-overload]
+benchmarks\rl_models\rl_utils.py:389: note: Possible overload variants:
+benchmarks\rl_models\rl_utils.py:389: note:     def __new__(cls, SupportsIndex, /) -> range
+benchmarks\rl_models\rl_utils.py:389: note:     def __new__(cls, SupportsIndex, SupportsIndex, SupportsIndex = ..., /) -> range
+benchmarks\rl_models\rl_utils.py:430: error: No overload variant of "range" matches argument type "float"  [call-overload]
+benchmarks\rl_models\rl_utils.py:430: note: Possible overload variants:
+benchmarks\rl_models\rl_utils.py:430: note:     def __new__(cls, SupportsIndex, /) -> range
+benchmarks\rl_models\rl_utils.py:430: note:     def __new__(cls, SupportsIndex, SupportsIndex, SupportsIndex = ..., /) -> range
+benchmarks\rl_models\rl_utils.py:436: error: No overload variant of "range" matches argument type "float"  [call-overload]
+benchmarks\rl_models\rl_utils.py:436: note: Possible overload variants:
+benchmarks\rl_models\rl_utils.py:436: note:     def __new__(cls, SupportsIndex, /) -> range
+benchmarks\rl_models\rl_utils.py:436: note:     def __new__(cls, SupportsIndex, SupportsIndex, SupportsIndex = ..., /) -> range
+Class_hook: rl_models.rl_utils.env_stats
+Class_hook: numpy._core.fromnumeric.prod
+Class_hook: numpy._core.fromnumeric.prod
+Class_hook: rl_models.agents.Dict
+Class_hook: rl_models.agents.Dict
+Class_hook: rl_models.agents.Dict
+Class_hook: rl_models.agents.Dict
+Class_hook: numpy._core.fromnumeric.prod
+Class_hook: numpy.random.mtrand.rand
+Class_hook: numpy._core.numeric.ones
+Class_hook: numpy.exp
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "mypy\semanal.py", line 7350, in accept
+  File "mypy\nodes.py", line 1624, in accept
+  File "mypy\semanal.py", line 3273, in visit_assignment_stmt
+  File "mypy\semanal.py", line 3642, in apply_dynamic_class_hook
+  File "C:\Users\Arnav\Desktop\programming\mypy_plugin\tensor_plugin\plugin.py", line 563, in exp
+    raise NotImplementedError
+NotImplementedError: 
