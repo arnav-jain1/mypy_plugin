@@ -19,6 +19,10 @@ class CustomPlugin(Plugin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.context = dict()
+        self.file = None
+
         self.func_hooks = {
             "numpy._core.multiarray.array": self.base_array,
             "numpy._core.numeric.ones": self.constructor,
@@ -44,11 +48,11 @@ class CustomPlugin(Plugin):
             "numpy._core.fromnumeric.sum": self.numpy_sum,
             "numpy._core.fromnumeric.mean": self.numpy_sum,
             "numpy._core.fromnumeric.var": self.numpy_sum,
+            "numpy._core.fromnumeric.prod": self.numpy_sum,
             "numpy._core.fromnumeric.max": self.maximum_func,
             "numpy._core.multiarray.dot": self.dot_prod,
             "numpy._core.fromnumeric.transpose": self.transpose,
             "numpy.lib._type_check_impl.nan_to_num": self.nan_to_none,
-            "numpy._core.fromnumeric.prod": self.numpy_sum
             }
 
         self.method_hooks = {
@@ -63,25 +67,20 @@ class CustomPlugin(Plugin):
             "numpy.ndarray.__rmatmul__": self.fail,
             "numpy.ndarray.reshape": self.reshape,
             "numpy.ndarray.__truediv__": self.broadcast,
-            "numpy.ndarray.argmax": self.argmax_method
+            "numpy.ndarray.__rtruediv__": self.fail,
+            "numpy.ndarray.argmax": self.argmax_method,
+            'numpy.ndarray.__getitem__': self.slicing,
             }
+
         self.dynamic_class_hooks = {
             "numpy.maximum": self.maximum,
             "numpy.exp": self.exp,
         }
 
-        self.broadcasting_funcs_direct = ["numpy.multiply", "numpy.add"]
-
-        self.context = dict()
-
-        self.file = None
-        self.default = None
 
 # region important_hooks
     def get_dynamic_class_hook(self, fullname):
         # print(f"Class_hook: {fullname}")
-        # if fullname in self.broadcasting_funcs_direct:
-        #     return self.add_array_direct
         return self.dynamic_class_hooks.get(fullname, None)
 
     def get_function_hook(self, fullname: str):
@@ -100,8 +99,6 @@ class CustomPlugin(Plugin):
             self.file = next(iter(self._modules))
         if self.file in fullname:
             return self.custom_method
-        if fullname == 'numpy.ndarray.__getitem__':
-            return self.slicing
         return self.method_hooks.get(fullname, None)
 # endregion
     
@@ -137,17 +134,9 @@ class CustomPlugin(Plugin):
     # # --- signature‐altering hooks ---
     def get_function_signature_hook(self, fullname):
         # print(f"DEBUG func sig: {fullname}")
-        # if not self.file:
-        #     self.file = next(iter(self._modules))
-        # if self.file in fullname:
-        #     return self.custom_func_sig
         return None
     def get_method_signature_hook(self, fullname):
         # print(f"DEBUG method sig: {fullname}")
-        # if not self.file:
-        #     self.file = next(iter(self._modules))
-        # if self.file in fullname:
-        #     return self.custom_method
         return None
 # endregion
 
@@ -188,6 +177,7 @@ class CustomPlugin(Plugin):
             shape.append(ctx.args[0][0].value)
         else:
             raise NotImplementedError
+            return ctx.default_return_type
 
         final_type = self.type_creator(ctx, shape, False)
         return final_type
@@ -203,6 +193,7 @@ class CustomPlugin(Plugin):
                 shape.append(arg.value)
             elif isinstance(arg, TupleExpr):
                 raise NotImplementedError
+                return ctx.default_return_type
             elif isinstance(arg, NameExpr):
                 arg = ctx.arg_types[2][0]
                 if isinstance(arg, LiteralType):
@@ -213,8 +204,6 @@ class CustomPlugin(Plugin):
         
         final_type = self.type_creator(ctx, shape, False)
         return final_type
-
-
 
     # Other rand (randint, uniform, normal, binomial, poisson, exp, beta, gamma, chi, choice)
     def rand_other(self, ctx):
@@ -322,9 +311,9 @@ class CustomPlugin(Plugin):
             final_type = self.type_creator(ctx, shape, False)
             # print(f"Type: {final_type}")
             return final_type
-
-
 # endregion
+
+# region method_callbacks
     def matmul(self, ctx):
         func_name = self.get_func_name(ctx)
         
@@ -408,9 +397,9 @@ class CustomPlugin(Plugin):
                     rhs= item
 
         # If one or the other is just a constant, then it is just the opposite one
-        if (rhs.type.fullname == 'builtins.int'):
+        if (rhs.type.fullname == 'builtins.int' or rhs.type.fullname == 'builtins.float'):
             return lhs
-        elif (lhs.type.fullname == 'builtins.int'):
+        elif (lhs.type.fullname == 'builtins.int' or rhs.type.fullname == 'builtins.float'):
             return rhs
 
         # Get the shapes as a list and the sizes, if its in the context use that
@@ -550,24 +539,13 @@ class CustomPlugin(Plugin):
         # print(f"Final output: {final_type}")
         return final_type
 
-    def custom_func(self, ctx):
-        func_def_node = ctx.context.callee.node
-        var_node = None
-        for stmt in func_def_node.body.body:
-            if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
-                var_node = stmt.expr.node.type
-        return var_node if var_node else ctx.default_return_type
-
     def argmax_method(self, ctx):
         if not ctx.args[1] and not ctx.arg_names[1]:
             int_type = ctx.api.named_generic_type("builtins.int", [])
-            print(ctx.args)
-            print(ctx.type)
             return int_type
 
-        print(dir(ctx))
-        print(ctx.arg_names)
         raise NotImplementedError
+        return ctx.default_return_type
 
     def custom_method(self, ctx):
         func_def_node = ctx.type.type.get(ctx.context.callee.name).node
@@ -577,6 +555,7 @@ class CustomPlugin(Plugin):
                 var_node = stmt.expr.node.type
         return var_node if var_node else ctx.default_return_type
 
+    # Not currently being used, but can be implemented in the future
     def custom_func_sig(self, ctx):
         func_name = ctx.context.callee.name
         
@@ -596,32 +575,9 @@ class CustomPlugin(Plugin):
         # print("SIG: ", new_sig)
         return new_sig
 
-    def maximum(self, ctx):
-        lhs = ctx.call.args[0]
-        rhs = ctx.call.args[1]
-        if isinstance(rhs, NameExpr):
-            rhs = ctx.api.lookup_current_scope(rhs.name).type
-            var = Var(ctx.name, rhs)
-            var._fullname = ctx.api.qualified_name(ctx.name)
-            ctx.api.add_symbol_table_node(
-                ctx.name,
-                SymbolTableNode(GDEF, var)
-            )
-            return rhs
-        elif isinstance(lhs, NameExpr):
-            lhs = ctx.api.lookup_current_scope(lhs.name).type
-            var = Var(ctx.name, lhs)
-            var._fullname = ctx.api.qualified_name(ctx.name)
-            ctx.api.add_symbol_table_node(
-                ctx.name,
-                SymbolTableNode(GDEF, var)
-            )
-            return lhs
-
-        # TODO NOT JUST INTS
-        # When neither are ints, broadcast them
-        raise NotImplementedError
-
+# endregion
+    
+# region function_callbacks
     def maximum_func(self, ctx):
         lhs = ctx.arg_types[0][0]
         if ctx.arg_names[1] and ctx.arg_names[1][0] == 'axis':
@@ -657,75 +613,15 @@ class CustomPlugin(Plugin):
         # print(f"Final output: {final_type}")
         return final_type
 
-# region replaced_by_sum
-    # def prod(self, ctx):
-    #     lhs = ctx.arg_types[0][0]
-    #     if ctx.arg_names[1] and ctx.arg_names[1][0] == 'axis':
-    #         dim = str(ctx.arg_types[1][0])
-    #         axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
-    #     else:
-    #         int_type = ctx.api.named_generic_type("builtins.int", [])
-    #         float_type = ctx.api.named_generic_type("builtins.float", [])
-    #         # TODO change this to union but requires a lot of work
-    #         # return UnionType.make_union([int_type, float_type])
-    #         return int_type
-            
-        
-    #     lhs_shape = self.get_shape(lhs.args[0])
-    #     output = lhs_shape[0:axis] + lhs_shape[axis+1:]
-
-    #     if ctx.arg_types[4]:
-    #         keep_dim = str(ctx.arg_types[4][0])
-    #         keep_dim = bool(keep_dim.replace('Literal[', '').rstrip('?').rstrip(']'))
-    #         if keep_dim:
-    #             output = lhs_shape[0:axis] + [1] + lhs_shape[axis+1:]
-
-    #     final_type = self.type_creator(ctx, output, False)
-    #     # print(f"Final output: {final_type}")
-    #     return final_type
-
-    # def numpy_mean(self, ctx):
-    #     lhs = ctx.arg_types[0][0]
-    #     if ctx.arg_names[1] and ctx.arg_names[1][0] == 'axis':
-    #         dim = str(ctx.arg_types[1][0])
-    #         axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
-    #     else:
-    #         int_type = ctx.api.named_generic_type("builtins.int", [])
-    #         float_type = ctx.api.named_generic_type("builtins.float", [])
-    #         # TODO change this to union but requires a lot of work
-    #         # return UnionType.make_union([int_type, float_type])
-    #         return int_type
-            
-        
-    #     lhs_shape = self.get_shape(lhs.args[0])
-    #     output = lhs_shape[0:axis] + lhs_shape[axis+1:]
-
-    #     if ctx.arg_types[4]:
-    #         keep_dim = str(ctx.arg_types[4][0])
-    #         keep_dim = bool(keep_dim.replace('Literal[', '').rstrip('?').rstrip(']'))
-    #         if keep_dim:
-    #             output = lhs_shape[0:axis] + [1] + lhs_shape[axis+1:]
-
-    #     final_type = self.type_creator(ctx, output, False)
-    #     # print(f"Final output: {final_type}")
-    #     return final_type
-# endregion
-
-    def exp(self, ctx):
-        lhs = ctx.call.args[0]
-        if isinstance(lhs, NameExpr):
-            lhs = ctx.api.lookup_current_scope(lhs.name).type
-            if lhs:
-                var = Var(ctx.name, lhs)
-                var._fullname = ctx.api.qualified_name(ctx.name)
-                ctx.api.add_symbol_table_node(
-                    ctx.name,
-                    SymbolTableNode(GDEF, var)
-                )
-            return lhs
-
-        # TODO when it is just ints
-        raise NotImplementedError
+    def custom_func(self, ctx):
+        func_def_node = ctx.context.callee.node
+        if isinstance(func_def_node, TypeInfo):
+            return ctx.default_return_type
+        var_node = None
+        for stmt in func_def_node.body.body:
+            if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
+                var_node = stmt.expr.node.type
+        return var_node if var_node else ctx.default_return_type
 
     def numpy_sum(self, ctx):
         lhs = ctx.arg_types[0][0]
@@ -764,7 +660,6 @@ class CustomPlugin(Plugin):
         # print(f"Final output: {final_type}")
         return final_type
 
-
     def dot_prod(self, ctx):
         func_name = self.get_func_name(ctx)
         if func_name not in self.context:
@@ -791,6 +686,7 @@ class CustomPlugin(Plugin):
 
         if len(lhs_shape) > 2 or len(rhs_shape) > 2:
             raise NotImplementedError
+            return ctx.default_return_type
 
         solver = NumpySolver(lhs_shape, rhs_shape)
         lhs_new, rhs_new, output = solver.solve_matmul()
@@ -845,7 +741,53 @@ class CustomPlugin(Plugin):
         lhs = ctx.arg_types[0][0]
         # print(lhs)
         return lhs
+# endregion
 
+# region dynamic_class_callbacks
+    def maximum(self, ctx):
+        lhs = ctx.call.args[0]
+        rhs = ctx.call.args[1]
+        if isinstance(rhs, NameExpr):
+            rhs = ctx.api.lookup_current_scope(rhs.name).type
+            var = Var(ctx.name, rhs)
+            var._fullname = ctx.api.qualified_name(ctx.name)
+            ctx.api.add_symbol_table_node(
+                ctx.name,
+                SymbolTableNode(GDEF, var)
+            )
+            return rhs
+        elif isinstance(lhs, NameExpr):
+            lhs = ctx.api.lookup_current_scope(lhs.name).type
+            var = Var(ctx.name, lhs)
+            var._fullname = ctx.api.qualified_name(ctx.name)
+            ctx.api.add_symbol_table_node(
+                ctx.name,
+                SymbolTableNode(GDEF, var)
+            )
+            return lhs
+
+        # TODO NOT JUST INTS
+        # When neither are ints, broadcast them
+        raise NotImplementedError
+        return ctx.default_return_type
+
+    def exp(self, ctx):
+        lhs = ctx.call.args[0]
+        if isinstance(lhs, NameExpr):
+            lhs = ctx.api.lookup_current_scope(lhs.name).type
+            if lhs:
+                var = Var(ctx.name, lhs)
+                var._fullname = ctx.api.qualified_name(ctx.name)
+                ctx.api.add_symbol_table_node(
+                    ctx.name,
+                    SymbolTableNode(GDEF, var)
+                )
+            return lhs
+
+        # TODO when it is just ints
+        raise NotImplementedError
+        return ctx.default_return_type
+# endregion
 
 # region tools
     def is_default(self, arg):
@@ -870,6 +812,7 @@ class CustomPlugin(Plugin):
 
         
         return output
+
     def fail(self, ctx):
         ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
         return ctx.default_return_type

@@ -23,10 +23,6 @@ benchmarks\rl_models\rl_utils.py:437: error: No overload variant of "range" matc
 benchmarks\rl_models\rl_utils.py:437: note: Possible overload variants:
 benchmarks\rl_models\rl_utils.py:437: note:     def __new__(cls, SupportsIndex, /) -> range
 benchmarks\rl_models\rl_utils.py:437: note:     def __new__(cls, SupportsIndex, SupportsIndex, SupportsIndex = ..., /) -> range
-[[], [], []]
-numpy.ndarray[tuple[Literal[1]], numpy.dtype[Any]]
-[[], [], []]
-numpy.ndarray[tuple[Literal[1]], numpy.dtype[Any]]
 benchmarks\rl_models\agents.py:45: error: "AgentBase" has no attribute "episode_history"  [attr-defined]
 benchmarks\rl_models\agents.py:46: error: "AgentBase" has no attribute "episode_history"  [attr-defined]
 benchmarks\rl_models\agents.py:173: note: Revealed type is "builtins.int"
@@ -43,32 +39,50 @@ benchmarks\rl_models\agents.py:251: note: Revealed type is "numpy.ndarray[tuple[
 benchmarks\rl_models\agents.py:253: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
 benchmarks\rl_models\agents.py:257: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:283: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:290: note: Revealed type is "Any"
-benchmarks\rl_models\agents.py:292: note: Revealed type is "Any"
-benchmarks\rl_models\agents.py:304: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:305: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:376: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]]]"
+benchmarks\rl_models\agents.py:291: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:293: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:295: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:307: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:308: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:378: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]]]"
-benchmarks\rl_models\agents.py:381: note: Revealed type is "Any"
-benchmarks\rl_models\agents.py:393: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:417: note: Revealed type is "numpy.ndarray[tuple[Literal[1], builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:421: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:425: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:427: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:429: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:480: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:558: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:565: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:566: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:380: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]]]"
+benchmarks\rl_models\agents.py:383: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:386: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:396: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:420: note: Revealed type is "numpy.ndarray[tuple[Literal[1], builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:424: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:428: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:430: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:432: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:483: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:561: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:568: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:577: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:607: note: Revealed type is "Any"
-benchmarks\rl_models\agents.py:797: error: Signature of "greedy_policy" incompatible with supertype "AgentBase"  [override]
-benchmarks\rl_models\agents.py:797: note:      Superclass:
-benchmarks\rl_models\agents.py:797: note:          def greedy_policy(self, max_steps: Any, **kwargs: Any) -> Any
-benchmarks\rl_models\agents.py:797: note:      Subclass:
-benchmarks\rl_models\agents.py:797: note:          def greedy_policy(self, max_steps: Any, render: Any = ...) -> Any
-benchmarks\rl_models\agents.py:972: error: "TemporalDifferenceAgent" has no attribute "_epsilon_soft_policy"  [attr-defined]
-benchmarks\rl_models\agents.py:975: error: "TemporalDifferenceAgent" has no attribute "_greedy"  [attr-defined]
-benchmarks\rl_models\agents.py:1017: error: "TemporalDifferenceAgent" has no attribute "_episode"; maybe "run_episode"?  [attr-defined]
-Found 12 errors in 3 files (checked 1 source file)
+benchmarks\rl_models\agents.py:569: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:571: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:580: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:610: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:800: error: Signature of "greedy_policy" incompatible with supertype "AgentBase"  [override]
+benchmarks\rl_models\agents.py:800: note:      Superclass:
+benchmarks\rl_models\agents.py:800: note:          def greedy_policy(self, max_steps: Any, **kwargs: Any) -> Any
+benchmarks\rl_models\agents.py:800: note:      Subclass:
+benchmarks\rl_models\agents.py:800: note:          def greedy_policy(self, max_steps: Any, render: Any = ...) -> Any
+benchmarks\rl_models\agents.py:1158: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1161: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1205: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1207: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1249: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1253: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1609: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1612: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1617: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:1619: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:1660: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1661: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1805: note: Revealed type is "builtins.int"
+benchmarks\rl_models\agents.py:1814: note: Revealed type is "Any"
+benchmarks\rl_models\agents.py:1938: error: Signature of "greedy_policy" incompatible with supertype "AgentBase"  [override]
+benchmarks\rl_models\agents.py:1938: note:      Superclass:
+benchmarks\rl_models\agents.py:1938: note:          def greedy_policy(self, max_steps: Any, **kwargs: Any) -> Any
+benchmarks\rl_models\agents.py:1938: note:      Subclass:
+benchmarks\rl_models\agents.py:1938: note:          def greedy_policy(self, max_steps: Any, render: Any = ...) -> Any
+Found 10 errors in 3 files (checked 1 source file)
