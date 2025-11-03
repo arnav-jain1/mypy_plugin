@@ -2,7 +2,6 @@ from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInt
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType, NoneType, UnionType, EllipsisType
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
 from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, ArgKind
-from mypy.plugins.common import add_method_to_class
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
 from z3_solver import NumpySolver
