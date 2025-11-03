@@ -3,12 +3,7 @@ from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfA
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
 from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, ArgKind
 from mypy.plugins.common import add_method_to_class
-from mypy import nodes
-from typing import Tuple, List, Literal, final, Any, get_origin
-from typing_extensions import Never
 from mypy.errorcodes import ErrorCode, OVERRIDE
-import numpy 
-import builtins
 
 from z3_solver import NumpySolver
 from slicing import slice_output
