@@ -543,6 +543,8 @@ class CustomPlugin(Plugin):
 
     def custom_method(self, ctx):
         func_def_node = ctx.type.type.get(ctx.context.callee.name).node
+        if not isinstance(func_def_node, FuncDef):
+            return ctx.default_return_type
         var_node = None
         for stmt in func_def_node.body.body:
             if isinstance(stmt, ReturnStmt) and isinstance(stmt.expr, NameExpr):
@@ -878,7 +880,7 @@ class CustomPlugin(Plugin):
             elif isinstance(dim, LiteralType):
                 shape_output.append(dim.value)
             elif isinstance(dim, UnionType):
-                shape_output.output(tuple(d.value for d in dim.items))
+                shape_output.append(tuple(d.value for d in dim.items))
 
         return shape_output
     
