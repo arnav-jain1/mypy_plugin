@@ -1,5 +1,9 @@
 from z3 import *
 
+class UnboundedType:
+    def __repr__(self): return "..."
+Unbounded = UnboundedType()
+
 class NumpySolver:
     def __init__(self, lhs, rhs, lhs_rank=None, rhs_rank=None):
         self.lhs = lhs if lhs else []

@@ -1,10 +1,12 @@
-benchmarks\rl_models\trainer.py:75: error: Cannot determine type of "smooth_tot"  [has-type]
 benchmarks\rl_models\rl_utils.py:66: error: Missing positional arguments "s", "a" in call to "reward_outcome_pairs"  [call-arg]
-benchmarks\rl_models\rl_utils.py:177: note: Revealed type is "Any | numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]] | builtins.float"
-benchmarks\rl_models\rl_utils.py:178: note: Revealed type is "Any | numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]] | builtins.float"
+benchmarks\rl_models\rl_utils.py:132: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\rl_utils.py:133: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\rl_utils.py:135: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\rl_utils.py:177: note: Revealed type is "Any | numpy.ndarray[Any, Any] | builtins.float"
+benchmarks\rl_models\rl_utils.py:178: note: Revealed type is "Any | numpy.ndarray[Any, Any] | builtins.float"
 benchmarks\rl_models\rl_utils.py:189: note: Revealed type is "Any"
 benchmarks\rl_models\rl_utils.py:190: note: Revealed type is "Any"
-benchmarks\rl_models\rl_utils.py:198: note: Revealed type is "numpy.ndarray[tuple[Literal[2]], numpy.dtype[Any]]"
+benchmarks\rl_models\rl_utils.py:198: note: Revealed type is "numpy.ndarray[Any, Any]"
 benchmarks\rl_models\rl_utils.py:200: note: Revealed type is "builtins.int"
 benchmarks\rl_models\rl_utils.py:202: note: Revealed type is "builtins.int"
 benchmarks\rl_models\rl_utils.py:384: error: No overload variant of "range" matches argument type "float"  [call-overload]
@@ -30,13 +32,17 @@ benchmarks\rl_models\agents.py:175: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:177: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:180: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
 benchmarks\rl_models\agents.py:182: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:202: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\agents.py:231: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\agents.py:232: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
 benchmarks\rl_models\agents.py:236: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]] | Any"
-benchmarks\rl_models\agents.py:242: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:245: note: Revealed type is "numpy.ndarray[tuple[Literal[1]], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:247: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:249: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:251: note: Revealed type is "numpy.ndarray[tuple[Literal[1]], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:253: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:242: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:245: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[1]], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:247: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:248: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\agents.py:249: note: Revealed type is "numpy.ndarray[Any, Any]"
+benchmarks\rl_models\agents.py:251: note: Revealed type is "numpy.ndarray[tuple[builtins.int, Literal[1]], numpy.dtype[Any]]"
+benchmarks\rl_models\agents.py:253: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\rl_models\agents.py:257: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:283: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:291: note: Revealed type is "Any"
@@ -44,8 +50,9 @@ benchmarks\rl_models\agents.py:293: note: Revealed type is "Any"
 benchmarks\rl_models\agents.py:295: note: Revealed type is "Any"
 benchmarks\rl_models\agents.py:307: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:308: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:378: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]]]"
-benchmarks\rl_models\agents.py:380: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]]]"
+benchmarks\rl_models\agents.py:311: error: "ndarray" expects 2 type arguments, but 1 given  [type-arg]
+benchmarks\rl_models\agents.py:378: note: Revealed type is "numpy.ndarray[Any, numpy.dtype[numpy.signedinteger[Any]]]"
+benchmarks\rl_models\agents.py:380: note: Revealed type is "numpy.ndarray[Any, numpy.dtype[numpy.signedinteger[Any]]]"
 benchmarks\rl_models\agents.py:383: note: Revealed type is "Any"
 benchmarks\rl_models\agents.py:386: note: Revealed type is "Any"
 benchmarks\rl_models\agents.py:396: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
@@ -67,16 +74,16 @@ benchmarks\rl_models\agents.py:800: note:          def greedy_policy(self, max_s
 benchmarks\rl_models\agents.py:800: note:      Subclass:
 benchmarks\rl_models\agents.py:800: note:          def greedy_policy(self, max_steps: Any, render: Any = ...) -> Any
 benchmarks\rl_models\agents.py:1158: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:1161: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1161: note: Revealed type is "numpy.signedinteger[Any]"
 benchmarks\rl_models\agents.py:1205: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:1207: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1207: note: Revealed type is "numpy.signedinteger[Any]"
 benchmarks\rl_models\agents.py:1249: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:1253: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:1609: note: Revealed type is "builtins.int"
-benchmarks\rl_models\agents.py:1612: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1612: note: Revealed type is "numpy.signedinteger[Any]"
 benchmarks\rl_models\agents.py:1617: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
 benchmarks\rl_models\agents.py:1619: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\rl_models\agents.py:1660: note: Revealed type is "numpy.signedinteger[numpy._typing._nbit_base._32Bit | numpy._typing._nbit_base._64Bit]"
+benchmarks\rl_models\agents.py:1660: note: Revealed type is "numpy.signedinteger[Any]"
 benchmarks\rl_models\agents.py:1661: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:1805: note: Revealed type is "builtins.int"
 benchmarks\rl_models\agents.py:1814: note: Revealed type is "Any"
@@ -85,4 +92,5 @@ benchmarks\rl_models\agents.py:1938: note:      Superclass:
 benchmarks\rl_models\agents.py:1938: note:          def greedy_policy(self, max_steps: Any, **kwargs: Any) -> Any
 benchmarks\rl_models\agents.py:1938: note:      Subclass:
 benchmarks\rl_models\agents.py:1938: note:          def greedy_policy(self, max_steps: Any, render: Any = ...) -> Any
-Found 10 errors in 3 files (checked 1 source file)
+benchmarks\rl_models\trainer.py:75: error: Cannot determine type of "smooth_tot"  [has-type]
+Found 18 errors in 3 files (checked 1 source file)

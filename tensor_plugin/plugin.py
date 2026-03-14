@@ -1,11 +1,16 @@
-from mypy.plugin import Plugin, FunctionContext, MethodContext, CheckerPluginInterface, DynamicClassDefContext, SemanticAnalyzerPluginInterface
+from mypy.plugin import (
+    Plugin, FunctionContext, MethodContext, AnalyzeTypeContext, 
+    CheckerPluginInterface, DynamicClassDefContext, SemanticAnalyzerPluginInterface
+)
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType, NoneType, UnionType, EllipsisType
 from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
 from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, ArgKind
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
-from z3_solver import NumpySolver
+from z3_solver import NumpySolver, UnboundedType
 from slicing import slice_output
+from typing import *
+import numpy as np
 
 ERROR_TYPE = NoneType()
 
@@ -38,7 +43,9 @@ class CustomPlugin(Plugin):
             "numpy.random.mtrand.multivariate_normal": self.multivariate_normal,
             "numpy._core.multiarray.arange": self.arange,
             "numpy._core.multiarray.repeat": self.repeat,
+            "numpy._core.fromnumeric.repeat": self.fromnumeric_repeat,
             "numpy.lib._function_base_impl.insert": self.insert,
+            "numpy.lib._shape_base_impl.tile": self.numpy_tile,
             "numpy._core.fromnumeric.sum": self.numpy_sum,
             "numpy._core.fromnumeric.mean": self.numpy_sum,
             "numpy._core.fromnumeric.var": self.numpy_sum,
@@ -124,6 +131,8 @@ class CustomPlugin(Plugin):
     # --- “type”‐analyze hook (e.g. for typing.Annotated) ---
     def get_type_analyze_hook(self, fullname):
         # print(f"DEBUG type analyze: {fullname}")
+        if fullname == 'numpy.ndarray':
+            return self.analyze_ndarray
         return None
     # # --- signature‐altering hooks ---
     def get_function_signature_hook(self, fullname):
@@ -135,6 +144,25 @@ class CustomPlugin(Plugin):
 # endregion
 
 # region array_creation
+    def analyze_ndarray(self, ctx):
+        args = []
+        if str(ctx.type).strip("?") == "np.ndarray" and not ctx.type.args:
+            any_type = AnyType(TypeOfAny.special_form)
+            shape_type = ctx.api.named_type("builtins.tuple", [any_type])
+            # dtype_type = ctx.api.named_type("numpy.dtype", [any_type])
+            
+            return_val = ctx.api.named_type("numpy.ndarray", [shape_type])
+        else:
+            for arg in ctx.type.args:
+                analyzed_arg = ctx.api.anal_type(arg)
+                args.append(analyzed_arg)
+            return_val = ctx.api.named_type("numpy.ndarray", args)
+
+        
+        return return_val
+            
+
+    
     def arange(self, ctx):
         output = [int]
         final_type = self.type_creator(ctx, output, False)
@@ -142,10 +170,77 @@ class CustomPlugin(Plugin):
         return final_type
 
     def repeat(self, ctx):
+        print(f"DEBUG repeat: arg_types={ctx.arg_types}")
+        # Simple case for 1D array and int repeats
+        input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
+        repeats_type = ctx.arg_types[1][0]
+        print(f"DEBUG repeat: input_shape={input_shape}, repeats_type={repeats_type}")
+
+        if len(input_shape) == 1 and isinstance(repeats_type, (LiteralType, Instance)):
+            input_len = input_shape[0]
+            if isinstance(repeats_type, LiteralType):
+                repeats_val = repeats_type.value
+            else: # Is an int
+                repeats_val = int
+
+            if input_len == int or repeats_val == int:
+                output_shape = [int]
+            else:
+                output_shape = [input_len * repeats_val]
+            return self.type_creator(ctx, output_shape, False)
+
         output = [int]
         final_type = self.type_creator(ctx, output, False)
-
         return final_type
+
+    def fromnumeric_repeat(self, ctx):
+        print(f"DEBUG fromnumeric_repeat: arg_types={ctx.arg_types}")
+        # Simple case for 1D array and int repeats
+        input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
+        repeats_type = ctx.arg_types[1][0]
+        print(f"DEBUG fromnumeric_repeat: input_shape={input_shape}, repeats_type={repeats_type}")
+
+        if len(input_shape) == 1 and isinstance(repeats_type, (LiteralType, Instance)):
+            input_len = input_shape[0]
+            if isinstance(repeats_type, LiteralType):
+                repeats_val = repeats_type.value
+            else: # Is an int
+                repeats_val = int
+
+            if input_len == int or repeats_val == int:
+                output_shape = [int]
+            else:
+                output_shape = [input_len * repeats_val]
+            return self.type_creator(ctx, output_shape, False)
+
+        output = [int]
+        final_type = self.type_creator(ctx, output, False)
+        return final_type
+
+    def numpy_tile(self, ctx):
+        print(f"DEBUG tile: arg_types={ctx.arg_types}")
+        # Simple case for 1D array and int reps
+        input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
+        reps_type = ctx.arg_types[1][0]
+        print(f"DEBUG tile: input_shape={input_shape}, reps_type={reps_type}")
+
+        if len(input_shape) == 1 and isinstance(reps_type, (LiteralType, Instance)):
+            input_len = input_shape[0]
+            if isinstance(reps_type, LiteralType):
+                reps_val = reps_type.value
+            else: # is an int
+                reps_val = int
+
+            if input_len == int or reps_val == int:
+                output_shape = [int]
+            else:
+                output_shape = [input_len * reps_val]
+            return self.type_creator(ctx, output_shape, False)
+
+        output = [int]
+        final_type = self.type_creator(ctx, output, False)
+        return final_type
+
     
     def insert(self, ctx):
         arg = ctx.args
@@ -266,25 +361,32 @@ class CustomPlugin(Plugin):
             literal_dims.append(param.value)
         elif isinstance(param, NameExpr):
             typ = ctx.arg_types[0][0]
-            # print(type(typ))
-            if typ.type.fullname == "builtins.int":
+            if isinstance(typ, TupleType):
+                for i, elem in enumerate(typ.items):
+                    if isinstance(elem, LiteralType):
+                        literal_dims.append(elem.value)
+                    else:
+                        literal_dims.append(int)
+            elif typ.type.fullname == "builtins.int":
                 literal_dims.append(int)
-                final_type = self.type_creator(ctx, literal_dims, False)
             elif typ.type.fullname == "numpy.ndarray":
-                # TODO: This assumes the input is a numpy array, also add list/tuple
                 return typ
 
         else:
-            typ = ctx.arg_types[0][0].items
-            for i, elem in enumerate(param.items):
-                if isinstance(elem, IntExpr):
-                    literal_dims.append(elem.value)
-                else:
-                    curr_type = typ[i]
-                    if isinstance(curr_type, LiteralType):
-                        literal_dims.append(curr_type.value)
+            typ = ctx.arg_types[0][0]
+            if isinstance(typ, AnyType):
+                literal_dims.append(int)
+            else:
+                typ = ctx.arg_types[0][0].items
+                for i, elem in enumerate(param.items):
+                    if isinstance(elem, IntExpr):
+                        literal_dims.append(elem.value)
                     else:
-                        literal_dims.append(int)
+                        curr_type = typ[i]
+                        if isinstance(curr_type, LiteralType):
+                            literal_dims.append(curr_type.value)
+                        else:
+                            literal_dims.append(int)
 
         # print(f"Type: {final_type}")
         final_type = self.type_creator(ctx, literal_dims, False)
@@ -316,8 +418,8 @@ class CustomPlugin(Plugin):
 
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
-        lhs_name = ctx.context.left.name
-        rhs_name = ctx.context.right.name
+        lhs_name = ctx.context.left.name if hasattr(ctx.context.left, 'name') else 'tmp_lhs'
+        rhs_name = ctx.context.right.name if hasattr(ctx.context.right, 'name') else 'tmp_rhs'
 
         # If one or the other is just a constant, error, use * instead
         # TODO NOT JUST INTS
@@ -365,10 +467,8 @@ class CustomPlugin(Plugin):
 
         lhs = ctx.type
         rhs = ctx.arg_types[0][0]
-        lhs_name = ctx.context.left.name
-        rhs_name = ctx.context.right.name
-
-        # For union types, numpy arrays get priority, then ints, TODO: account for any
+        lhs_name = ctx.context.left.name if hasattr(ctx.context.left, 'name') else 'tmp_lhs'
+        rhs_name = ctx.context.right.name if hasattr(ctx.context.right, 'name') else 'tmp_rhs'
         if isinstance(lhs, UnionType):
             lhs_items = lhs.items
             for item in lhs_items:
@@ -393,7 +493,7 @@ class CustomPlugin(Plugin):
         # If one or the other is just a constant, then it is just the opposite one
         if (rhs.type.fullname == 'builtins.int' or rhs.type.fullname == 'builtins.float'):
             return lhs
-        elif (lhs.type.fullname == 'builtins.int' or rhs.type.fullname == 'builtins.float'):
+        elif (lhs.type.fullname == 'builtins.int' or lhs.type.fullname == 'builtins.float'):
             return rhs
 
         # Get the shapes as a list and the sizes, if its in the context use that
@@ -500,7 +600,8 @@ class CustomPlugin(Plugin):
         rhs_shape = []
         arg_types = ctx.arg_types[0][0].items if isinstance(ctx.arg_types[0][0], TupleType) else [ctx.arg_types[0][0]]
         minus_1 = False
-        for i, item in enumerate(rhs.items):
+        rhs_items = rhs.items if hasattr(rhs, 'items') else [rhs]
+        for i, item in enumerate(rhs_items):
             if isinstance(item, IntExpr):
                 rhs_shape.append(item.value)
             elif isinstance(item, NameExpr):
@@ -805,6 +906,8 @@ class CustomPlugin(Plugin):
             output = index.value
         elif isinstance(index, NameExpr):
             output = arg_types[i].args[elem].value if isinstance(arg_types[i].args[elem], LiteralType) else int 
+        else:
+            output = None
 
         
         return output
@@ -823,6 +926,9 @@ class CustomPlugin(Plugin):
                     literal_dims.append(UnionType.make_union([LiteralType(d, ctx.api.named_generic_type("builtins.int", [])) for d in dim]))
                 elif dim == int:
                     literal_dims.append(ctx.api.named_generic_type("builtins.int", []))
+                else:
+                    literal_dims.append(AnyType(TypeOfAny.special_form))
+
         else:
             literal_dims = shape
 
@@ -871,16 +977,20 @@ class CustomPlugin(Plugin):
     def get_shape(self, shape):
         # If no input, assume a 2x2 matrix
         if isinstance(shape, AnyType) or isinstance(shape, Instance):
-            return [int, int]
+            return [UnboundedType]
         shape = shape.items
         shape_output = []
         for dim in shape:
+            print(dim)
             if isinstance(dim, Instance):
                 shape_output.append(int)
             elif isinstance(dim, LiteralType):
                 shape_output.append(dim.value)
             elif isinstance(dim, UnionType):
                 shape_output.append(tuple(d.value for d in dim.items))
+            elif isinstance(dim, AnyType):
+                shape_output.append(UnboundedType)
+            
 
         return shape_output
     

@@ -4,7 +4,7 @@
         {
             "label": "test",
             "type": "shell",
-            "command": "mypy --show-traceback --config-file mypy.ini benchmarks\\test3.py > outputs\\test.txt",
+            "command": "mypy --show-traceback --config-file mypy.ini benchmarks\\test_unbounded.py > outputs\\test.txt",
             "presentation": {"echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": false, "clear": true},
         },
         {
