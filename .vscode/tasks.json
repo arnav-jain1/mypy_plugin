@@ -13,5 +13,11 @@
             "command": "mypy --show-traceback --config-file mypy.ini benchmarks\\test2.py > outputs\\test2.txt",
             "presentation": {"echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": false, "clear": true},
         },
+        {
+            "label": "test6",
+            "type": "shell",
+            "command": "source .venv/bin/activate && mypy --show-traceback --config-file mypy.ini benchmarks/test6.py > outputs/test6.txt",
+            "presentation": {"echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": false, "clear": true},
+        },
     ]
 }

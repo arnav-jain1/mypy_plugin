@@ -9,6 +9,9 @@ def test2(x: np.ndarray[Tuple[int]]):
 
 def test3(x: np.ndarray[Tuple[Any, int]]):
     reveal_type(x)
+
+    y = np.transpose(x)
+    reveal_type(y)
     
     return x
 

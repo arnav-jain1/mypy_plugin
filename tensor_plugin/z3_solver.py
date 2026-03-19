@@ -13,9 +13,19 @@ class NumpySolver:
             print("Need at least one of lhs, lhs_rank, rhs, rhs_rank")
             raise RuntimeError         
 
+
+        # Added to help with unbounded
+        self.lhs_unbounded = Unbounded in self.lhs
+        self.rhs_unbounded = Unbounded in self.rhs
+
+        if self.lhs_unbounded:
+            self.lhs = [d for d in self.lhs if d is not Unbounded]
+        if self.rhs_unbounded:
+            self.rhs = [d for d in self.rhs if d is not Unbounded]
+
         # inputed rank gets priority
-        self.lhs_rank = lhs_rank if lhs_rank else len(lhs)
-        self.rhs_rank = rhs_rank if rhs_rank else len(rhs)
+        self.lhs_rank = lhs_rank if lhs_rank else len(self.lhs)
+        self.rhs_rank = rhs_rank if rhs_rank else len(self.rhs)
         
         self.solver = Solver()
 
@@ -84,6 +94,15 @@ class NumpySolver:
             elif self.rhs_vec:
                 output.pop(-1)
                 rhs.pop(-1)
+            
+            # Readd the unbounded
+            if self.lhs_unbounded or self.rhs_unbounded:
+                if isinstance(output, list):
+                    output.insert(0, Unbounded)
+                if self.lhs_unbounded:
+                    lhs.insert(0, Unbounded)
+                if self.rhs_unbounded:
+                    rhs.insert(0, Unbounded)
 
         return lhs, rhs, output
 
@@ -114,6 +133,13 @@ class NumpySolver:
                 lhs.pop(0)
             while self.rhs_rank < len(rhs):
                 rhs.pop(0)
+
+            if self.lhs_unbounded or self.rhs_unbounded:
+                output.insert(0, Unbounded)
+                if self.lhs_unbounded:
+                    lhs.insert(0, Unbounded)
+                if self.rhs_unbounded:
+                    rhs.insert(0, Unbounded)
 
         return lhs, rhs, output
     
@@ -483,7 +509,9 @@ class NumpySolver:
 
         self.solver.add(rhs_prod == rhs_product)
         
-        self.solver.add(lhs_prod == rhs_prod)
+        # If one is unbounded then we can't assume that the products are equal
+        if not self.lhs_unbounded and not self.rhs_unbounded:
+            self.solver.add(lhs_prod == rhs_prod)
 
     def _reshape_sols(self, var_list):
         solutions = [set() for _ in range(len(var_list))]
@@ -525,6 +553,147 @@ class NumpySolver:
                 output[i] = tuple(sorted(list(sol)))
         
         return output
+    
+    def _expand_ellipsis(self, slice_tuple):
+        """Helper to replace Ellipsis with the correct number of slice(None)"""
+        slice_list = list(slice_tuple) if isinstance(slice_tuple, tuple) else [slice_tuple]
+        
+        if Ellipsis not in slice_list:
+            return slice_list
+            
+        # Only one Ellipsis allowed
+        if slice_list.count(Ellipsis) > 1:
+            return None
+            
+        idx = slice_list.index(Ellipsis)
+        missing_dims = self.lhs_rank - (len(slice_list) - 1)
+        
+            
+        # We pad with missing dims if there are, 
+        # if it is negative and unbounded then we just remove the ellipsis, 
+        # if it is negative and not unbounded then its an error
+        if missing_dims > 0:
+            replacements = [slice(None)] * missing_dims
+        elif missing_dims < 0 and self.lhs_unbounded: 
+            replacements = []
+        elif missing_dims < 0 and not self.lhs_unbounded:
+            return None
+        elif missing_dims == 0:
+            replacements = []
+        return slice_list[:idx] + replacements + slice_list[idx+1:]
+
+
+    def solve_slicing(self, slice_tuple):
+        """Formally verifies slicing bounds and calculates the output shape."""
+
+        # 1. Expand Ellipsis
+        slice_list = self._expand_ellipsis(slice_tuple)
+        if slice_list is None:
+            # Syntax/Dimension Error
+            return None             
+        
+        if not self.lhs_unbounded and len(slice_list) > self.lhs_rank:
+            return None
+
+        
+        while len(slice_list) < self.lhs_rank:
+            slice_list.append(slice(None))
+        
+        # If it is unbounded, we want to pad to the length of the slice list
+        if self.lhs_unbounded:
+            self.lhs_rank = max(self.lhs_rank, len(slice_list))
+
+        self.lhs_vars = [Int(f"lhs_slice_{i}") for i in range(self.lhs_rank)]
+        self.output_vars = []
+        
+        # 2. Set up LHS constraints (Same as your reshape logic)
+        for i in range(self.lhs_rank):
+            dim = self.lhs[i]
+            var = self.lhs_vars[i]
+            self.solver.add(var > 0)
+            
+            if isinstance(dim, int):
+                self.solver.add(var == dim)
+            elif isinstance(dim, tuple):
+                self.solver.add(Or([var == val for val in dim]))
+
+        # 3. Apply Slicing Mathematics
+        for i in range(self.lhs_rank):
+            s = slice_list[i]
+            dim_var = self.lhs_vars[i]
+
+            if isinstance(s, int):
+                # Prove no IndexError occurs
+                self.solver.add(s >= -dim_var)
+                self.solver.add(s < dim_var)
+                # Dimension drops, do not append to output_vars
+                
+            elif isinstance(s, slice):
+                # If parameters are completely unknown 
+                if s.start is int or s.stop is int or s.step is int:
+                    out_var = Int(f"out_slice_unk_params_{i}")
+                    self.solver.add(out_var >= 0)
+                    self.solver.add(out_var <= dim_var)
+                    self.output_vars.append(out_var)
+                    continue
+
+                # --- ADD STRICT BOUNDARY CONSTRAINTS ---
+                # This forces Z3 to return UNSAT (triggering your plugin error) 
+                # if the literal bounds exceed the array dimensions
+                if isinstance(s.start, int):
+                    self.solver.add(s.start >= -dim_var)
+                    self.solver.add(s.start <= dim_var)
+                if isinstance(s.stop, int):
+                    self.solver.add(s.stop >= -dim_var)
+                    self.solver.add(s.stop <= dim_var)
+
+                out_var = Int(f"out_slice_{i}")
+                
+                # Setup Defaults based on Step Direction
+                step_val = 1 if s.step is None else s.step
+                if step_val > 0:
+                    z3_start = 0 if s.start is None else s.start
+                    z3_stop = dim_var if s.stop is None else s.stop
+                else:
+                    z3_start = dim_var - 1 if s.start is None else s.start
+                    z3_stop = -1 if s.stop is None else s.stop # -1 to include index 0
+
+                # Convert negative relative indices to positive space
+                if s.start is not None and isinstance(z3_start, int) and z3_start < 0:
+                    z3_start = dim_var + z3_start
+                if s.stop is not None and isinstance(z3_stop, int) and z3_stop < 0:
+                    z3_stop = dim_var + z3_stop
+                
+                diff = z3_stop - z3_start if step_val > 0 else z3_start - z3_stop
+                step_val = step_val if step_val > 0 else -step_val
+
+                z3_diff = IntVal(diff) if isinstance(diff, int) else diff
+                z3_len = If(z3_diff <= 0, 0, (z3_diff + step_val - 1) / step_val)
+                
+                self.solver.add(out_var == z3_len)
+                self.output_vars.append(out_var)
+            
+            else:
+                # Fallback for symbolic unknown slices (e.g. variable indices)
+                # We know the dimension persists, but its size is between 0 and original dim
+                out_var = Int(f"out_slice_unk_{i}")
+                self.solver.add(out_var >= 0)
+                self.solver.add(out_var <= dim_var)
+                self.output_vars.append(out_var)
+
+        # 4. Extract Solutions
+        if self.solver.check() == sat:
+            output = self._reshape_sols(self.output_vars)
+            
+            # Add Unbounded
+            if self.lhs_unbounded:
+                output.insert(0, Unbounded)
+                
+            return output
+        else:
+            # IndexError
+            print(self.solver.assertions())
+            return None
 
 
 

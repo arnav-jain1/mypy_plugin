@@ -7,7 +7,7 @@ from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTabl
 from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, ArgKind
 from mypy.errorcodes import ErrorCode, OVERRIDE
 
-from z3_solver import NumpySolver, UnboundedType
+from z3_solver import NumpySolver, UnboundedType, Unbounded
 from slicing import slice_output
 from typing import *
 import numpy as np
@@ -140,6 +140,8 @@ class CustomPlugin(Plugin):
         return None
     def get_method_signature_hook(self, fullname):
         # print(f"DEBUG method sig: {fullname}")
+        if fullname == "numpy.ndarray.__getitem__":
+            return self.slicing_sig
         return None
 # endregion
 
@@ -524,6 +526,15 @@ class CustomPlugin(Plugin):
         # print(f"Final output: {final_type}")
         return final_type
 
+    # TODO Dont let this be any but like an int or smth instead
+    def slicing_sig(self, ctx):    
+        any_type = AnyType(TypeOfAny.explicit)
+    
+        # Force the expected argument types to Any so validation passes
+        new_arg_types = [any_type] * len(ctx.default_signature.arg_types)
+    
+        return ctx.default_signature.copy_modified(arg_types=new_arg_types)
+
     def slicing(self, ctx):
         func_name = self.get_func_name(ctx)
         if func_name not in self.context:
@@ -555,6 +566,8 @@ class CustomPlugin(Plugin):
                 slicing.append(slice(start, stop, stride))
             elif isinstance(elem, EllipsisExpr):
                 slicing.append(Ellipsis)
+            elif isinstance(elem, UnaryExpr) and isinstance(elem.expr, IntExpr):
+                slicing.append(-elem.expr.value)
             else:
                 # Check if its a literal and if so append the value
                 # otherwise assume it is an int TODO: HANDLE SLICING OF Op expr (<=, 1+2, etc)
@@ -566,20 +579,27 @@ class CustomPlugin(Plugin):
                 else:
                     slicing.append(int)
 
-        try:
-            output = slice_output(lhs_shape, tuple(slicing))
-        except TabError:
-            ctx.api.fail("Ellipses Error or too many slices", ctx.context, code=OVERRIDE)
-            return ctx.default_return_type
-        except IndexError:
-            ctx.api.fail("Slicing Error", ctx.context, code=OVERRIDE)
-            return ctx.default_return_type
+        # try:
+        #     output = slice_output(lhs_shape, tuple(slicing))
+        # except TabError:
+        #     ctx.api.fail("Ellipses Error or too many slices", ctx.context, code=OVERRIDE)
+        #     return ctx.default_return_type
+        # except IndexError:
+        #     ctx.api.fail("Slicing Error", ctx.context, code=OVERRIDE)
+        #     return ctx.default_return_type
+        solver = NumpySolver(lhs=lhs_shape, rhs=None)
+        output = solver.solve_slicing(tuple(slicing))
 
-        
+        # If None, Z3 proved an IndexError or invalid syntax
+        if output is None:
+            ctx.api.fail("Slicing Error or Index out of bounds", ctx.context, code=OVERRIDE)
+            return ERROR_TYPE
 
-        if output == int:
+        if not output:
             return ctx.api.named_generic_type("builtins.int", [])
         final_type = self.type_creator(ctx, output, False)
+
+        # print(final_type)
         return final_type
 
     def reshape(self, ctx):
@@ -827,6 +847,8 @@ class CustomPlugin(Plugin):
         else:
             lhs_shape = self.get_shape(lhs.args[0])
 
+        if isinstance(lhs_shape[0], UnboundedType):
+            lhs_shape = lhs_shape[1:]
         lhs_new = lhs_shape[::-1]
 
         lhs_new_type = self.type_creator(ctx, lhs_new, False)
@@ -904,6 +926,8 @@ class CustomPlugin(Plugin):
             output = None
         elif isinstance(index, IntExpr):
             output = index.value
+        elif isinstance(index, UnaryExpr) and isinstance(index.expr, IntExpr):
+            output = -index.expr.value
         elif isinstance(index, NameExpr):
             output = arg_types[i].args[elem].value if isinstance(arg_types[i].args[elem], LiteralType) else int 
         else:
@@ -975,13 +999,13 @@ class CustomPlugin(Plugin):
         return shape, rank
 
     def get_shape(self, shape):
-        # If no input, assume a 2x2 matrix
+        # If no input, use unbounded type
         if isinstance(shape, AnyType) or isinstance(shape, Instance):
-            return [UnboundedType]
+            return [Unbounded]
         shape = shape.items
         shape_output = []
         for dim in shape:
-            print(dim)
+            # print(dim)
             if isinstance(dim, Instance):
                 shape_output.append(int)
             elif isinstance(dim, LiteralType):
@@ -989,7 +1013,7 @@ class CustomPlugin(Plugin):
             elif isinstance(dim, UnionType):
                 shape_output.append(tuple(d.value for d in dim.items))
             elif isinstance(dim, AnyType):
-                shape_output.append(UnboundedType)
+                shape_output.append(Unbounded)
             
 
         return shape_output
