@@ -1,0 +1,145 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["5fc144c9fe6f44e5.olean"],
+  "i": "aee030b37ee94cf1.ilean",
+  "c": "446d350def9eefb8.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\Cli\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\batteries\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\Qq\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\aesop\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\proofwidgets\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\importGraph\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\LeanSearchClient\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\plausible\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\packages\\mathlib\\.lake\\build\\lib\\lean;C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\build\\lib\\lean c:\\Users\\Arnav\\.elan\\toolchains\\leanprover--lean4---v4.28.0\\bin\\lean.exe C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\RequestProject\\Soundness.lean -o C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\build\\lib\\lean\\RequestProject\\Soundness.olean -i C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\build\\lib\\lean\\RequestProject\\Soundness.ilean -c C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\build\\ir\\RequestProject\\Soundness.c --setup C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\.lake\\build\\ir\\RequestProject\\Soundness.setup.json --json",
+   "level": "trace"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] exact Subtype.refl Val.nil.typeOf",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] (expose_names; exact Subtype.refl (Val.obj A_2).typeOf)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] exact Subtype.refl Val.true_.typeOf",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] exact Subtype.refl Val.false_.typeOf",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] (expose_names; exact Subtype.refl (Val.cls A_2).typeOf)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] (expose_names; exact Subtype.trans h_ih hSub)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:40:26: Try this:\n  [apply] exact Subtype.refl Val.nil.typeOf",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tNil Δ",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tObj Δ Γ",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tSelf Δ e (hExt VarId.self_id e ty)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tTrue Δ",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tFalse Δ",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tType Δ hType",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tVar Δ hExt hType' (hExt_1 hExt hType' hExt'))",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tTSelf Δ hType'' (hExt VarId.tself_id hType'' hExt'')",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tEq Δ e1 e2 A1 A2 h1_ih h2_ih)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tSeq Δ e1 e2 A1 A2 h1_ih h2_ih)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tNew Δ A)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tIf Δ e1 e2 e3 A1 A2 A3 h1_ih h2_ih h3_ih)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tApp Δ e0 e1 m Arecv Aarg A1 A2 h0_ih h1_ih hUser hCT hSub)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tAppLib Δ e0 e1 m Ares Arec Aarg h0_ih h1_ih hLib)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] (expose_names; exact HasType.tSub Δ e_1 a a' h_ih hSub)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:57:12: Try this:\n  [apply] exact HasType.tNil Δ",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:133:10: Try this:\n  [apply] exact fun {a b c} a_2 a_3 => subtype_trans' a_2 a_3",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:260:10: Try this:\n  [apply] (expose_names; exact subtype_trans' (h_ih rfl) hSub)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:262:4: Try this:\n  [apply] exact subtype_trans' h_ind h2",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:389:5: unused variable `hValid`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:432:8: Try this:\n  [apply] exact Exists₂.imp (fun a b a_1 => a_1) hUserCall",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:627:4: Try this:\n  [apply] exact ctx_decomposition hType",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:633:4: Try this:\n  [apply] exact val_type_subtype hArecv",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:650:36: This simp argument is unused:\n  Subtype.trans\n\nHint: Omit it from the simp argument list.\n  simp_all +decide ̵[̵ ̵S̵u̵b̵t̵y̵p̵e̵.̵t̵r̵a̵n̵s̵ ̵]̵\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:666:16: Try this:\n  [apply] exact CtxHasType.hole Δ tyHole",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:666:16: Try this:\n  [apply] (expose_names; exact CtxHasType.ctxSub Δ tyHole C_1 tyC tyC' hCtx_ih hSub)",
+   "level": "info"},
+  {"message":
+   "RequestProject/Soundness.lean:785:5: unused variable `hNotVal`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:786:5: unused variable `hNotUserCall`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:979:30: This simp argument is unused:\n  StepResult.config\n\nHint: Omit it from the simp argument list.\n  simp ̵[̵S̵t̵e̵p̵R̵e̵s̵u̵l̵t̵.̵c̵o̵n̵f̵i̵g̵]̵\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:982:30: This simp argument is unused:\n  StepResult.config\n\nHint: Omit it from the simp argument list.\n  simp ̵[̵S̵t̵e̵p̵R̵e̵s̵u̵l̵t̵.̵c̵o̵n̵f̵i̵g̵]̵\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"},
+  {"message":
+   "RequestProject/Soundness.lean:985:30: This simp argument is unused:\n  StepResult.config\n\nHint: Omit it from the simp argument list.\n  simp ̵[̵S̵t̵e̵p̵R̵e̵s̵u̵l̵t̵.̵c̵o̵n̵f̵i̵g̵]̵\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`",
+   "level": "warning"}],
+ "inputs":
+ [["RequestProject.Soundness:deps",
+   [["deps",
+     [["RequestProject/RequestProject:extraDep",
+       [["@RequestProject:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["RequestProject.Typing transitive imports (legacy)",
+         "cdbe654a6689553e"],
+        ["RequestProject.Typing:importAllArts", "6faa67ff0a3f4a94"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.28.0, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b",
+   "a96bc04a2e5e9630"],
+  ["C:\\Users\\Arnav\\Desktop\\programming\\mypy_plugin\\lean_proofs\\RequestProject\\Soundness.lean",
+   "c6f2a0dc85127847"],
+  ["options", "00000000000006bb"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "f378d49aadd0e7db"}

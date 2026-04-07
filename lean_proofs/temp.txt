@@ -1,0 +1,15 @@
+You are exactly right. Great catch. 
+
+Writing $e[e]$ implies the index is just a standard single expression, which completely ignores NumPy's actual slicing syntax (colons, step values, tuples of slices, and ellipses). 
+
+To fix this, we need to add a dedicated syntactic category for slice indices ($idx$) and the individual slice elements ($s$) inside them. Here is the corrected Overleaf-ready snippet:
+
+\subsection*{Expressions and Slicing}
+To accurately model NumPy's multi-dimensional array slicing, we introduce a dedicated syntax for slice indices. A single slice element $s$ can be a standard integer expression, a range with optional start/stop/step bounds ($e:e$ or $e:e:e$), or the unbounded Ellipsis marker $U$. The full index $idx$ is either a single slice element or a tuple of slice elements.
+
+$$s ::= e \mid e : e \mid e : e : e \mid U$$
+$$idx ::= s \mid (s_1, \dots, s_k)$$
+
+The expression grammar is then updated to use this specific index structure for array access:
+
+$$e ::= \dots \mid e \mathbin{@} e \mid e + e \mid e * e \mid e[idx] \mid e.\text{reshape}(e)$$
