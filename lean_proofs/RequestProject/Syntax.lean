@@ -54,6 +54,7 @@ inductive Expr where
   | checkedCall : ClassId → Expr → MethId → Expr → Expr  -- ⌈A⌉e.m(e)
   | broadcast : Expr → Expr → Expr                        -- tensor broadcast
   | matmul : Expr → Expr → Expr                           -- tensor matmul
+  | reshape : Expr → List ℕ → Expr                      -- tensor reshape (e, target_shape)
 deriving DecidableEq, Repr
 
 /-- Evaluation contexts -/
@@ -71,6 +72,7 @@ inductive Ctx where
   | broadcastR : Val → Ctx → Ctx                    -- broadcast(v, C)
   | matmulL : Ctx → Expr → Ctx                      -- matmul(C, e)
   | matmulR : Val → Ctx → Ctx                       -- matmul(v, C)
+  | reshapeC : Ctx → List ℕ → Ctx                       -- reshape(C, target_shape)
 deriving DecidableEq, Repr
 
 /-- Fill a context with an expression -/
@@ -88,6 +90,7 @@ def Ctx.fill : Ctx → Expr → Expr
   | .broadcastR v c, e => Expr.broadcast (Expr.val v) (c.fill e)
   | .matmulL c e2, e => Expr.matmul (c.fill e) e2
   | .matmulR v c, e => Expr.matmul (Expr.val v) (c.fill e)
+  | .reshapeC c s2, e => Expr.reshape (c.fill e) s2
 
 notation C "[[" e "]]" => Ctx.fill C e
 
@@ -106,6 +109,7 @@ def Ctx.compose : Ctx → Ctx → Ctx
   | .broadcastR v c, c' => .broadcastR v (c.compose c')
   | .matmulL c e, c' => .matmulL (c.compose c') e
   | .matmulR v c, c' => .matmulR v (c.compose c')
+  | .reshapeC c s2, c' => .reshapeC (c.compose c') s2
 
 theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
     (C.compose C')[[e]] = C[[C'[[e]]]] := by
@@ -123,6 +127,7 @@ theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
   | broadcastR v c ih => simp [Ctx.compose, Ctx.fill, ih]
   | matmulL c e2 ih => simp [Ctx.compose, Ctx.fill, ih]
   | matmulR v c ih => simp [Ctx.compose, Ctx.fill, ih]
+  | reshapeC c s2 ih => simp [Ctx.compose, Ctx.fill, ih]
 
 /-- Method type: A₁ → A₂ -/
 structure MethType where

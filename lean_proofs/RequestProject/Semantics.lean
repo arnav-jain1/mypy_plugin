@@ -197,6 +197,20 @@ inductive Step (methodDefs : MethKey → Option MethDef)
         ⟨E, Expr.matmul (Expr.val v1) (Expr.val v2), S⟩
         .blame
 
+  /-- (E-Reshape): reshape a tensor to a statically provided shape if their products match -/
+  | eReshape (E : DynEnv) (s1 s2 : List ℕ) (S : Stack)
+      (hProd : s1.prod = s2.prod) :
+      Step methodDefs libImpl ms
+        ⟨E, Expr.reshape (Expr.val (Val.tensor s1)) s2, S⟩
+        (.config ⟨E, Expr.val (Val.tensor s2), S⟩)
+
+  /-- Blame when reshape target product doesn't match or receiver is not a tensor -/
+  | eBlameReshape (E : DynEnv) (v : Val) (s2 : List ℕ) (S : Stack)
+      (hNotMatch : ¬ (∃ s1, v = Val.tensor s1 ∧ s1.prod = s2.prod)) :
+      Step methodDefs libImpl ms
+        ⟨E, Expr.reshape (Expr.val v) s2, S⟩
+        .blame
+
   /-- Blame propagation in contexts -/
   | eBlameContext (E : DynEnv) (C : Ctx) (e : Expr) (S : Stack)
     (hStep : Step methodDefs libImpl ms ⟨E, e, S⟩ .blame) :

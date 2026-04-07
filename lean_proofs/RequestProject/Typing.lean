@@ -80,6 +80,12 @@ inductive HasType (CT : ClassTable) (ms : MethodSets) :
     (h1 : HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]))
     (h2 : HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3])) :
     HasType CT ms Γ (Expr.matmul e1 e2) (ClassId.tensor_id [d1, d2, f3])
+  /-- T-Reshape: Reshapes a tensor to a static shape.
+      The product of the dimensions must match. -/
+  | tReshape (Γ : TypEnv) (e : Expr) (s1 s2 : List ℕ)
+    (h1 : HasType CT ms Γ e (ClassId.tensor_id s1))
+    (hProd : s1.prod = s2.prod) :
+    HasType CT ms Γ (Expr.reshape e s2) (ClassId.tensor_id s2)
   /-- Subsumption -/
   | tSub (Γ : TypEnv) (e : Expr) (a a' : ClassId)
     (h : HasType CT ms Γ e a)
@@ -160,6 +166,11 @@ inductive CtxHasType (CT : ClassTable) (ms : MethodSets) :
     (hCtx : CtxHasType CT ms Γ Ahole C tyC)
     (hSub : Subtype tyC tyC') :
     CtxHasType CT ms Γ Ahole C tyC'
+  /-- Context evaluation for the tensor in a reshape operation -/
+  | reshapeC (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (s1 s2 : List ℕ)
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s1))
+    (hProd : s1.prod = s2.prod) :
+    CtxHasType CT ms Γ Ahole (Ctx.reshapeC C s2) (ClassId.tensor_id s2)
 
 /-- Environmental consistency -/
 def EnvConsistent (CT : ClassTable) (ms : MethodSets) (Γ : TypEnv) (E : DynEnv) : Prop :=
