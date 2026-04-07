@@ -73,6 +73,13 @@ inductive HasType (CT : ClassTable) (ms : MethodSets) :
     (h1 : HasType CT ms Γ e1 (ClassId.tensor_id s))
     (h2 : HasType CT ms Γ e2 (ClassId.tensor_id s)) :
     HasType CT ms Γ (Expr.broadcast e1 e2) (ClassId.tensor_id s)
+  /-- T-Matmul: Performs batched matrix multiplication.
+      Left tensor must be [d1, d2, d3], right must be [d1, d3, f3].
+      Resulting tensor has shape [d1, d2, f3]. -/
+  | tMatmul (Γ : TypEnv) (e1 e2 : Expr) (d1 d2 d3 f3 : ℕ)
+    (h1 : HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]))
+    (h2 : HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3])) :
+    HasType CT ms Γ (Expr.matmul e1 e2) (ClassId.tensor_id [d1, d2, f3])
   /-- Subsumption -/
   | tSub (Γ : TypEnv) (e : Expr) (a a' : ClassId)
     (h : HasType CT ms Γ e a)
@@ -140,6 +147,14 @@ inductive CtxHasType (CT : ClassTable) (ms : MethodSets) :
     (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id s))
     (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s)) :
     CtxHasType CT ms Γ Ahole (Ctx.broadcastR v C) (ClassId.tensor_id s)
+  | matmulL (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (e : Expr) (d1 d2 d3 f3 : ℕ)
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id [d1, d2, d3]))
+    (hExpr : HasType CT ms Γ e (ClassId.tensor_id [d1, d3, f3])) :
+    CtxHasType CT ms Γ Ahole (Ctx.matmulL C e) (ClassId.tensor_id [d1, d2, f3])
+  | matmulR (Γ : TypEnv) (Ahole : ClassId) (v : Val) (C : Ctx) (d1 d2 d3 f3 : ℕ)
+    (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id [d1, d2, d3]))
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id [d1, d3, f3])) :
+    CtxHasType CT ms Γ Ahole (Ctx.matmulR v C) (ClassId.tensor_id [d1, d2, f3])
   /-- Subsumption for context output type -/
   | ctxSub (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (tyC tyC' : ClassId)
     (hCtx : CtxHasType CT ms Γ Ahole C tyC)

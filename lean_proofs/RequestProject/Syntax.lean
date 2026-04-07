@@ -53,6 +53,7 @@ inductive Expr where
   | call : Expr → MethId → Expr → Expr            -- e.m(e)
   | checkedCall : ClassId → Expr → MethId → Expr → Expr  -- ⌈A⌉e.m(e)
   | broadcast : Expr → Expr → Expr                        -- tensor broadcast
+  | matmul : Expr → Expr → Expr                           -- tensor matmul
 deriving DecidableEq, Repr
 
 /-- Evaluation contexts -/
@@ -68,6 +69,8 @@ inductive Ctx where
   | eqR : Val → Ctx → Ctx                          -- v == C
   | broadcastL : Ctx → Expr → Ctx                   -- broadcast(C, e)
   | broadcastR : Val → Ctx → Ctx                    -- broadcast(v, C)
+  | matmulL : Ctx → Expr → Ctx                      -- matmul(C, e)
+  | matmulR : Val → Ctx → Ctx                       -- matmul(v, C)
 deriving DecidableEq, Repr
 
 /-- Fill a context with an expression -/
@@ -83,6 +86,8 @@ def Ctx.fill : Ctx → Expr → Expr
   | .eqR v c, e => Expr.eq (Expr.val v) (c.fill e)
   | .broadcastL c e2, e => Expr.broadcast (c.fill e) e2
   | .broadcastR v c, e => Expr.broadcast (Expr.val v) (c.fill e)
+  | .matmulL c e2, e => Expr.matmul (c.fill e) e2
+  | .matmulR v c, e => Expr.matmul (Expr.val v) (c.fill e)
 
 notation C "[[" e "]]" => Ctx.fill C e
 
@@ -99,6 +104,8 @@ def Ctx.compose : Ctx → Ctx → Ctx
   | .eqR v c, c' => .eqR v (c.compose c')
   | .broadcastL c e, c' => .broadcastL (c.compose c') e
   | .broadcastR v c, c' => .broadcastR v (c.compose c')
+  | .matmulL c e, c' => .matmulL (c.compose c') e
+  | .matmulR v c, c' => .matmulR v (c.compose c')
 
 theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
     (C.compose C')[[e]] = C[[C'[[e]]]] := by
@@ -114,6 +121,8 @@ theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
   | eqR v c ih => simp [Ctx.compose, Ctx.fill, ih]
   | broadcastL c e2 ih => simp [Ctx.compose, Ctx.fill, ih]
   | broadcastR v c ih => simp [Ctx.compose, Ctx.fill, ih]
+  | matmulL c e2 ih => simp [Ctx.compose, Ctx.fill, ih]
+  | matmulR v c ih => simp [Ctx.compose, Ctx.fill, ih]
 
 /-- Method type: A₁ → A₂ -/
 structure MethType where

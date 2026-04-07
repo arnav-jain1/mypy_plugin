@@ -264,6 +264,112 @@ theorem new_inversion {Γ : TypEnv} {cls : ClassId} {ty : ClassId}
 
 /-! ## Context lemmas -/
 
+/-- tensor_id values are always ≥ 6 -/
+private lemma tensor_id_ge_six (s : List ℕ) : ClassId.tensor_id s ≥ 6 := by
+  simp [ClassId.tensor_id]
+
+/-
+lub never returns nil_id unless both arguments are nil_id
+-/
+private lemma lub_eq_zero {a b : ClassId} (h : lub a b = ClassId.nil_id) :
+    a = ClassId.nil_id ∧ b = ClassId.nil_id := by
+      unfold lub at h;
+      split_ifs at h <;> simp_all +decide
+
+/-
+If a ≤ₜ nil_id, then a = nil_id
+-/
+private lemma subtype_nil_eq {a : ClassId} (h : a ≤ₜ ClassId.nil_id) :
+    a = ClassId.nil_id := by
+      have := h;
+      revert ‹a ≤ₜ ClassId.nil_id› a;
+      intros a ha ha';
+      -- By definition of lub, if lub a b = ClassId.nil_id, then a must be ClassId.nil_id and b must be ClassId.nil_id.
+      have h_lub_nil : ∀ a b : ClassId, lub a b = ClassId.nil_id → a = ClassId.nil_id ∧ b = ClassId.nil_id := by
+        exact?;
+      have h_lub_nil : ∀ a b : ClassId, Subtype a b → b = ClassId.nil_id → a = ClassId.nil_id := by
+        intros a b hab hb_nil
+        induction' hab with a b hab ih;
+        all_goals norm_cast at *;
+        · grind;
+        · exact h_lub_nil _ _ hb_nil |>.1;
+        · exact h_lub_nil _ _ hb_nil |>.2;
+      exact h_lub_nil a _ ha rfl
+
+/-
+For a ∈ [1,5], lub(a, b) ≤ 5 for any b
+-/
+private lemma lub_le_five_left {a b : ClassId} (ha1 : 1 ≤ a) (ha5 : a ≤ 5) :
+    lub a b ≤ 5 := by
+      unfold lub; split_ifs <;> simp_all +decide ;
+
+/-
+For a ∈ [1,5], lub(b, a) ≤ 5 for any b
+-/
+private lemma lub_le_five_right {a b : ClassId} (ha1 : 1 ≤ a) (ha5 : a ≤ 5) :
+    lub b a ≤ 5 := by
+      convert lub_le_five_left ha1 ha5 using 1;
+      swap;
+      exact b;
+      unfold lub;
+      grind
+
+/-
+If a ∈ [1,5] and a ≤ₜ b, then b ≤ 5
+-/
+private lemma subtype_small_stays_small {a b : ClassId} (ha1 : 1 ≤ a) (ha5 : a ≤ 5)
+    (h : a ≤ₜ b) : b ≤ 5 := by
+      induction' h with a b h ih;
+      all_goals norm_cast at *;
+      · rename_i h₁ h₂ h₃ h₄;
+        by_cases h₅ : 1 ≤ ih <;> by_cases h₆ : ih ≤ 5 <;> simp_all +decide;
+        exact absurd ( subtype_nil_eq h₁ ) ( by rintro rfl; contradiction );
+      · exact?;
+      · exact?
+
+/-
+If a ≥ 6 and a ≤ₜ b, then b = a or b ≤ 5
+-/
+private lemma subtype_from_ge_six {a b : ClassId} (ha : a ≥ 6)
+    (h : a ≤ₜ b) : b = a ∨ b ≤ 5 := by
+      contrapose! h;
+      revert h;
+      rintro ⟨ hab, hb ⟩ h
+      induction' h with a b h ih;
+      all_goals norm_cast at *;
+      · rename_i k hk₁ hk₂ hk₃ hk₄;
+        by_cases hih : ih = h <;> by_cases hih' : ih ≥ 6 <;> simp_all +decide;
+        · exact absurd hk₃ ( not_le_of_gt hb );
+        · exact absurd ( subtype_small_stays_small ( show 1 ≤ ih from Nat.pos_of_ne_zero ( by
+                                                      rintro rfl;
+                                                      exact absurd ( subtype_nil_eq hk₁ ) ( by rintro rfl; contradiction ) ) ) hk₃ hk₂ ) ( by
+                                                      exact? );
+      · rename_i a b;
+        cases a <;> cases b <;> simp_all +decide [ lub ];
+        split_ifs at * <;> norm_cast at *;
+        lia;
+      · unfold lub at *;
+        split_ifs at hb;
+        all_goals simp_all +decide [ ClassId ]
+
+/-- If a ≥ 6 and b ≥ 6 and a ≤ₜ b, then a = b.
+    This holds because the Subtype relation only connects tensor-range values
+    to themselves (no non-trivial subtypings between distinct tensor types). -/
+private lemma subtype_ge_six_eq {a b : ClassId} (ha : a ≥ 6) (hb : b ≥ 6)
+    (h : a ≤ₜ b) : a = b := by
+  rcases subtype_from_ge_six ha h with rfl | hle
+  · rfl
+  · exact absurd hle (by simp [ClassId] at *; omega)
+
+/-
+If tensor_id s1 ≤ₜ tensor_id s2, then s1 = s2.
+-/
+theorem tensor_id_subtype_implies_eq {s1 s2 : List ℕ}
+    (h : ClassId.tensor_id s1 ≤ₜ ClassId.tensor_id s2) : s1 = s2 := by
+      have := @subtype_ge_six_eq;
+      specialize @this ( ClassId.tensor_id s1 ) ( ClassId.tensor_id s2 ) ; norm_num at *;
+      simp_all +decide [ ClassId.tensor_id ]
+
 /-
 Broadcast inversion: if broadcast(e1,e2) has type ty, there exists s such that
     e1 and e2 both have type tensor_id s and tensor_id s ≤ ty
@@ -280,6 +386,29 @@ theorem broadcast_inversion {Γ : TypEnv} {e1 e2 : Expr} {ty : ClassId}
     · exact ⟨ _, by assumption, by assumption, Subtype.refl _ ⟩;
     · rename_i h₁ h₂ h₃;
       exact h₃ rfl |> fun ⟨ s, hs₁, hs₂, hs₃ ⟩ => ⟨ s, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
+  exact h_inv h rfl
+
+/-
+Matmul inversion: if matmul(e1,e2) has type ty, there exist d1 d2 d3 f3 such that
+    e1 has type tensor_id [d1,d2,d3], e2 has type tensor_id [d1,d3,f3],
+    and tensor_id [d1,d2,f3] ≤ ty
+-/
+theorem matmul_inversion {Γ : TypEnv} {e1 e2 : Expr} {ty : ClassId}
+    (h : HasType CT ms Γ (Expr.matmul e1 e2) ty) :
+    ∃ (d1 d2 d3 f3 : ℕ),
+      HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]) ∧
+      HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3]) ∧
+      Subtype (ClassId.tensor_id [d1, d2, f3]) ty := by
+  have h_inv : ∀ {e ty}, HasType CT ms Γ e ty → e = Expr.matmul e1 e2 →
+      ∃ d1 d2 d3 f3, HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]) ∧
+        HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3]) ∧
+        (ClassId.tensor_id [d1, d2, f3] ≤ₜ ty) := by
+    intros e ty h h_eq; induction h; aesop;
+    all_goals cases h_eq;
+    · exact ⟨ _, _, _, _, by assumption, by assumption, Subtype.refl _ ⟩;
+    · rename_i h₁ h₂ h₃;
+      exact h₃ rfl |> fun ⟨ d1, d2, d3, f3, hs₁, hs₂, hs₃ ⟩ =>
+        ⟨ d1, d2, d3, f3, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
   exact h_inv h rfl
 
 /-- Lemma 1 (Contextual Decomposition). -/
@@ -347,6 +476,18 @@ theorem ctx_decomposition
     have hCtxArg := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
     exact ⟨tyE, ClassId.tensor_id s, hE,
       CtxHasType.broadcastR _ _ _ _ _ h1 hCtxArg, hSub⟩
+  | matmulL C' e2 ih =>
+    obtain ⟨d1, d2, d3, f3, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
+    obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h1
+    have hCtxRecv := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
+    exact ⟨tyE, ClassId.tensor_id [d1, d2, f3], hE,
+      CtxHasType.matmulL _ _ _ _ _ _ _ _ hCtxRecv h2, hSub⟩
+  | matmulR v C' ih =>
+    obtain ⟨d1, d2, d3, f3, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
+    obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h2
+    have hCtxArg := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
+    exact ⟨tyE, ClassId.tensor_id [d1, d2, f3], hE,
+      CtxHasType.matmulR _ _ _ _ _ _ _ _ h1 hCtxArg, hSub⟩
 
 /-
 Lemma 2 (Substitution).
@@ -368,6 +509,7 @@ theorem substitution_lemma
     | (apply HasType.tEq <;> assumption)
     | (apply HasType.tAppLib <;> assumption)
     | (apply HasType.tBroadcast <;> assumption)
+    | (apply HasType.tMatmul <;> assumption)
     | (apply HasType.tSub <;> assumption)
 
 /-! ## Main theorems -/
@@ -555,6 +697,20 @@ theorem progress_core
             · obtain ⟨s', rfl, rfl⟩ := hm
               exact Or.inl ⟨_, _, _, Step.eBroadcast E s' S⟩
             · exact Or.inr (Step.eBlameBroadcast E v1 v2 S hm)))
+  | tMatmul _ _ d1 d2 d3 f3 h1 h2 ih1 ih2 =>
+    right
+    show (∃ E' e' S', Step _ _ _ ⟨E, (Ctx.matmulL Ctx.hole _)[[_]], S⟩ _) ∨ _
+    exact progress_subexpr (ih1 hEnvCons) hValid
+      (fun v1 hv1 => by
+        subst hv1
+        show (∃ E' e' S', Step _ _ _ ⟨E, (Ctx.matmulR v1 Ctx.hole)[[_]], S⟩ _) ∨ _
+        exact progress_subexpr (ih2 hEnvCons) hValid
+          (fun v2 hv2 => by
+            subst hv2
+            by_cases hm : ∃ d1' d2' d3' f3', v1 = Val.tensor [d1', d2', d3'] ∧ v2 = Val.tensor [d1', d3', f3']
+            · obtain ⟨d1', d2', d3', f3', rfl, rfl⟩ := hm
+              exact Or.inl ⟨_, _, _, Step.eMatmul E d1' d2' d3' f3' S⟩
+            · exact Or.inr (Step.eBlameMatmul E v1 v2 S hm)))
 
 theorem ctx_weakening
     {Γ Δ : TypEnv} {C : Ctx} {tyHole tyCtx : ClassId}
@@ -669,9 +825,25 @@ private theorem preservation_same_stack
     have hValSub := val_type_subtype h1
     exact ⟨Γ, (Val.tensor s).typeOf, val_has_type Γ (Val.tensor s), hEnvCons,
       Subtype.trans hValSub hSub, fun x a h => h⟩
+  | eMatmul E_v d1 d2 d3 f3 S_v =>
+    intro Γ E E' e e' ty S hc hr hType hEnvCons hValid
+    cases hc; cases hr
+    obtain ⟨d1', d2', d3', f3', h1, h2, hSub⟩ := matmul_inversion hType
+    have hVS1 := val_type_subtype h1
+    have hVS2 := val_type_subtype h2
+    have heq1 := tensor_id_subtype_implies_eq hVS1
+    have heq2 := tensor_id_subtype_implies_eq hVS2
+    -- heq1 : [d1, d2, d3] = [d1', d2', d3'], heq2 : [d1, d3, f3] = [d1', d3', f3']
+    have hd1 : d1 = d1' := by have := List.cons.inj heq1; exact this.1
+    have hd2 : d2 = d2' := by have := List.cons.inj heq1; have := List.cons.inj this.2; exact this.1
+    have hf3 : f3 = f3' := by have := List.cons.inj heq2; have := List.cons.inj this.2; have := List.cons.inj this.2; exact this.1
+    subst hd1; subst hd2; subst hf3
+    exact ⟨Γ, (Val.tensor [d1, d2, f3]).typeOf, val_has_type Γ (Val.tensor [d1, d2, f3]), hEnvCons,
+      Subtype.trans (Subtype.refl _) hSub, fun x a h => h⟩
   | eBlameNilRecv => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameCheckedCall => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameBroadcast => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
+  | eBlameMatmul => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameContext => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
 
 private theorem preservation_eAppUD
@@ -931,6 +1103,24 @@ private theorem preservation_gen
         exact Subtype.trans (Subtype.trans hValSub hSub) hSubStack),
       hEnvCons, hStackCons,
       fun _ => ⟨Subtype.trans hValSub hSub, fun x a h => h⟩⟩
+  | eMatmul E_v d1 d2 d3 f3 S_v =>
+    intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
+    cases hc; cases hr
+    obtain ⟨d1', d2', d3', f3', h1, h2, hSub⟩ := matmul_inversion hType
+    have hVS1 := val_type_subtype h1
+    have hVS2 := val_type_subtype h2
+    have heq1 := tensor_id_subtype_implies_eq hVS1
+    have heq2 := tensor_id_subtype_implies_eq hVS2
+    have hd1 : d1 = d1' := by have := List.cons.inj heq1; exact this.1
+    have hd2 : d2 = d2' := by have := List.cons.inj heq1; have := List.cons.inj this.2; exact this.1
+    have hf3 : f3 = f3' := by have := List.cons.inj heq2; have := List.cons.inj this.2; have := List.cons.inj this.2; exact this.1
+    subst hd1; subst hd2; subst hf3
+    have hResultSub : (Val.tensor [d1, d2, f3]).typeOf ≤ₜ ty := Subtype.trans (Subtype.refl _) hSub
+    exact ⟨Γ, TS, (Val.tensor [d1, d2, f3]).typeOf, val_has_type Γ (Val.tensor [d1, d2, f3]),
+      (by cases TS with | nil => trivial | cons ts rest =>
+        exact Subtype.trans hResultSub hSubStack),
+      hEnvCons, hStackCons,
+      fun _ => ⟨hResultSub, fun x a h => h⟩⟩
   | eBlameNilRecv E_v C_v m v S_v hNil =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
@@ -938,6 +1128,9 @@ private theorem preservation_gen
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
   | eBlameBroadcast E_v v1 v2 S_v hNotMatch =>
+    intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
+    exact absurd hr (by simp [StepResult.config])
+  | eBlameMatmul E_v v1 v2 S_v hNotMatch =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
   | eBlameContext E_v C_v e_v S_v hStep_inner =>

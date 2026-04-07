@@ -184,6 +184,19 @@ inductive Step (methodDefs : MethKey → Option MethDef)
       ⟨E, Expr.broadcast (Expr.val v1) (Expr.val v2), S⟩
       .blame
 
+  /-- (E-Matmul): matmul of two 3D tensors matching batch and inner dimensions -/
+  | eMatmul (E : DynEnv) (d1 d2 d3 f3 : ℕ) (S : Stack) :
+      Step methodDefs libImpl ms
+        ⟨E, Expr.matmul (Expr.val (Val.tensor [d1, d2, d3])) (Expr.val (Val.tensor [d1, d3, f3])), S⟩
+        (.config ⟨E, Expr.val (Val.tensor [d1, d2, f3]), S⟩)
+
+  /-- Blame when matmul shapes don't match or are not 3D tensors -/
+  | eBlameMatmul (E : DynEnv) (v1 v2 : Val) (S : Stack)
+      (hNotMatch : ¬ (∃ d1 d2 d3 f3, v1 = Val.tensor [d1, d2, d3] ∧ v2 = Val.tensor [d1, d3, f3])) :
+      Step methodDefs libImpl ms
+        ⟨E, Expr.matmul (Expr.val v1) (Expr.val v2), S⟩
+        .blame
+
   /-- Blame propagation in contexts -/
   | eBlameContext (E : DynEnv) (C : Ctx) (e : Expr) (S : Stack)
     (hStep : Step methodDefs libImpl ms ⟨E, e, S⟩ .blame) :
