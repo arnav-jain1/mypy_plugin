@@ -376,57 +376,48 @@ Broadcast inversion: if broadcast(e1,e2) has type ty, there exists s such that
 -/
 theorem broadcast_inversion {Γ : TypEnv} {e1 e2 : Expr} {ty : ClassId}
     (h : HasType CT ms Γ (Expr.broadcast e1 e2) ty) :
-    ∃ (s : List ℕ),
-      HasType CT ms Γ e1 (ClassId.tensor_id s) ∧
-      HasType CT ms Γ e2 (ClassId.tensor_id s) ∧
-      Subtype (ClassId.tensor_id s) ty := by
-  have h_inv : ∀ {e ty}, HasType CT ms Γ e ty → e = Expr.broadcast e1 e2 → ∃ s, HasType CT ms Γ e1 (ClassId.tensor_id s) ∧ HasType CT ms Γ e2 (ClassId.tensor_id s) ∧ (ClassId.tensor_id s ≤ₜ ty) := by
+    ∃ (s1 s2 sOut : List ℕ),
+      broadcastShapes s1 s2 = some sOut ∧
+      HasType CT ms Γ e1 (ClassId.tensor_id s1) ∧
+      HasType CT ms Γ e2 (ClassId.tensor_id s2) ∧
+      Subtype (ClassId.tensor_id sOut) ty := by
+  have h_inv : ∀ {e ty}, HasType CT ms Γ e ty → e = Expr.broadcast e1 e2 →
+      ∃ s1 s2 sOut, broadcastShapes s1 s2 = some sOut ∧
+        HasType CT ms Γ e1 (ClassId.tensor_id s1) ∧
+        HasType CT ms Γ e2 (ClassId.tensor_id s2) ∧
+        (ClassId.tensor_id sOut ≤ₜ ty) := by
     intros e ty h h_eq; induction h; aesop;
     all_goals cases h_eq;
-    · exact ⟨ _, by assumption, by assumption, Subtype.refl _ ⟩;
+    · exact ⟨ _, _, _, by assumption, by assumption, by assumption, Subtype.refl _ ⟩;
     · rename_i h₁ h₂ h₃;
-      exact h₃ rfl |> fun ⟨ s, hs₁, hs₂, hs₃ ⟩ => ⟨ s, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
+      exact h₃ rfl |> fun ⟨ s1, s2, sOut, hb, hs₁, hs₂, hs₃ ⟩ =>
+        ⟨ s1, s2, sOut, hb, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
   exact h_inv h rfl
 
 /-
-Matmul inversion: if matmul(e1,e2) has type ty, there exist d1 d2 d3 f3 such that
-    e1 has type tensor_id [d1,d2,d3], e2 has type tensor_id [d1,d3,f3],
-    and tensor_id [d1,d2,f3] ≤ ty
+Matmul inversion: if matmul(e1,e2) has type ty, there exist batch1 batch2 batchOut m k n such that
+    batch dims are broadcast-compatible, e1 has type tensor_id (batch1 ++ [m, k]),
+    e2 has type tensor_id (batch2 ++ [k, n]), and tensor_id (batchOut ++ [m, n]) ≤ ty
 -/
 theorem matmul_inversion {Γ : TypEnv} {e1 e2 : Expr} {ty : ClassId}
     (h : HasType CT ms Γ (Expr.matmul e1 e2) ty) :
-    ∃ (d1 d2 d3 f3 : ℕ),
-      HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]) ∧
-      HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3]) ∧
-      Subtype (ClassId.tensor_id [d1, d2, f3]) ty := by
+    ∃ (batch1 batch2 batchOut : List ℕ) (m k n : ℕ),
+      broadcastShapes batch1 batch2 = some batchOut ∧
+      HasType CT ms Γ e1 (ClassId.tensor_id (batch1 ++ [m, k])) ∧
+      HasType CT ms Γ e2 (ClassId.tensor_id (batch2 ++ [k, n])) ∧
+      Subtype (ClassId.tensor_id (batchOut ++ [m, n])) ty := by
   have h_inv : ∀ {e ty}, HasType CT ms Γ e ty → e = Expr.matmul e1 e2 →
-      ∃ d1 d2 d3 f3, HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]) ∧
-        HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3]) ∧
-        (ClassId.tensor_id [d1, d2, f3] ≤ₜ ty) := by
+      ∃ batch1 batch2 batchOut m k n,
+        broadcastShapes batch1 batch2 = some batchOut ∧
+        HasType CT ms Γ e1 (ClassId.tensor_id (batch1 ++ [m, k])) ∧
+        HasType CT ms Γ e2 (ClassId.tensor_id (batch2 ++ [k, n])) ∧
+        (ClassId.tensor_id (batchOut ++ [m, n]) ≤ₜ ty) := by
     intros e ty h h_eq; induction h; aesop;
     all_goals cases h_eq;
-    · exact ⟨ _, _, _, _, by assumption, by assumption, Subtype.refl _ ⟩;
+    · exact ⟨ _, _, _, _, _, _, by assumption, by assumption, by assumption, Subtype.refl _ ⟩;
     · rename_i h₁ h₂ h₃;
-      exact h₃ rfl |> fun ⟨ d1, d2, d3, f3, hs₁, hs₂, hs₃ ⟩ =>
-        ⟨ d1, d2, d3, f3, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
-  exact h_inv h rfl
-
-/-
-Reshape inversion: if reshape(e, s2) has type ty, there exists s1 such that
-    e has type tensor_id s1 and s1.prod = s2.prod and tensor_id s2 ≤ ty
--/
-theorem reshape_inversion {Γ : TypEnv} {e : Expr} {s2 : List ℕ} {ty : ClassId}
-    (h : HasType CT ms Γ (Expr.reshape e s2) ty) :
-    ∃ (s1 : List ℕ),
-      HasType CT ms Γ e (ClassId.tensor_id s1) ∧
-      s1.prod = s2.prod ∧
-      Subtype (ClassId.tensor_id s2) ty := by
-  have h_inv : ∀ {e' ty}, HasType CT ms Γ e' ty → e' = Expr.reshape e s2 → ∃ s1, HasType CT ms Γ e (ClassId.tensor_id s1) ∧ s1.prod = s2.prod ∧ (ClassId.tensor_id s2 ≤ₜ ty) := by
-    intros e' ty h h_eq; induction h; aesop;
-    all_goals cases h_eq;
-    · exact ⟨ _, by assumption, by assumption, Subtype.refl _ ⟩;
-    · rename_i h₁ h₂ h₃;
-      exact h₃ rfl |> fun ⟨ s1, hs₁, hs₂, hs₃ ⟩ => ⟨ s1, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
+      exact h₃ rfl |> fun ⟨ b1, b2, bo, m, k, n, hb, hs₁, hs₂, hs₃ ⟩ =>
+        ⟨ b1, b2, bo, m, k, n, hb, hs₁, hs₂, Subtype.trans hs₃ h₁ ⟩;
   exact h_inv h rfl
 
 /-- Lemma 1 (Contextual Decomposition). -/
@@ -483,35 +474,29 @@ theorem ctx_decomposition
     exact ⟨tyE, Ares, hE,
       CtxHasType.checkedCallR _ _ Arec Aarg _ _ _ _ h0 hCtxArg hLib, hSub⟩
   | broadcastL C' e2 ih =>
-    obtain ⟨s, h1, h2, hSub⟩ := broadcast_inversion hCtxExpr
+    obtain ⟨s1, s2, sOut, hb, h1, h2, hSub⟩ := broadcast_inversion hCtxExpr
     obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h1
     have hCtxRecv := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
-    exact ⟨tyE, ClassId.tensor_id s, hE,
-      CtxHasType.broadcastL _ _ _ _ _ hCtxRecv h2, hSub⟩
+    exact ⟨tyE, ClassId.tensor_id sOut, hE,
+      CtxHasType.broadcastL _ _ _ _ _ _ _ hb hCtxRecv h2, hSub⟩
   | broadcastR v C' ih =>
-    obtain ⟨s, h1, h2, hSub⟩ := broadcast_inversion hCtxExpr
+    obtain ⟨s1, s2, sOut, hb, h1, h2, hSub⟩ := broadcast_inversion hCtxExpr
     obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h2
     have hCtxArg := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
-    exact ⟨tyE, ClassId.tensor_id s, hE,
-      CtxHasType.broadcastR _ _ _ _ _ h1 hCtxArg, hSub⟩
+    exact ⟨tyE, ClassId.tensor_id sOut, hE,
+      CtxHasType.broadcastR _ _ _ _ _ _ _ hb h1 hCtxArg, hSub⟩
   | matmulL C' e2 ih =>
-    obtain ⟨d1, d2, d3, f3, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
+    obtain ⟨b1, b2, bo, m, k, n, hb, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
     obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h1
     have hCtxRecv := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
-    exact ⟨tyE, ClassId.tensor_id [d1, d2, f3], hE,
-      CtxHasType.matmulL _ _ _ _ _ _ _ _ hCtxRecv h2, hSub⟩
+    exact ⟨tyE, ClassId.tensor_id (bo ++ [m, n]), hE,
+      CtxHasType.matmulL _ _ _ _ _ _ _ _ _ _ hb hCtxRecv h2, hSub⟩
   | matmulR v C' ih =>
-    obtain ⟨d1, d2, d3, f3, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
+    obtain ⟨b1, b2, bo, m, k, n, hb, h1, h2, hSub⟩ := matmul_inversion hCtxExpr
     obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h2
     have hCtxArg := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
-    exact ⟨tyE, ClassId.tensor_id [d1, d2, f3], hE,
-      CtxHasType.matmulR _ _ _ _ _ _ _ _ h1 hCtxArg, hSub⟩
-  | reshapeC C' s2 ih =>
-    obtain ⟨s1, h1, hProd, hSub⟩ := reshape_inversion hCtxExpr
-    obtain ⟨tyE, tyC', hE, hCtx, hSub'⟩ := ih h1
-    have hCtxRecv := CtxHasType.ctxSub _ _ _ _ _ hCtx hSub'
-    exact ⟨tyE, ClassId.tensor_id s2, hE,
-      CtxHasType.reshapeC _ _ _ _ _ hCtxRecv hProd, hSub⟩
+    exact ⟨tyE, ClassId.tensor_id (bo ++ [m, n]), hE,
+      CtxHasType.matmulR _ _ _ _ _ _ _ _ _ _ hb h1 hCtxArg, hSub⟩
 
 /-
 Lemma 2 (Substitution).
@@ -534,7 +519,6 @@ theorem substitution_lemma
     | (apply HasType.tAppLib <;> assumption)
     | (apply HasType.tBroadcast <;> assumption)
     | (apply HasType.tMatmul <;> assumption)
-    | (apply HasType.tReshape <;> assumption)
     | (apply HasType.tSub <;> assumption)
 
 /-! ## Main theorems -/
@@ -708,7 +692,7 @@ theorem progress_core
             by_cases hc : v'.typeOf ≤ₜ Ares
             · exact Or.inl ⟨_, _, _, Step.eAppLib E Ares v0 v1 v' _ S hLibRT hCall hc⟩
             · exact Or.inr (Step.eBlameCheckedCall E Ares v0 v1 v' _ S hLibRT hCall hc)))
-  | tBroadcast _ _ s h1 h2 ih1 ih2 =>
+  | tBroadcast _ _ _ _ _ hBcast h1 h2 ih1 ih2 =>
     right
     show (∃ E' e' S', Step _ _ _ ⟨E, (Ctx.broadcastL Ctx.hole _)[[_]], S⟩ _) ∨ _
     exact progress_subexpr (ih1 hEnvCons) hValid
@@ -718,11 +702,12 @@ theorem progress_core
         exact progress_subexpr (ih2 hEnvCons) hValid
           (fun v2 hv2 => by
             subst hv2
-            by_cases hm : ∃ s, v1 = Val.tensor s ∧ v2 = Val.tensor s
-            · obtain ⟨s', rfl, rfl⟩ := hm
-              exact Or.inl ⟨_, _, _, Step.eBroadcast E s' S⟩
+            by_cases hm : ∃ s1 s2 sOut, v1 = Val.tensor s1 ∧ v2 = Val.tensor s2 ∧
+                broadcastShapes s1 s2 = some sOut
+            · obtain ⟨s1', s2', sOut', rfl, rfl, hb'⟩ := hm
+              exact Or.inl ⟨_, _, _, Step.eBroadcast E s1' s2' sOut' S hb'⟩
             · exact Or.inr (Step.eBlameBroadcast E v1 v2 S hm)))
-  | tMatmul _ _ d1 d2 d3 f3 h1 h2 ih1 ih2 =>
+  | tMatmul _ _ _ _ _ _ _ _ hBatch h1 h2 ih1 ih2 =>
     right
     show (∃ E' e' S', Step _ _ _ ⟨E, (Ctx.matmulL Ctx.hole _)[[_]], S⟩ _) ∨ _
     exact progress_subexpr (ih1 hEnvCons) hValid
@@ -732,20 +717,13 @@ theorem progress_core
         exact progress_subexpr (ih2 hEnvCons) hValid
           (fun v2 hv2 => by
             subst hv2
-            by_cases hm : ∃ d1' d2' d3' f3', v1 = Val.tensor [d1', d2', d3'] ∧ v2 = Val.tensor [d1', d3', f3']
-            · obtain ⟨d1', d2', d3', f3', rfl, rfl⟩ := hm
-              exact Or.inl ⟨_, _, _, Step.eMatmul E d1' d2' d3' f3' S⟩
+            by_cases hm : ∃ batch1 batch2 batchOut m k n,
+                broadcastShapes batch1 batch2 = some batchOut ∧
+                v1 = Val.tensor (batch1 ++ [m, k]) ∧
+                v2 = Val.tensor (batch2 ++ [k, n])
+            · obtain ⟨b1, b2, bo, m', k', n', hb', rfl, rfl⟩ := hm
+              exact Or.inl ⟨_, _, _, Step.eMatmul E b1 b2 bo m' k' n' S hb'⟩
             · exact Or.inr (Step.eBlameMatmul E v1 v2 S hm)))
-  | tReshape _ s1 s2 h1 hProd ih1 =>
-    right
-    show (∃ E' e' S', Step _ _ _ ⟨E, (Ctx.reshapeC Ctx.hole s2)[[_]], S⟩ _) ∨ _
-    exact progress_subexpr (ih1 hEnvCons) hValid
-      (fun v1 hv1 => by
-        subst hv1
-        by_cases hm : ∃ s1', v1 = Val.tensor s1' ∧ s1'.prod = s2.prod
-        · obtain ⟨s1', rfl, hProd'⟩ := hm
-          exact Or.inl ⟨_, _, _, Step.eReshape E s1' s2 S hProd'⟩
-        · exact Or.inr (Step.eBlameReshape E v1 s2 S hm))
 
 theorem ctx_weakening
     {Γ Δ : TypEnv} {C : Ctx} {tyHole tyCtx : ClassId}
@@ -756,7 +734,7 @@ theorem ctx_weakening
   have h_ind : ∀ {Γ Δ : TypEnv} {e : Expr} {ty : ClassId}, HasType CT ms Γ e ty → Γ.extends_ Δ → HasType CT ms Δ e ty := by
     exact?;
   induction' hCtx with Γ tyHole C tyCtx hCtx hExt generalizing Δ;
-  all_goals (first | (constructor <;> tauto) | (exact CtxHasType.reshapeC _ _ _ _ _ (by tauto) (by tauto)));
+  all_goals constructor <;> tauto;
 
 /-- Type preservation for same-stack steps (no TypeSubStack needed). -/
 private theorem preservation_same_stack
@@ -853,40 +831,47 @@ private theorem preservation_same_stack
     obtain ⟨tyCtx', hTypeCtx, hSubCtxNew⟩ := substitution_lemma hCtxW hType' hSubTy
     exact ⟨Δ, tyCtx', hTypeCtx, hEnvCons',
       Subtype.trans hSubCtxNew hSubCtx, hExt⟩
-  | eBroadcast E_v s S_v =>
+  | eBroadcast E_v s1 s2 sOut S_v hBcast =>
     intro Γ E E' e e' ty S hc hr hType hEnvCons hValid
     cases hc; cases hr
-    obtain ⟨s', h1, h2, hSub⟩ := broadcast_inversion hType
-    have hValSub := val_type_subtype h1
-    exact ⟨Γ, (Val.tensor s).typeOf, val_has_type Γ (Val.tensor s), hEnvCons,
-      Subtype.trans hValSub hSub, fun x a h => h⟩
-  | eMatmul E_v d1 d2 d3 f3 S_v =>
+    obtain ⟨s1', s2', sOut', hb', h1, h2, hSub⟩ := broadcast_inversion hType
+    have hValSub1 := val_type_subtype h1
+    have hValSub2 := val_type_subtype h2
+    have heq1 := tensor_id_subtype_implies_eq hValSub1
+    have heq2 := tensor_id_subtype_implies_eq hValSub2
+    subst heq1; subst heq2
+    rw [hBcast] at hb'; cases hb'
+    exact ⟨Γ, (Val.tensor sOut).typeOf, val_has_type Γ (Val.tensor sOut), hEnvCons,
+      hSub, fun x a h => h⟩
+  | eMatmul E_v batch1 batch2 batchOut m k n S_v hBatch =>
     intro Γ E E' e e' ty S hc hr hType hEnvCons hValid
     cases hc; cases hr
-    obtain ⟨d1', d2', d3', f3', h1, h2, hSub⟩ := matmul_inversion hType
+    obtain ⟨b1', b2', bo', m', k', n', hb', h1, h2, hSub⟩ := matmul_inversion hType
     have hVS1 := val_type_subtype h1
     have hVS2 := val_type_subtype h2
     have heq1 := tensor_id_subtype_implies_eq hVS1
     have heq2 := tensor_id_subtype_implies_eq hVS2
-    -- heq1 : [d1, d2, d3] = [d1', d2', d3'], heq2 : [d1, d3, f3] = [d1', d3', f3']
-    have hd1 : d1 = d1' := by have := List.cons.inj heq1; exact this.1
-    have hd2 : d2 = d2' := by have := List.cons.inj heq1; have := List.cons.inj this.2; exact this.1
-    have hf3 : f3 = f3' := by have := List.cons.inj heq2; have := List.cons.inj this.2; have := List.cons.inj this.2; exact this.1
-    subst hd1; subst hd2; subst hf3
-    exact ⟨Γ, (Val.tensor [d1, d2, f3]).typeOf, val_has_type Γ (Val.tensor [d1, d2, f3]), hEnvCons,
-      Subtype.trans (Subtype.refl _) hSub, fun x a h => h⟩
+    have hl1 : batch1.length = b1'.length := by
+      have := congr_arg List.length heq1; simp at this; omega
+    have hl2 : batch2.length = b2'.length := by
+      have := congr_arg List.length heq2; simp at this; omega
+    have hpair1 := List.append_inj heq1 hl1
+    have hpair2 := List.append_inj heq2 hl2
+    have hb1eq : batch1 = b1' := hpair1.1
+    have hb2eq : batch2 = b2' := hpair2.1
+    have hmk : [m, k] = [m', k'] := hpair1.2
+    have hkn : [k, n] = [k', n'] := hpair2.2
+    have hm : m = m' := by have := List.cons.inj hmk; exact this.1
+    have hn : n = n' := by have := List.cons.inj hkn; have := List.cons.inj this.2; exact this.1
+    subst hb1eq; subst hb2eq; subst hm; subst hn
+    rw [hBatch] at hb'; cases hb'
+    exact ⟨Γ, (Val.tensor (batchOut ++ [m, n])).typeOf,
+      val_has_type Γ (Val.tensor (batchOut ++ [m, n])), hEnvCons,
+      hSub, fun x a h => h⟩
   | eBlameNilRecv => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameCheckedCall => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameBroadcast => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameMatmul => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
-  | eReshape E_v s1 s2 S_v hProd =>
-    intro Γ E E' e e' ty S hc hr hType hEnvCons hValid
-    cases hc; cases hr
-    obtain ⟨s1', h1, hProd', hSub⟩ := reshape_inversion hType
-    have hVS := val_type_subtype h1
-    exact ⟨Γ, (Val.tensor s2).typeOf, val_has_type Γ (Val.tensor s2), hEnvCons,
-      Subtype.trans (Subtype.refl _) hSub, fun x a h => h⟩
-  | eBlameReshape => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
   | eBlameContext => intro _ _ _ _ _ _ _ _ hr; exact absurd hr (by simp)
 
 private theorem preservation_eAppUD
@@ -1136,34 +1121,49 @@ private theorem preservation_gen
     cases hc; cases hr
     obtain ⟨Δ, TS', ty', h1, h2, h3, h4, h5, h6⟩ := preservation_eContext hType hSubStack hEnvCons hStackCons hValid hStep_inner hNotVal hNotUserCall ih
     exact ⟨Δ, TS', ty', h1, h2, h3, h4, fun _ => ⟨h5, h6⟩⟩
-  | eBroadcast E_v s S_v =>
+  | eBroadcast E_v s1 s2 sOut S_v hBcast =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     cases hc; cases hr
-    obtain ⟨s', h1, h2, hSub⟩ := broadcast_inversion hType
-    have hValSub := val_type_subtype h1
-    exact ⟨Γ, TS, (Val.tensor s).typeOf, val_has_type Γ (Val.tensor s),
+    obtain ⟨s1', s2', sOut', hb', h1, h2, hSub⟩ := broadcast_inversion hType
+    have hValSub1 := val_type_subtype h1
+    have hValSub2 := val_type_subtype h2
+    have heq1 := tensor_id_subtype_implies_eq hValSub1
+    have heq2 := tensor_id_subtype_implies_eq hValSub2
+    subst heq1; subst heq2
+    rw [hBcast] at hb'; cases hb'
+    exact ⟨Γ, TS, (Val.tensor sOut).typeOf, val_has_type Γ (Val.tensor sOut),
       (by cases TS with | nil => trivial | cons ts rest =>
-        exact Subtype.trans (Subtype.trans hValSub hSub) hSubStack),
+        exact Subtype.trans hSub hSubStack),
       hEnvCons, hStackCons,
-      fun _ => ⟨Subtype.trans hValSub hSub, fun x a h => h⟩⟩
-  | eMatmul E_v d1 d2 d3 f3 S_v =>
+      fun _ => ⟨hSub, fun x a h => h⟩⟩
+  | eMatmul E_v batch1 batch2 batchOut m k n S_v hBatch =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     cases hc; cases hr
-    obtain ⟨d1', d2', d3', f3', h1, h2, hSub⟩ := matmul_inversion hType
+    obtain ⟨b1', b2', bo', m', k', n', hb', h1, h2, hSub⟩ := matmul_inversion hType
     have hVS1 := val_type_subtype h1
     have hVS2 := val_type_subtype h2
     have heq1 := tensor_id_subtype_implies_eq hVS1
     have heq2 := tensor_id_subtype_implies_eq hVS2
-    have hd1 : d1 = d1' := by have := List.cons.inj heq1; exact this.1
-    have hd2 : d2 = d2' := by have := List.cons.inj heq1; have := List.cons.inj this.2; exact this.1
-    have hf3 : f3 = f3' := by have := List.cons.inj heq2; have := List.cons.inj this.2; have := List.cons.inj this.2; exact this.1
-    subst hd1; subst hd2; subst hf3
-    have hResultSub : (Val.tensor [d1, d2, f3]).typeOf ≤ₜ ty := Subtype.trans (Subtype.refl _) hSub
-    exact ⟨Γ, TS, (Val.tensor [d1, d2, f3]).typeOf, val_has_type Γ (Val.tensor [d1, d2, f3]),
+    have hl1 : batch1.length = b1'.length := by
+      have := congr_arg List.length heq1; simp at this; omega
+    have hl2 : batch2.length = b2'.length := by
+      have := congr_arg List.length heq2; simp at this; omega
+    have hpair1 := List.append_inj heq1 hl1
+    have hpair2 := List.append_inj heq2 hl2
+    have hb1eq : batch1 = b1' := hpair1.1
+    have hb2eq : batch2 = b2' := hpair2.1
+    have hmk : [m, k] = [m', k'] := hpair1.2
+    have hkn : [k, n] = [k', n'] := hpair2.2
+    have hm : m = m' := by have := List.cons.inj hmk; exact this.1
+    have hn : n = n' := by have := List.cons.inj hkn; have := List.cons.inj this.2; exact this.1
+    subst hb1eq; subst hb2eq; subst hm; subst hn
+    rw [hBatch] at hb'; cases hb'
+    exact ⟨Γ, TS, (Val.tensor (batchOut ++ [m, n])).typeOf,
+      val_has_type Γ (Val.tensor (batchOut ++ [m, n])),
       (by cases TS with | nil => trivial | cons ts rest =>
-        exact Subtype.trans hResultSub hSubStack),
+        exact Subtype.trans hSub hSubStack),
       hEnvCons, hStackCons,
-      fun _ => ⟨hResultSub, fun x a h => h⟩⟩
+      fun _ => ⟨hSub, fun x a h => h⟩⟩
   | eBlameNilRecv E_v C_v m v S_v hNil =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
@@ -1174,19 +1174,6 @@ private theorem preservation_gen
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
   | eBlameMatmul E_v v1 v2 S_v hNotMatch =>
-    intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
-    exact absurd hr (by simp [StepResult.config])
-  | eReshape E_v s1 s2 S_v hProd =>
-    intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
-    cases hc; cases hr
-    obtain ⟨s1', h1, hProd', hSub⟩ := reshape_inversion hType
-    have hResultSub : (Val.tensor s2).typeOf ≤ₜ ty := Subtype.trans (Subtype.refl _) hSub
-    exact ⟨Γ, TS, (Val.tensor s2).typeOf, val_has_type Γ (Val.tensor s2),
-      (by cases TS with | nil => trivial | cons ts rest =>
-        exact Subtype.trans hResultSub hSubStack),
-      hEnvCons, hStackCons,
-      fun _ => ⟨hResultSub, fun x a h => h⟩⟩
-  | eBlameReshape E_v v s2 S_v hNotMatch =>
     intro Γ E E' e e' ty S S' TS hc hr hType hSubStack hEnvCons hStackCons hValid
     exact absurd hr (by simp [StepResult.config])
   | eBlameContext E_v C_v e_v S_v hStep_inner =>

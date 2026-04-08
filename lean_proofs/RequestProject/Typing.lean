@@ -68,24 +68,20 @@ inductive HasType (CT : ClassTable) (ms : MethodSets) :
   /-- T-Tensor: a tensor value has the corresponding tensor type -/
   | tTensor (Γ : TypEnv) (shape : List ℕ) :
     HasType CT ms Γ (Expr.val (Val.tensor shape)) (ClassId.tensor_id shape)
-  /-- T-Broadcast: if both operands have tensor type with the same shape, result has that type -/
-  | tBroadcast (Γ : TypEnv) (e1 e2 : Expr) (s : List ℕ)
-    (h1 : HasType CT ms Γ e1 (ClassId.tensor_id s))
-    (h2 : HasType CT ms Γ e2 (ClassId.tensor_id s)) :
-    HasType CT ms Γ (Expr.broadcast e1 e2) (ClassId.tensor_id s)
-  /-- T-Matmul: Performs batched matrix multiplication.
-      Left tensor must be [d1, d2, d3], right must be [d1, d3, f3].
-      Resulting tensor has shape [d1, d2, f3]. -/
-  | tMatmul (Γ : TypEnv) (e1 e2 : Expr) (d1 d2 d3 f3 : ℕ)
-    (h1 : HasType CT ms Γ e1 (ClassId.tensor_id [d1, d2, d3]))
-    (h2 : HasType CT ms Γ e2 (ClassId.tensor_id [d1, d3, f3])) :
-    HasType CT ms Γ (Expr.matmul e1 e2) (ClassId.tensor_id [d1, d2, f3])
-  /-- T-Reshape: Reshapes a tensor to a static shape.
-      The product of the dimensions must match. -/
-  | tReshape (Γ : TypEnv) (e : Expr) (s1 s2 : List ℕ)
-    (h1 : HasType CT ms Γ e (ClassId.tensor_id s1))
-    (hProd : s1.prod = s2.prod) :
-    HasType CT ms Γ (Expr.reshape e s2) (ClassId.tensor_id s2)
+  /-- T-Broadcast: broadcast two tensors with compatible shapes (rank-polymorphic). -/
+  | tBroadcast (Γ : TypEnv) (e1 e2 : Expr) (s1 s2 sOut : List ℕ)
+    (hBroadcast : broadcastShapes s1 s2 = some sOut)
+    (h1 : HasType CT ms Γ e1 (ClassId.tensor_id s1))
+    (h2 : HasType CT ms Γ e2 (ClassId.tensor_id s2)) :
+    HasType CT ms Γ (Expr.broadcast e1 e2) (ClassId.tensor_id sOut)
+  /-- T-Matmul: Rank-polymorphic batched matrix multiplication.
+      Left tensor has shape batch1 ++ [m, k], right has shape batch2 ++ [k, n].
+      Batch dimensions are broadcast. Result shape is batchOut ++ [m, n]. -/
+  | tMatmul (Γ : TypEnv) (e1 e2 : Expr) (batch1 batch2 batchOut : List ℕ) (m k n : ℕ)
+    (hBatch : broadcastShapes batch1 batch2 = some batchOut)
+    (h1 : HasType CT ms Γ e1 (ClassId.tensor_id (batch1 ++ [m, k])))
+    (h2 : HasType CT ms Γ e2 (ClassId.tensor_id (batch2 ++ [k, n]))) :
+    HasType CT ms Γ (Expr.matmul e1 e2) (ClassId.tensor_id (batchOut ++ [m, n]))
   /-- Subsumption -/
   | tSub (Γ : TypEnv) (e : Expr) (a a' : ClassId)
     (h : HasType CT ms Γ e a)
@@ -145,32 +141,33 @@ inductive CtxHasType (CT : ClassTable) (ms : MethodSets) :
     (hCtx : CtxHasType CT ms Γ Ahole C Aarg)
     (hLib : ⟨Arecv, m⟩ ∈ ms.library) :
     CtxHasType CT ms Γ Ahole (Ctx.checkedCallR Ares v m C) Ares
-  | broadcastL (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (e : Expr) (s : List ℕ)
-    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s))
-    (hExpr : HasType CT ms Γ e (ClassId.tensor_id s)) :
-    CtxHasType CT ms Γ Ahole (Ctx.broadcastL C e) (ClassId.tensor_id s)
-  | broadcastR (Γ : TypEnv) (Ahole : ClassId) (v : Val) (C : Ctx) (s : List ℕ)
-    (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id s))
-    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s)) :
-    CtxHasType CT ms Γ Ahole (Ctx.broadcastR v C) (ClassId.tensor_id s)
-  | matmulL (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (e : Expr) (d1 d2 d3 f3 : ℕ)
-    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id [d1, d2, d3]))
-    (hExpr : HasType CT ms Γ e (ClassId.tensor_id [d1, d3, f3])) :
-    CtxHasType CT ms Γ Ahole (Ctx.matmulL C e) (ClassId.tensor_id [d1, d2, f3])
-  | matmulR (Γ : TypEnv) (Ahole : ClassId) (v : Val) (C : Ctx) (d1 d2 d3 f3 : ℕ)
-    (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id [d1, d2, d3]))
-    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id [d1, d3, f3])) :
-    CtxHasType CT ms Γ Ahole (Ctx.matmulR v C) (ClassId.tensor_id [d1, d2, f3])
+  | broadcastL (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (e : Expr) (s1 s2 sOut : List ℕ)
+    (hBroadcast : broadcastShapes s1 s2 = some sOut)
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s1))
+    (hExpr : HasType CT ms Γ e (ClassId.tensor_id s2)) :
+    CtxHasType CT ms Γ Ahole (Ctx.broadcastL C e) (ClassId.tensor_id sOut)
+  | broadcastR (Γ : TypEnv) (Ahole : ClassId) (v : Val) (C : Ctx) (s1 s2 sOut : List ℕ)
+    (hBroadcast : broadcastShapes s1 s2 = some sOut)
+    (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id s1))
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s2)) :
+    CtxHasType CT ms Γ Ahole (Ctx.broadcastR v C) (ClassId.tensor_id sOut)
+  | matmulL (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (e : Expr)
+    (batch1 batch2 batchOut : List ℕ) (m k n : ℕ)
+    (hBatch : broadcastShapes batch1 batch2 = some batchOut)
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id (batch1 ++ [m, k])))
+    (hExpr : HasType CT ms Γ e (ClassId.tensor_id (batch2 ++ [k, n]))) :
+    CtxHasType CT ms Γ Ahole (Ctx.matmulL C e) (ClassId.tensor_id (batchOut ++ [m, n]))
+  | matmulR (Γ : TypEnv) (Ahole : ClassId) (v : Val) (C : Ctx)
+    (batch1 batch2 batchOut : List ℕ) (m k n : ℕ)
+    (hBatch : broadcastShapes batch1 batch2 = some batchOut)
+    (hVal : HasType CT ms Γ (Expr.val v) (ClassId.tensor_id (batch1 ++ [m, k])))
+    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id (batch2 ++ [k, n]))) :
+    CtxHasType CT ms Γ Ahole (Ctx.matmulR v C) (ClassId.tensor_id (batchOut ++ [m, n]))
   /-- Subsumption for context output type -/
   | ctxSub (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (tyC tyC' : ClassId)
     (hCtx : CtxHasType CT ms Γ Ahole C tyC)
     (hSub : Subtype tyC tyC') :
     CtxHasType CT ms Γ Ahole C tyC'
-  /-- Context evaluation for the tensor in a reshape operation -/
-  | reshapeC (Γ : TypEnv) (Ahole : ClassId) (C : Ctx) (s1 s2 : List ℕ)
-    (hCtx : CtxHasType CT ms Γ Ahole C (ClassId.tensor_id s1))
-    (hProd : s1.prod = s2.prod) :
-    CtxHasType CT ms Γ Ahole (Ctx.reshapeC C s2) (ClassId.tensor_id s2)
 
 /-- Environmental consistency -/
 def EnvConsistent (CT : ClassTable) (ms : MethodSets) (Γ : TypEnv) (E : DynEnv) : Prop :=

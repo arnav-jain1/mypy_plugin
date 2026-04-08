@@ -54,7 +54,6 @@ inductive Expr where
   | checkedCall : ClassId → Expr → MethId → Expr → Expr  -- ⌈A⌉e.m(e)
   | broadcast : Expr → Expr → Expr                        -- tensor broadcast
   | matmul : Expr → Expr → Expr                           -- tensor matmul
-  | reshape : Expr → List ℕ → Expr                      -- tensor reshape (e, target_shape)
 deriving DecidableEq, Repr
 
 /-- Evaluation contexts -/
@@ -72,7 +71,6 @@ inductive Ctx where
   | broadcastR : Val → Ctx → Ctx                    -- broadcast(v, C)
   | matmulL : Ctx → Expr → Ctx                      -- matmul(C, e)
   | matmulR : Val → Ctx → Ctx                       -- matmul(v, C)
-  | reshapeC : Ctx → List ℕ → Ctx                       -- reshape(C, target_shape)
 deriving DecidableEq, Repr
 
 /-- Fill a context with an expression -/
@@ -90,7 +88,6 @@ def Ctx.fill : Ctx → Expr → Expr
   | .broadcastR v c, e => Expr.broadcast (Expr.val v) (c.fill e)
   | .matmulL c e2, e => Expr.matmul (c.fill e) e2
   | .matmulR v c, e => Expr.matmul (Expr.val v) (c.fill e)
-  | .reshapeC c s2, e => Expr.reshape (c.fill e) s2
 
 notation C "[[" e "]]" => Ctx.fill C e
 
@@ -109,7 +106,6 @@ def Ctx.compose : Ctx → Ctx → Ctx
   | .broadcastR v c, c' => .broadcastR v (c.compose c')
   | .matmulL c e, c' => .matmulL (c.compose c') e
   | .matmulR v c, c' => .matmulR v (c.compose c')
-  | .reshapeC c s2, c' => .reshapeC (c.compose c') s2
 
 theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
     (C.compose C')[[e]] = C[[C'[[e]]]] := by
@@ -127,7 +123,6 @@ theorem Ctx.compose_fill (C C' : Ctx) (e : Expr) :
   | broadcastR v c ih => simp [Ctx.compose, Ctx.fill, ih]
   | matmulL c e2 ih => simp [Ctx.compose, Ctx.fill, ih]
   | matmulR v c ih => simp [Ctx.compose, Ctx.fill, ih]
-  | reshapeC c s2 ih => simp [Ctx.compose, Ctx.fill, ih]
 
 /-- Method type: A₁ → A₂ -/
 structure MethType where
@@ -223,6 +218,39 @@ noncomputable def lub (a b : ClassId) : ClassId :=
   else ClassId.obj_id
 
 notation a " ⊔ₜ " b => lub a b
+
+/-- Broadcast a single dimension pair: if equal keep it, if one is 1 take the other. -/
+def broadcastDim (a b : ℕ) : Option ℕ :=
+  if a = b then some a
+  else if a = 1 then some b
+  else if b = 1 then some a
+  else none
+
+/-- Broadcast two shapes given in *reversed* order (i.e. rightmost dimension first).
+    When one list is exhausted, the remaining dimensions of the other are kept. -/
+def broadcastShapesRev : List ℕ → List ℕ → Option (List ℕ)
+  | [], bs => some bs
+  | as, [] => some as
+  | a :: as, b :: bs => do
+    let d ← broadcastDim a b
+    let rest ← broadcastShapesRev as bs
+    return d :: rest
+
+/-- Compute the broadcast-compatible output shape of two tensor shapes,
+    following NumPy-style broadcasting rules (align from the right). -/
+def broadcastShapes (s1 s2 : List ℕ) : Option (List ℕ) :=
+  (broadcastShapesRev s1.reverse s2.reverse).map List.reverse
+
+/-- Same-shape broadcasting is always valid. -/
+theorem broadcastShapesRev_self (s : List ℕ) :
+    broadcastShapesRev s s = some s := by
+  induction s with
+  | nil => simp [broadcastShapesRev]
+  | cons a as ih => simp [broadcastShapesRev, broadcastDim, ih]
+
+theorem broadcastShapes_self (s : List ℕ) :
+    broadcastShapes s s = some s := by
+  simp [broadcastShapes, broadcastShapesRev_self, Option.map]
 
 /-- Subtyping relation. Nil ≤ A for all A, A ≤ A (reflexive),
     True ≤ Bool, False ≤ Bool, and A ≤ A ⊔ A' for all A, A'.

@@ -171,44 +171,38 @@ inductive Step (methodDefs : MethKey → Option MethDef)
       ⟨E, Expr.checkedCall Ares (Expr.val vr) m (Expr.val v), S⟩
       .blame
 
-  /-- (E-Broadcast): broadcast of two tensors with same shape -/
-  | eBroadcast (E : DynEnv) (s : List ℕ) (S : Stack) :
+  /-- (E-Broadcast): broadcast of two tensors with compatible shapes -/
+  | eBroadcast (E : DynEnv) (s1 s2 sOut : List ℕ) (S : Stack)
+    (hBroadcast : broadcastShapes s1 s2 = some sOut) :
     Step methodDefs libImpl ms
-      ⟨E, Expr.broadcast (Expr.val (Val.tensor s)) (Expr.val (Val.tensor s)), S⟩
-      (.config ⟨E, Expr.val (Val.tensor s), S⟩)
+      ⟨E, Expr.broadcast (Expr.val (Val.tensor s1)) (Expr.val (Val.tensor s2)), S⟩
+      (.config ⟨E, Expr.val (Val.tensor sOut), S⟩)
 
-  /-- Blame when broadcast shapes don't match -/
+  /-- Blame when broadcast shapes are incompatible -/
   | eBlameBroadcast (E : DynEnv) (v1 v2 : Val) (S : Stack)
-    (hNotMatch : ¬ (∃ s, v1 = Val.tensor s ∧ v2 = Val.tensor s)) :
+    (hNotMatch : ¬ (∃ s1 s2 sOut, v1 = Val.tensor s1 ∧ v2 = Val.tensor s2 ∧
+                    broadcastShapes s1 s2 = some sOut)) :
     Step methodDefs libImpl ms
       ⟨E, Expr.broadcast (Expr.val v1) (Expr.val v2), S⟩
       .blame
 
-  /-- (E-Matmul): matmul of two 3D tensors matching batch and inner dimensions -/
-  | eMatmul (E : DynEnv) (d1 d2 d3 f3 : ℕ) (S : Stack) :
+  /-- (E-Matmul): matmul of two tensors with compatible shapes.
+      Left has shape batch1 ++ [m, k], right has shape batch2 ++ [k, n],
+      batch dimensions are broadcast. Result shape is batchOut ++ [m, n]. -/
+  | eMatmul (E : DynEnv) (batch1 batch2 batchOut : List ℕ) (m k n : ℕ) (S : Stack)
+      (hBatch : broadcastShapes batch1 batch2 = some batchOut) :
       Step methodDefs libImpl ms
-        ⟨E, Expr.matmul (Expr.val (Val.tensor [d1, d2, d3])) (Expr.val (Val.tensor [d1, d3, f3])), S⟩
-        (.config ⟨E, Expr.val (Val.tensor [d1, d2, f3]), S⟩)
+        ⟨E, Expr.matmul (Expr.val (Val.tensor (batch1 ++ [m, k]))) (Expr.val (Val.tensor (batch2 ++ [k, n]))), S⟩
+        (.config ⟨E, Expr.val (Val.tensor (batchOut ++ [m, n])), S⟩)
 
-  /-- Blame when matmul shapes don't match or are not 3D tensors -/
+  /-- Blame when matmul shapes are incompatible -/
   | eBlameMatmul (E : DynEnv) (v1 v2 : Val) (S : Stack)
-      (hNotMatch : ¬ (∃ d1 d2 d3 f3, v1 = Val.tensor [d1, d2, d3] ∧ v2 = Val.tensor [d1, d3, f3])) :
+      (hNotMatch : ¬ (∃ batch1 batch2 batchOut m k n,
+          broadcastShapes batch1 batch2 = some batchOut ∧
+          v1 = Val.tensor (batch1 ++ [m, k]) ∧
+          v2 = Val.tensor (batch2 ++ [k, n]))) :
       Step methodDefs libImpl ms
         ⟨E, Expr.matmul (Expr.val v1) (Expr.val v2), S⟩
-        .blame
-
-  /-- (E-Reshape): reshape a tensor to a statically provided shape if their products match -/
-  | eReshape (E : DynEnv) (s1 s2 : List ℕ) (S : Stack)
-      (hProd : s1.prod = s2.prod) :
-      Step methodDefs libImpl ms
-        ⟨E, Expr.reshape (Expr.val (Val.tensor s1)) s2, S⟩
-        (.config ⟨E, Expr.val (Val.tensor s2), S⟩)
-
-  /-- Blame when reshape target product doesn't match or receiver is not a tensor -/
-  | eBlameReshape (E : DynEnv) (v : Val) (s2 : List ℕ) (S : Stack)
-      (hNotMatch : ¬ (∃ s1, v = Val.tensor s1 ∧ s1.prod = s2.prod)) :
-      Step methodDefs libImpl ms
-        ⟨E, Expr.reshape (Expr.val v) s2, S⟩
         .blame
 
   /-- Blame propagation in contexts -/
