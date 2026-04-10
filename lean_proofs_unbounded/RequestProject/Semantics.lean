@@ -2,6 +2,7 @@
 # λC Dynamic Semantics
 
 Small-step operational semantics for λC, formalized from the paper's Figure 8.
+Extended with unbounded (rank-polymorphic) tensor shapes.
 -/
 
 import RequestProject.Syntax
@@ -56,10 +57,8 @@ Dynamic semantics: single step relation.
 
 ⟨E, e, S⟩ ⇝ ⟨E', e', S'⟩
 
-We define this as an inductive relation, parameterized by:
-- method definitions (for user-defined methods)
-- library implementations (for library methods)
-- method sets (to distinguish U and L)
+At runtime, all tensor shapes are concrete (List Dim). Unbounded shapes
+exist only at the type level.
 -/
 inductive Step (methodDefs : MethKey → Option MethDef)
               (libImpl : MethKey → Val → Val → Option Val)
@@ -124,8 +123,7 @@ inductive Step (methodDefs : MethKey → Option MethDef)
       ⟨E, C[[ Expr.call (Expr.val vr) m (Expr.val v) ]], S⟩
       (.config ⟨(emptyEnv [VarId.self_id ↦ vr]) [x ↦ v], body, (E, C) :: S⟩)
 
-  /-- (E-AppLib): ⟨E, ⌈Ares⌉vr.m(v), S⟩ ⇝ ⟨E, v', S⟩
-      when type_of(vr) = A and A.m ∈ L and v' = call(A.m, vr, v) and type_of(v') ≤ Ares -/
+  /-- (E-AppLib): ⟨E, ⌈Ares⌉vr.m(v), S⟩ ⇝ ⟨E, v', S⟩ -/
   | eAppLib (E : DynEnv) (Ares : ClassId) (vr v v' : Val)
     (m : MethId) (S : Stack)
     (hLibMethod : ⟨vr.typeOf, m⟩ ∈ ms.library)
@@ -141,10 +139,7 @@ inductive Step (methodDefs : MethKey → Option MethDef)
       ⟨E', Expr.val v, (E, C) :: S⟩
       (.config ⟨E, C[[ Expr.val v ]], S⟩)
 
-  /-- (E-Context): ⟨E, C[e], S⟩ ⇝ ⟨E', C[e'], S⟩
-      when ⟨E, e, S⟩ ⇝ ⟨E', e', S⟩ and e is not a user method call value,
-      and e is not a value. The inner step must preserve the stack
-      (eAppUD and eRet handle stack changes separately). -/
+  /-- (E-Context): ⟨E, C[e], S⟩ ⇝ ⟨E', C[e'], S⟩ -/
   | eContext (E E' : DynEnv) (C : Ctx) (e e' : Expr) (S : Stack)
     (hStep : Step methodDefs libImpl ms ⟨E, e, S⟩ (.config ⟨E', e', S⟩))
     (hNotUserCall : ¬ isUserMethodCall e ms)
@@ -171,9 +166,9 @@ inductive Step (methodDefs : MethKey → Option MethDef)
       ⟨E, Expr.checkedCall Ares (Expr.val vr) m (Expr.val v), S⟩
       .blame
 
-  /-- (E-Broadcast): broadcast of two tensors with compatible shapes -/
-  | eBroadcast (E : DynEnv) (s1 s2 sOut : Shape) (S : Stack)
-    (hBroadcast : broadcastShapes s1 s2 = some sOut) :
+  /-- (E-Broadcast): broadcast of two tensors with compatible concrete shapes -/
+  | eBroadcast (E : DynEnv) (s1 s2 : List Dim) (sOut : List Dim) (S : Stack)
+    (hBroadcast : broadcastShapes (Shape.concrete s1) (Shape.concrete s2) = some (Shape.concrete sOut)) :
     Step methodDefs libImpl ms
       ⟨E, Expr.broadcast (Expr.val (Val.tensor s1)) (Expr.val (Val.tensor s2)), S⟩
       (.config ⟨E, Expr.val (Val.tensor sOut), S⟩)
@@ -181,16 +176,14 @@ inductive Step (methodDefs : MethKey → Option MethDef)
   /-- Blame when broadcast shapes are incompatible -/
   | eBlameBroadcast (E : DynEnv) (v1 v2 : Val) (S : Stack)
     (hNotMatch : ¬ (∃ s1 s2 sOut, v1 = Val.tensor s1 ∧ v2 = Val.tensor s2 ∧
-                    broadcastShapes s1 s2 = some sOut)) :
+                    broadcastShapes (Shape.concrete s1) (Shape.concrete s2) = some (Shape.concrete sOut))) :
     Step methodDefs libImpl ms
       ⟨E, Expr.broadcast (Expr.val v1) (Expr.val v2), S⟩
       .blame
 
-  /-- (E-Matmul): matmul of two tensors with compatible shapes.
-      Left has shape batch1 ++ [m, k], right has shape batch2 ++ [k, n],
-      batch dimensions are broadcast. Result shape is batchOut ++ [m, n]. -/
-  | eMatmul (E : DynEnv) (batch1 batch2 batchOut : Shape) (m k n : ℕ) (S : Stack)
-      (hBatch : broadcastShapes batch1 batch2 = some batchOut) :
+  /-- (E-Matmul): matmul of two tensors with compatible concrete shapes. -/
+  | eMatmul (E : DynEnv) (batch1 batch2 batchOut : List Dim) (m k n : ℕ) (S : Stack)
+      (hBatch : broadcastShapes (Shape.concrete batch1) (Shape.concrete batch2) = some (Shape.concrete batchOut)) :
       Step methodDefs libImpl ms
         ⟨E, Expr.matmul (Expr.val (Val.tensor (batch1 ++ [m, k]))) (Expr.val (Val.tensor (batch2 ++ [k, n]))), S⟩
         (.config ⟨E, Expr.val (Val.tensor (batchOut ++ [m, n])), S⟩)
@@ -198,7 +191,7 @@ inductive Step (methodDefs : MethKey → Option MethDef)
   /-- Blame when matmul shapes are incompatible -/
   | eBlameMatmul (E : DynEnv) (v1 v2 : Val) (S : Stack)
       (hNotMatch : ¬ (∃ batch1 batch2 batchOut m k n,
-          broadcastShapes batch1 batch2 = some batchOut ∧
+          broadcastShapes (Shape.concrete batch1) (Shape.concrete batch2) = some (Shape.concrete batchOut) ∧
           v1 = Val.tensor (batch1 ++ [m, k]) ∧
           v2 = Val.tensor (batch2 ++ [k, n]))) :
       Step methodDefs libImpl ms
@@ -206,15 +199,15 @@ inductive Step (methodDefs : MethKey → Option MethDef)
         .blame
 
   /-- (E-Reshape): reshape a tensor when the total sizes match -/
-  | eReshape (E : DynEnv) (s1 s2 : Shape) (S : Stack)
-    (hSize : s1.size = s2.size) :
+  | eReshape (E : DynEnv) (s1 s2 : List Dim) (S : Stack)
+    (hSize : s1.prod = s2.prod) :
     Step methodDefs libImpl ms
       ⟨E, Expr.reshape (Expr.val (Val.tensor s1)) s2, S⟩
       (.config ⟨E, Expr.val (Val.tensor s2), S⟩)
 
   /-- Blame when reshape sizes don't match -/
-  | eBlameReshape (E : DynEnv) (v : Val) (s2 : Shape) (S : Stack)
-    (hNotMatch : ¬ (∃ s1, v = Val.tensor s1 ∧ s1.size = s2.size)) :
+  | eBlameReshape (E : DynEnv) (v : Val) (s2 : List Dim) (S : Stack)
+    (hNotMatch : ¬ (∃ s1, v = Val.tensor s1 ∧ s1.prod = s2.prod)) :
     Step methodDefs libImpl ms
       ⟨E, Expr.reshape (Expr.val v) s2, S⟩
       .blame
