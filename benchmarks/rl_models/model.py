@@ -144,9 +144,6 @@ class Network:
             dA_prev, dW_curr, db_curr = layer.backward(dA_curr, W_curr, Z_curr, A_prev, activation)
 
             self.gradients.append({'dW':dW_curr, 'db':db_curr})
-            reveal_type(A_prev)
-            reveal_type(Z_curr)
-            reveal_type(db_curr)
             
     def _update(self, lr=0.01):
         for idx, layer in enumerate(self.network):

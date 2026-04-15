@@ -185,7 +185,7 @@ def tile_state_space(
 
         obs_max = np.concatenate([obs_max, n])
         obs_min = np.concatenate([obs_min, np.zeros_like(n)])
-        # Unable to type check here because n is unknown, so the rest fails
+        # Unable to type check here because concatenate is not yet supported, so the rest fails
         reveal_type(obs_max)
         reveal_type(obs_min)
 

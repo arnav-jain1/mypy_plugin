@@ -5,6 +5,8 @@ from collections import Hashable
 import numpy as np
 
 from .distance_metrics import euclidean
+from typing_extensions import reveal_type
+from typing import Literal, Tuple
 
 #######################################################################
 #                           Priority Queue                            #
@@ -231,7 +233,7 @@ class BallTree:
         self.leaf_size = leaf_size
         self.metric = metric if metric is not None else euclidean
 
-    def fit(self, X, y=None):
+    def fit(self, X: np.ndarray , y = None):
         """
         Build a ball tree recursively using the O(M log N) `k`-d construction
         algorithm.
@@ -271,9 +273,11 @@ class BallTree:
         node.right = self._build_tree(right_X, right_y)
         return node
 
-    def _split(self, X, y=None):
+    def _split(self, X: np.ndarray, y=None):
         # find the dimension with greatest variance
-        split_dim = np.argmax(np.var(X, axis=0))
+        temp = np.var(X, axis=0)
+        split_dim = np.argmax(temp)
+        reveal_type(split_dim)
 
         # sort X and y along split_dim
         sort_ixs = np.argsort(X[:, split_dim])
@@ -289,7 +293,7 @@ class BallTree:
         right_X, right_y = X[med_ix:], y[med_ix:] if y is not None else None
         return centroid, left_X, left_y, right_X, right_y
 
-    def nearest_neighbors(self, k, x):
+    def nearest_neighbors(self, k, x: np.ndarray[Tuple[Literal[1], int]]):
         """
         Find the `k` nearest neighbors in the ball tree to a query vector `x`
         using the KNS1 algorithm.
@@ -344,7 +348,7 @@ class BallTree:
 
 
 class DiscreteSampler:
-    def __init__(self, probs, log=False, with_replacement=True):
+    def __init__(self, probs: np.ndarray, log=False, with_replacement=True):
         """
         Sample from an arbitrary multinomial PMF over the first `N` nonnegative
         integers using Vose's algorithm for the alias method.
@@ -388,6 +392,8 @@ class DiscreteSampler:
 
         alias = np.zeros(self.N)
         prob = np.zeros(self.N)
+        reveal_type(alias)
+        reveal_type(prob)
         scaled_probs = self.probs + np.log(self.N) if log else self.probs * self.N
 
         selector = scaled_probs < 0 if log else scaled_probs < 1

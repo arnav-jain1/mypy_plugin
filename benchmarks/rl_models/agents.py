@@ -287,12 +287,11 @@ class CrossEntropyAgent(AgentBase):
 
         #TODO unable to discern type here
         for theta in D["theta_samples"]:
-            W = theta[:W_len]
+            W: np.ndarray = theta[:W_len]
             reveal_type(W)
             W = W.reshape(obs_dim, n_actions)
             reveal_type(W)
             b = theta[W_len:]
-            reveal_type(b)
 
             total_rwd, n_steps = self._episode(W, b, max_steps, render)
             rewards.append(total_rwd)
@@ -380,10 +379,8 @@ class CrossEntropyAgent(AgentBase):
         reveal_type(top_idxs)
 
         # update theta_mean and theta_var with the best theta value
-        reveal_type(P["theta_samples"])
         P["theta_mean"] = np.mean(D["theta_samples"][top_idxs], axis=0)
         P["theta_var"] = np.var(D["theta_samples"][top_idxs], axis=0)
-        reveal_type(P["theta_mean"])
 
     def _sample_thetas(self):
         """

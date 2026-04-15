@@ -749,6 +749,10 @@ class CustomPlugin(Plugin):
         rhs_shape = []
         minus_1 = False
         rhs_items = rhs.items if hasattr(rhs, 'items') else rhs
+        if isinstance(rhs_items[0], TupleExpr):
+            rhs_items = rhs_items[0].items  
+            arg_types = arg_types[0]
+
         for i, item in enumerate(rhs_items):
             if isinstance(item, IntExpr):
                 rhs_shape.append(item.value)
@@ -961,7 +965,7 @@ class CustomPlugin(Plugin):
 
     def custom_func(self, ctx):
         func_def_node = ctx.context.callee.node
-        if isinstance(func_def_node, TypeInfo):
+        if isinstance(func_def_node, (TypeInfo, Var)):
             return ctx.default_return_type
         var_node = None
         for stmt in func_def_node.body.body:
@@ -993,6 +997,11 @@ class CustomPlugin(Plugin):
 
         lhs_shape = self.get_shape(lhs.args[0])
         ub = False
+        if lhs_shape[0] == Unbounded and len(lhs_shape) == 1:
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+
         if lhs_shape[0] == Unbounded:
             lhs_shape.pop(0)
             ub = True
