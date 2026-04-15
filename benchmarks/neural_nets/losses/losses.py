@@ -1,3 +1,4 @@
+from typing import Any, Literal
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -9,17 +10,18 @@ from ..initializers import (
     OptimizerInitializer,
 )
 
+from typing_extensions import reveal_type
 
 class ObjectiveBase(ABC):
     def __init__(self):
         super().__init__()
 
     @abstractmethod
-    def loss(self, y_true, y_pred):
+    def loss(self, y_true: np.ndarray[tuple[Any, int]], y_pred: np.ndarray[tuple[Any, int]]):
         pass
 
     @abstractmethod
-    def grad(self, y_true, y_pred, **kwargs):
+    def grad(self, y_true: np.ndarray[tuple[Any, int]], y_pred: np.ndarray[tuple[Any, int]], **kwargs):
         pass
 
 
@@ -39,14 +41,14 @@ class SquaredError(ObjectiveBase):
         """
         super().__init__()
 
-    def __call__(self, y, y_pred):
+    def __call__(self, y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]]):
         return self.loss(y, y_pred)
 
     def __str__(self):
         return "SquaredError"
 
     @staticmethod
-    def loss(y, y_pred):
+    def loss(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]]):
         """
         Compute the squared error between `y` and `y_pred`.
 
@@ -62,10 +64,12 @@ class SquaredError(ObjectiveBase):
         loss : float
             The sum of the squared error across dimensions and examples.
         """
-        return 0.5 * np.linalg.norm(y_pred - y) ** 2
+        temp = np.linalg.norm(y_pred - y) 
+        reveal_type(temp)
+        return 0.5 * temp ** 2
 
     @staticmethod
-    def grad(y, y_pred, z, act_fn):
+    def grad(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]], z: np.ndarray[tuple[int, int]], act_fn): # type: ignore [override]
         """
         Gradient of the squared error loss with respect to the pre-nonlinearity
         input, `z`.
@@ -104,7 +108,9 @@ class SquaredError(ObjectiveBase):
         grad : :py:class:`ndarray <numpy.ndarray>` of shape (n, m)
             The gradient of the squared error loss with respect to `z`.
         """
-        return (y_pred - y) * act_fn.grad(z)
+        temp = y_pred - y
+        reveal_type(temp)
+        return temp * act_fn.grad(z)
 
 
 class CrossEntropy(ObjectiveBase):
@@ -123,14 +129,14 @@ class CrossEntropy(ObjectiveBase):
         """
         super().__init__()
 
-    def __call__(self, y, y_pred):
+    def __call__(self, y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]]):
         return self.loss(y, y_pred)
 
     def __str__(self):
         return "CrossEntropy"
 
     @staticmethod
-    def loss(y, y_pred):
+    def loss(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]]):
         """
         Compute the cross-entropy (log) loss.
 
@@ -163,11 +169,17 @@ class CrossEntropy(ObjectiveBase):
         # probability of the correct label over all samples in the batch.
         # observe that we are taking advantage of the fact that y is one-hot
         # encoded
-        cross_entropy = -np.sum(y * np.log(y_pred + eps))
-        return cross_entropy
+        temp = y_pred + eps
+        reveal_type(temp)
+        temp1 = np.log(temp)
+        reveal_type(temp1) # Loog Not implemented 
+        temp2 = y * temp1
+        cross_entropy = np.sum(temp2)
+        reveal_type(cross_entropy)
+        return -cross_entropy
 
     @staticmethod
-    def grad(y, y_pred):
+    def grad(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]]): # type: ignore [override]
         """
         Compute the gradient of the cross entropy loss with regard to the
         softmax input, `z`.
@@ -251,14 +263,14 @@ class VAELoss(ObjectiveBase):
         """
         super().__init__()
 
-    def __call__(self, y, y_pred, t_mean, t_log_var):
+    def __call__(self, y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]], t_mean: np.ndarray[tuple[int, int]], t_log_var: np.ndarray[tuple[int, int]]):
         return self.loss(y, y_pred, t_mean, t_log_var)
 
     def __str__(self):
         return "VAELoss"
 
     @staticmethod
-    def loss(y, y_pred, t_mean, t_log_var):
+    def loss(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]], t_mean: np.ndarray[tuple[int, int]], t_log_var: np.ndarray[tuple[int, int]]):# type: ignore [override]
         """
         Variational lower bound for a Bernoulli VAE.
 
@@ -293,7 +305,7 @@ class VAELoss(ObjectiveBase):
         return loss
 
     @staticmethod
-    def grad(y, y_pred, t_mean, t_log_var):
+    def grad(y: np.ndarray[tuple[int, int]], y_pred: np.ndarray[tuple[int, int]], t_mean: np.ndarray[tuple[int, int]], t_log_var: np.ndarray[tuple[int, int]]):# type: ignore [override]
         """
         Compute the gradient of the VLB with regard to the network parameters.
 
@@ -382,7 +394,7 @@ class WGAN_GPLoss(ObjectiveBase):
         self.lambda_ = lambda_
         super().__init__()
 
-    def __call__(self, Y_fake, module, Y_real=None, gradInterp=None):
+    def __call__(self, Y_fake: np.ndarray[tuple[int]], module, Y_real = None, gradInterp = None):
         """
         Computes the generator and critic loss using the WGAN-GP value
         function.
@@ -412,7 +424,7 @@ class WGAN_GPLoss(ObjectiveBase):
     def __str__(self):
         return "WGANLossGP(lambda_={})".format(self.lambda_)
 
-    def loss(self, Y_fake, module, Y_real=None, gradInterp=None):
+    def loss(self, Y_fake: np.ndarray[tuple[int]], module, Y_real = None, gradInterp = None):# type: ignore [override]
         """
         Computes the generator and critic loss using the WGAN-GP value
         function.
@@ -454,7 +466,7 @@ class WGAN_GPLoss(ObjectiveBase):
 
         return loss
 
-    def grad(self, Y_fake, module, Y_real=None, gradInterp=None):
+    def grad(self, Y_fake: np.ndarray[tuple[int]], module, Y_real= None, gradInterp = None):# type: ignore [override]
         """
         Computes the gradient of the generator or critic loss with regard to
         its inputs.
@@ -660,7 +672,7 @@ class NCELoss(ObjectiveBase):
             },
         }
 
-    def __call__(self, X, target, neg_samples=None, retain_derived=True):
+    def __call__(self, X: np.ndarray[tuple[int, int, int]], target: np.ndarray[tuple[int]], neg_samples = None, retain_derived=True):# type: ignore [override]
         return self.loss(X, target, neg_samples, retain_derived)
 
     def __str__(self):
@@ -704,7 +716,7 @@ class NCELoss(ObjectiveBase):
                 self.parameters[k] = self.optimizer(self.parameters[k], v, k, cur_loss)
         self.flush_gradients()
 
-    def loss(self, X, target, neg_samples=None, retain_derived=True):
+    def loss(self, X: np.ndarray[tuple[int, int, int]], target: np.ndarray[tuple[int]], neg_samples = None, retain_derived=True): # type: ignore [override]
         """
         Compute the NCE loss for a collection of inputs and associated targets.
 
@@ -757,13 +769,13 @@ class NCELoss(ObjectiveBase):
 
         return loss, np.squeeze(y_pred[..., :1], -1)
 
-    def _loss(self, X, target, neg_samples):
+    def _loss(self, X: np.ndarray[tuple[int, int, int]], target: np.ndarray[tuple[int]], neg_samples: np.ndarray[tuple[int]]):
         """Actual computation of NCE loss"""
         fstr = "X must have shape (n_ex, n_c, n_in), but got {} dims instead"
         assert X.ndim == 3, fstr.format(X.ndim)
 
-        W = self.parameters["W"]
-        b = self.parameters["b"]
+        W: np.ndarray[tuple[int, int]] = self.parameters["W"]
+        b: np.ndarray[tuple[Literal[1], int]] = self.parameters["b"]
 
         # sample negative samples from the noise distribution
         if neg_samples is None:
@@ -779,8 +791,26 @@ class NCELoss(ObjectiveBase):
         noise_samples = (neg_samples, p_target, p_neg_samples)
 
         # compute the logit for the negative samples and target
-        Z_target = X @ W[target].T + b[0, target]
-        Z_neg = X @ W[neg_samples].T + b[0, neg_samples]
+        W_target = W[target]
+        W_target_T = np.transpose(W_target)
+        reveal_type(W_target_T)  # Expected shape: (n_in, n_ex)
+        b_new = b[0, target] 
+        reveal_type(b_new)       # Expected shape: (n_ex,)
+        Z_temp = X @ W_target_T 
+        reveal_type(Z_temp)      # Expected shape: (n_ex, n_c, n_ex)
+        Z_target = Z_temp + b_new
+        reveal_type(Z_target)    # Expected shape: (n_ex, n_c, n_ex)
+
+        # --- Z_neg computation ---
+        W_neg = W[neg_samples]
+        W_neg_T = np.transpose(W_neg)
+        reveal_type(W_neg_T)     # Expected shape: (n_in, n_samples)
+        b_neg = b[0, neg_samples]
+        reveal_type(b_neg)       # Expected shape: (n_samples,)
+        Z_neg_temp = X @ W_neg_T
+        reveal_type(Z_neg_temp)  # Expected shape: (n_ex, n_c, n_samples)
+        Z_neg = Z_neg_temp + b_neg
+        reveal_type(Z_neg)       # Expected shape: (n_ex, n_c, n_samples)
 
         # subtract the log probability of each label under the noise dist
         if self.subtract_log_label_prob:
@@ -791,19 +821,25 @@ class NCELoss(ObjectiveBase):
         # only retain the probability of the target under its associated
         # minibatch example
         aa, _, cc = Z_target.shape
-        Z_target = Z_target[range(aa), :, range(cc)][..., None]
+        Z_temp_2 = Z_target[range(aa), :, range(cc)] # Slicing also doesn't support this advanced slicing yet, so this will also fail
+        reveal_type(Z_temp_2)
+        Z_target = Z_temp_2[..., None] # Slicing doesn't support None, yet so this will fail
+        reveal_type(Z_target)
 
         # p_target = (n_ex, n_c, 1)
         # p_neg = (n_ex, n_c, n_samples)
-        pred_p_target = self.act_fn(Z_target)
-        pred_p_neg = self.act_fn(Z_neg)
+        pred_p_target: np.ndarray[tuple[int, int, Literal[1]]] = self.act_fn(Z_target)
+        pred_p_neg: np.ndarray[tuple[int, int, int]] = self.act_fn(Z_neg)
+        reveal_type(pred_p_target)
+        reveal_type(pred_p_neg)
 
         # if we're in evaluation mode, ignore the negative samples - just
         # return the binary cross entropy on the targets
         y_pred = pred_p_target
         if self.trainable:
             # (n_ex, n_c, 1 + n_samples) (target is first column)
-            y_pred = np.concatenate((y_pred, pred_p_neg), axis=-1)
+            y_pred = np.concatenate((pred_p_target, pred_p_neg), axis=-1)
+            reveal_type(y_pred) # Not implemented yet
 
         n_targets = 1
         y_true = np.zeros_like(y_pred)
@@ -815,7 +851,7 @@ class NCELoss(ObjectiveBase):
         loss = -np.sum(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
         return loss, Z_target, Z_neg, y_pred, y_true, noise_samples
 
-    def grad(self, retain_grads=True, update_params=True):
+    def grad(self, retain_grads=True, update_params=True): # type: ignore [override]
         """
         Compute the gradient of the NCE loss with regard to the inputs,
         weights, and biases.
@@ -855,7 +891,7 @@ class NCELoss(ObjectiveBase):
 
         return dX
 
-    def _grad(self, X, input_idx):
+    def _grad(self, X: np.ndarray[tuple[int, int, int]], input_idx):
         """Actual computation of gradient wrt. loss weights + input"""
         W, b = self.parameters["W"], self.parameters["b"]
 

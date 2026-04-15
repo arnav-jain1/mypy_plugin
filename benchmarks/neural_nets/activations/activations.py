@@ -1,42 +1,44 @@
 """A collection of activation function objects for building neural networks"""
 from math import erf
 from abc import ABC, abstractmethod
+from typing import Any
 
 import numpy as np
+from typing_extensions import reveal_type
 
 
 class ActivationBase(ABC):
-    def __init__(self, **kwargs):
+    def __init__(self) -> None:
         """Initialize the ActivationBase object"""
         super().__init__()
 
-    def __call__(self, z):
+    def __call__(self, z: np.ndarray) -> np.ndarray:
         """Apply the activation function to an input"""
         if z.ndim == 1:
             z = z.reshape(1, -1)
         return self.fn(z)
 
     @abstractmethod
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         """Apply the activation function to an input"""
         raise NotImplementedError
 
     @abstractmethod
-    def grad(self, x, **kwargs):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         """Compute the gradient of the activation function wrt the input"""
         raise NotImplementedError
 
 
 class Sigmoid(ActivationBase):
-    def __init__(self):
+    def __init__(self) -> None:
         """A logistic sigmoid activation function."""
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Sigmoid"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the logistic sigmoid, :math:`\sigma`, on the elements of input `z`.
 
@@ -46,7 +48,7 @@ class Sigmoid(ActivationBase):
         """
         return 1 / (1 + np.exp(-z))
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the logistic sigmoid on the elements of `x`.
 
@@ -55,9 +57,12 @@ class Sigmoid(ActivationBase):
             \frac{\partial \sigma}{\partial x_i} = \sigma(x_i) (1 - \sigma(x_i))
         """
         fn_x = self.fn(x)
-        return fn_x * (1 - fn_x)
+        reveal_type(fn_x)
+        temp = (1 - fn_x)
+        output = fn_x * temp
+        return output
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the logistic sigmoid on the elements of `x`.
 
@@ -94,14 +99,14 @@ class ReLU(ActivationBase):
     .. [*] Karpathy, A. "CS231n: Convolutional neural networks for visual recognition."
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "ReLU"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaulate the ReLU function on the elements of input `z`.
 
@@ -113,7 +118,7 @@ class ReLU(ActivationBase):
         """
         return np.clip(z, 0, np.inf)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaulate the first derivative of the ReLU function on the elements of input `x`.
 
@@ -125,7 +130,7 @@ class ReLU(ActivationBase):
         """
         return (x > 0).astype(int)
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaulate the second derivative of the ReLU function on the elements of
         input `x`.
@@ -158,15 +163,15 @@ class LeakyReLU(ActivationBase):
        the 30th International Conference of Machine Learning, 30*.
     """
 
-    def __init__(self, alpha=0.3):
+    def __init__(self, alpha: float = 0.3) -> None:
         self.alpha = alpha
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Leaky ReLU(alpha={})".format(self.alpha)
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the leaky ReLU function on the elements of input `z`.
 
@@ -180,7 +185,7 @@ class LeakyReLU(ActivationBase):
         _z[z < 0] = _z[z < 0] * self.alpha
         return _z
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the leaky ReLU function on the elements
         of input `x`.
@@ -195,7 +200,7 @@ class LeakyReLU(ActivationBase):
         out[x < 0] *= self.alpha
         return out
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the leaky ReLU function on the
         elements of input `x`.
@@ -208,7 +213,7 @@ class LeakyReLU(ActivationBase):
 
 
 class GELU(ActivationBase):
-    def __init__(self, approximate=True):
+    def __init__(self, approximate: bool = True) -> None:
         r"""
         A Gaussian error linear unit (GELU). [*]_
 
@@ -220,7 +225,7 @@ class GELU(ActivationBase):
         References
         ----------
         .. [*] Hendrycks, D., & Gimpel, K. (2016). "Bridging nonlinearities and
-           stochastic regularizers with Gaussian error linear units." *CoRR*.
+            stochastic regularizers with Gaussian error linear units." *CoRR*.
 
         Parameters
         ----------
@@ -229,14 +234,14 @@ class GELU(ActivationBase):
             error function when calculating the unit activation and gradient.
             Default is True.
         """
-        self.approximate = True
+        self.approximate = approximate
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return f"GELU(approximate={self.approximate})"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Compute the GELU function on the elements of input `z`.
 
@@ -249,9 +254,14 @@ class GELU(ActivationBase):
 
         if self.approximate:
             return 0.5 * z * (1 + tanh(sqrt(2 / pi) * (z + 0.044715 * z ** 3)))
-        return 0.5 * z * (1 + erf(z / sqrt(2)))
+        
+        # Note: erf is technically a scalar function in Python's math module.
+        # If your numpy arrays are large, consider using scipy.special.erf 
+        # or np.vectorize here. Assuming `z` handles it per original code.
+        vectorized_erf = np.vectorize(erf)
+        return 0.5 * z * (1 + vectorized_erf(z / sqrt(2)))
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the GELU function on the elements
         of input `x`.
@@ -273,10 +283,11 @@ class GELU(ActivationBase):
             approx = tanh(sqrt(2 / pi) * (x + 0.044715 * x ** 3))
             dx = 0.5 + 0.5 * approx + ((0.5 * x * erf_prime(s)) / sqrt(2))
         else:
-            dx = 0.5 + 0.5 * erf(s) + ((0.5 * x * erf_prime(s)) / sqrt(2))
+            vectorized_erf = np.vectorize(erf)
+            dx = 0.5 + 0.5 * vectorized_erf(s) + ((0.5 * x * erf_prime(s)) / sqrt(2))
         return dx
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the GELU function on the elements
         of input `x`.
@@ -284,7 +295,7 @@ class GELU(ActivationBase):
         .. math::
 
             \frac{\partial^2 \text{GELU}}{\partial x_i^2} =
-                \frac{1}{2\sqrt{2}} \left\[
+                \frac{1}{2\sqrt{2}} \left[
                     \text{erf}'(\frac{x}{\sqrt{2}}) +
                     \frac{1}{\sqrt{2}} \text{erf}''(\frac{x}{\sqrt{2}})
                 \right]
@@ -302,19 +313,19 @@ class GELU(ActivationBase):
 
 
 class Tanh(ActivationBase):
-    def __init__(self):
+    def __init__(self) -> None:
         """A hyperbolic tangent activation function."""
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Tanh"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         """Compute the tanh function on the elements of input `z`."""
         return np.tanh(z)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the tanh function on the elements
         of input `x`.
@@ -325,7 +336,7 @@ class Tanh(ActivationBase):
         """
         return 1 - np.tanh(x) ** 2
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the tanh function on the elements
         of input `x`.
@@ -340,7 +351,7 @@ class Tanh(ActivationBase):
 
 
 class Affine(ActivationBase):
-    def __init__(self, slope=1, intercept=0):
+    def __init__(self, slope: float = 1.0, intercept: float = 0.0) -> None:
         """
         An affine activation function.
 
@@ -355,11 +366,11 @@ class Affine(ActivationBase):
         self.intercept = intercept
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Affine(slope={}, intercept={})".format(self.slope, self.intercept)
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the Affine activation on the elements of input `z`.
 
@@ -369,7 +380,7 @@ class Affine(ActivationBase):
         """
         return self.slope * z + self.intercept
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the Affine activation on the elements
         of input `x`.
@@ -380,7 +391,7 @@ class Affine(ActivationBase):
         """
         return self.slope * np.ones_like(x)
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the Affine activation on the elements
         of input `x`.
@@ -393,7 +404,7 @@ class Affine(ActivationBase):
 
 
 class Identity(Affine):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Identity activation function.
 
@@ -402,15 +413,15 @@ class Identity(Affine):
         :class:`Identity` is syntactic sugar for :class:`Affine` with
         slope = 1 and intercept = 0.
         """
-        super().__init__(slope=1, intercept=0)
+        super().__init__(slope=1.0, intercept=0.0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Identity"
 
 
 class ELU(ActivationBase):
-    def __init__(self, alpha=1.0):
+    def __init__(self, alpha: float = 1.0) -> None:
         r"""
         An exponential linear unit (ELU).
 
@@ -442,11 +453,11 @@ class ELU(ActivationBase):
         self.alpha = alpha
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "ELU(alpha={})".format(self.alpha)
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the ELU activation on the elements of input `z`.
 
@@ -459,7 +470,7 @@ class ELU(ActivationBase):
         # z if z > 0  else alpha * (e^z - 1)
         return np.where(z > 0, z, self.alpha * (np.exp(z) - 1))
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the ELU activation on the elements
         of input `x`.
@@ -473,7 +484,7 @@ class ELU(ActivationBase):
         # 1 if x > 0 else alpha * e^(z)
         return np.where(x > 0, np.ones_like(x), self.alpha * np.exp(x))
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the ELU activation on the elements
         of input `x`.
@@ -489,15 +500,15 @@ class ELU(ActivationBase):
 
 
 class Exponential(ActivationBase):
-    def __init__(self):
+    def __init__(self) -> None:
         """An exponential (base e) activation function"""
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Exponential"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the activation function
 
@@ -506,7 +517,7 @@ class Exponential(ActivationBase):
         """
         return np.exp(z)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the exponential activation on the elements
         of input `x`.
@@ -517,7 +528,7 @@ class Exponential(ActivationBase):
         """
         return np.exp(x)
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the exponential activation on the elements
         of input `x`.
@@ -555,17 +566,17 @@ class SELU(ActivationBase):
        Processing Systems, 30.*
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.alpha = 1.6732632423543772848170429916717
         self.scale = 1.0507009873554804934193349852946
         self.elu = ELU(alpha=self.alpha)
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "SELU"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the SELU activation on the elements of input `z`.
 
@@ -583,7 +594,7 @@ class SELU(ActivationBase):
         """
         return self.scale * self.elu.fn(z)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the SELU activation on the elements
         of input `x`.
@@ -598,7 +609,7 @@ class SELU(ActivationBase):
             x >= 0, np.ones_like(x) * self.scale, np.exp(x) * self.alpha * self.scale,
         )
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the SELU activation on the elements
         of input `x`.
@@ -613,7 +624,7 @@ class SELU(ActivationBase):
 
 
 class HardSigmoid(ActivationBase):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         A "hard" sigmoid activation function.
 
@@ -624,11 +635,11 @@ class HardSigmoid(ActivationBase):
         """
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "Hard Sigmoid"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the hard sigmoid activation on the elements of input `z`.
 
@@ -641,7 +652,7 @@ class HardSigmoid(ActivationBase):
         """
         return np.clip((0.2 * z) + 0.5, 0.0, 1.0)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the hard sigmoid activation on the elements
         of input `x`.
@@ -654,7 +665,7 @@ class HardSigmoid(ActivationBase):
         """
         return np.where((x >= -2.5) & (x <= 2.5), 0.2, 0)
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the hard sigmoid activation on the elements
         of input `x`.
@@ -667,7 +678,7 @@ class HardSigmoid(ActivationBase):
 
 
 class SoftPlus(ActivationBase):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         A softplus activation function.
 
@@ -681,11 +692,11 @@ class SoftPlus(ActivationBase):
         """
         super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the activation function"""
         return "SoftPlus"
 
-    def fn(self, z):
+    def fn(self, z: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the softplus activation on the elements of input `z`.
 
@@ -695,7 +706,7 @@ class SoftPlus(ActivationBase):
         """
         return np.log(np.exp(z) + 1)
 
-    def grad(self, x):
+    def grad(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the first derivative of the softplus activation on the elements
         of input `x`.
@@ -707,7 +718,7 @@ class SoftPlus(ActivationBase):
         exp_x = np.exp(x)
         return exp_x / (exp_x + 1)
 
-    def grad2(self, x):
+    def grad2(self, x: np.ndarray) -> np.ndarray:
         r"""
         Evaluate the second derivative of the softplus activation on the elements
         of input `x`.

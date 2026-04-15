@@ -7,9 +7,10 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from typing_extensions import reveal_type
 
 class WrapperBase(ABC):
-    def __init__(self, wrapped_layer):
+    def __init__(self, wrapped_layer) -> None:
         """An abstract base class for all Wrapper instances"""
         self._base_layer = wrapped_layer
         if hasattr(wrapped_layer, "_base_layer"):
@@ -17,31 +18,31 @@ class WrapperBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def _init_wrapper_params(self):
+    def _init_wrapper_params(self) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def forward(self, z, **kwargs):
+    def forward(self, z: np.ndarray, **kwargs) -> np.ndarray:
         """Overwritten by inherited class"""
         raise NotImplementedError
 
     @abstractmethod
-    def backward(self, out, **kwargs):
+    def backward(self, out: np.ndarray, **kwargs) -> np.ndarray:
         """Overwritten by inherited class"""
         raise NotImplementedError
 
     @property
-    def trainable(self):
+    def trainable(self) -> bool:
         """Whether the base layer is frozen"""
         return self._base_layer.trainable
 
     @property
-    def parameters(self):
+    def parameters(self) -> dict:
         """A dictionary of the base layer parameters"""
         return self._base_layer.parameters
 
     @property
-    def hyperparameters(self):
+    def hyperparameters(self) -> dict:
         """A dictionary of the base layer's hyperparameters"""
         hp = self._base_layer.hyperparameters
         hpw = self._wrapper_hyperparameters
@@ -52,7 +53,7 @@ class WrapperBase(ABC):
         return hp
 
     @property
-    def derived_variables(self):
+    def derived_variables(self) -> dict:
         """
         A dictionary of the intermediate values computed during layer
         training.
@@ -65,7 +66,7 @@ class WrapperBase(ABC):
         return dv
 
     @property
-    def gradients(self):
+    def gradients(self) -> dict:
         """A dictionary of the current layer parameter gradients."""
         return self._base_layer.gradients
 
@@ -79,25 +80,25 @@ class WrapperBase(ABC):
         """The collection of layer inputs."""
         return self._base_layer.X
 
-    def _init_params(self):
+    def _init_params(self) -> None:
         hp = self._wrapper_hyperparameters
         if "wrappers" in self._base_layer.hyperparameters:
             self._base_layer.hyperparameters["wrappers"].append(hp)
         else:
             self._base_layer.hyperparameters["wrappers"] = [hp]
 
-    def freeze(self):
+    def freeze(self) -> None:
         """
         Freeze the base layer's parameters at their current values so they can
         no longer be updated.
         """
         self._base_layer.freeze()
 
-    def unfreeze(self):
+    def unfreeze(self) -> None:
         """Unfreeze the base layer's parameters so they can be updated."""
         self._base_layer.freeze()
 
-    def flush_gradients(self):
+    def flush_gradients(self) -> None:
         """Erase all the wrapper and base layer's derived variables and gradients."""
         assert self.trainable, "Layer is frozen"
         self._base_layer.flush_gradients()
@@ -105,7 +106,7 @@ class WrapperBase(ABC):
         for k, v in self._wrapper_derived_variables.items():
             self._wrapper_derived_variables[k] = []
 
-    def update(self, lr):
+    def update(self, lr: float) -> None:
         """
         Update the base layer's parameters using the accrued gradients and
         layer optimizer. Flush all gradients once the update is complete.
@@ -114,13 +115,13 @@ class WrapperBase(ABC):
         self._base_layer.update(lr)
         self.flush_gradients()
 
-    def _set_wrapper_params(self, pdict):
+    def _set_wrapper_params(self, pdict: dict) -> 'WrapperBase':
         for k, v in pdict.items():
             if k in self._wrapper_hyperparameters:
                 self._wrapper_hyperparameters[k] = v
         return self
 
-    def set_params(self, summary_dict):
+    def set_params(self, summary_dict: dict):
         """
         Set the base layer parameters from a dictionary of values.
 
@@ -139,7 +140,7 @@ class WrapperBase(ABC):
         """
         return self._base_layer.set_params(summary_dict)
 
-    def summary(self):
+    def summary(self) -> dict:
         """Return a dict of the layer parameters, hyperparameters, and ID."""
         return {
             "layer": self.hyperparameters["layer"],
@@ -150,7 +151,7 @@ class WrapperBase(ABC):
 
 
 class Dropout(WrapperBase):
-    def __init__(self, wrapped_layer, p):
+    def __init__(self, wrapped_layer, p: float) -> None:
         """
         A dropout regularization wrapper.
 
@@ -174,11 +175,11 @@ class Dropout(WrapperBase):
         self._init_wrapper_params()
         self._init_params()
 
-    def _init_wrapper_params(self):
+    def _init_wrapper_params(self) -> None:
         self._wrapper_derived_variables = {"dropout_mask": []}
         self._wrapper_hyperparameters = {"wrapper": "Dropout", "p": self.p}
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived: bool = True) -> np.ndarray: # type: ignore[override]
         """
         Compute the layer output with dropout for a single minibatch.
 
@@ -198,18 +199,22 @@ class Dropout(WrapperBase):
         Y : :py:class:`ndarray <numpy.ndarray>` of shape `(n_ex, n_out)`
             Layer output for each of the `n_ex` examples.
         """
-        scaler, mask = 1.0, np.ones(X.shape).astype(bool)
+        scaler = 1.0 
+        x_shape = X.shape
+        mask = np.ones(x_shape).astype(bool)
+        reveal_type(mask)
         if self.trainable:
             scaler = 1.0 / (1.0 - self.p)
             mask = np.random.rand(*X.shape) >= self.p
             X = mask * X
+            reveal_type(X)
 
         if retain_derived:
             self._wrapper_derived_variables["dropout_mask"].append(mask)
 
         return scaler * self._base_layer.forward(X, retain_derived)
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int]], retain_grads: bool = True) -> np.ndarray: # type: ignore[override]
         """
         Backprop from the base layer's outputs to inputs.
 
@@ -228,11 +233,16 @@ class Dropout(WrapperBase):
             The gradient of the loss wrt. the layer input(s) `X`.
         """  # noqa: E501
         assert self.trainable, "Layer is frozen"
-        dLdy *= 1.0 / (1.0 - self.p)
+        # dLdy *= 1.0 / (1.0 - self.p)
+        # reveal_type(dLdy)
+        temp1 = (1.0 - self.p)
+        temp2 = 1.0 / temp1
+        dLdy = dLdy * temp2
+        reveal_type(dLdy)
         return self._base_layer.backward(dLdy, retain_grads)
 
 
-def init_wrappers(layer, wrappers_list):
+def init_wrappers(layer, wrappers_list: list):
     """
     Initialize the layer wrappers in `wrapper_list` and return a wrapped
     `layer` object.

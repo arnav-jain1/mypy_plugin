@@ -4,9 +4,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 from numpy.linalg import norm
 
+from typing_extensions import reveal_type
 
 class OptimizerBase(ABC):
-    def __init__(self, lr, scheduler=None):
+    def __init__(self, lr: float, scheduler=None) -> None:
         """
         An abstract base class for all Optimizer objects.
 
@@ -19,22 +20,22 @@ class OptimizerBase(ABC):
         self.hyperparameters = {}
         self.lr_scheduler = SchedulerInitializer(scheduler, lr=lr)()
 
-    def __call__(self, param, param_grad, param_name, cur_loss=None):
+    def __call__(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss = None) -> np.ndarray:
         return self.update(param, param_grad, param_name, cur_loss)
 
-    def step(self):
+    def step(self) -> None:
         """Increment the optimizer step counter by 1"""
         self.cur_step += 1
 
-    def reset_step(self):
+    def reset_step(self) -> None:
         """Reset the step counter to zero"""
         self.cur_step = 0
 
-    def copy(self):
+    def copy(self) -> 'OptimizerBase':
         """Return a copy of the optimizer object"""
         return deepcopy(self)
 
-    def set_params(self, hparam_dict=None, cache_dict=None):
+    def set_params(self, hparam_dict = None, cache_dict = None) -> None:
         """Set the parameters of the optimizer object from a dictionary"""
         from ..initializers import SchedulerInitializer
 
@@ -51,14 +52,14 @@ class OptimizerBase(ABC):
                     self.cache[k] = v
 
     @abstractmethod
-    def update(self, param, param_grad, param_name, cur_loss=None):
+    def update(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss = None) -> np.ndarray:
         raise NotImplementedError
 
 
 class SGD(OptimizerBase):
     def __init__(
-        self, lr=0.01, momentum=0.0, clip_norm=None, lr_scheduler=None, **kwargs
-    ):
+        self, lr: float = 0.01, momentum: float = 0.0, clip_norm = None, lr_scheduler=None, **kwargs
+    ) -> None:
         """
         A stochastic gradient descent optimizer.
 
@@ -100,14 +101,14 @@ class SGD(OptimizerBase):
             "lr_scheduler": str(self.lr_scheduler),
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         H = self.hyperparameters
         lr, mm, cn, sc = H["lr"], H["momentum"], H["clip_norm"], H["lr_scheduler"]
         return "SGD(lr={}, momentum={}, clip_norm={}, lr_scheduler={})".format(
             lr, mm, cn, sc
         )
 
-    def update(self, param, param_grad, param_name, cur_loss=None):
+    def update(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss = None) -> np.ndarray:
         """
         Compute the SGD update for a given parameter
 
@@ -141,7 +142,12 @@ class SGD(OptimizerBase):
         # scale gradient to avoid explosion
         t = np.inf if clip_norm is None else clip_norm
         if norm(param_grad) > t:
-            param_grad = param_grad * t / norm(param_grad)
+            norm_param_grad = norm(param_grad)
+            reveal_type(norm_param_grad)
+            temp = param_grad * t
+            reveal_type(temp)
+            param_grad = temp / norm_param_grad
+            reveal_type(param_grad)
 
         update = momentum * C[param_name] + lr * param_grad
         self.cache[param_name] = update
@@ -154,7 +160,7 @@ class SGD(OptimizerBase):
 
 
 class AdaGrad(OptimizerBase):
-    def __init__(self, lr=0.01, eps=1e-7, clip_norm=None, lr_scheduler=None, **kwargs):
+    def __init__(self, lr: float = 0.01, eps: float = 1e-7, clip_norm = None, lr_scheduler=None, **kwargs) -> None:
         """
         An AdaGrad optimizer.
 
@@ -178,7 +184,7 @@ class AdaGrad(OptimizerBase):
         References
         ----------
         .. [1] Karpathy, A. "CS231n: Convolutional neural networks for visual
-           recognition" https://cs231n.github.io/neural-networks-3/
+            recognition" https://cs231n.github.io/neural-networks-3/
 
         Parameters
         ----------
@@ -205,14 +211,14 @@ class AdaGrad(OptimizerBase):
             "lr_scheduler": str(self.lr_scheduler),
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         H = self.hyperparameters
         lr, eps, cn, sc = H["lr"], H["eps"], H["clip_norm"], H["lr_scheduler"]
         return "AdaGrad(lr={}, eps={}, clip_norm={}, lr_scheduler={})".format(
             lr, eps, cn, sc
         )
 
-    def update(self, param, param_grad, param_name, cur_loss=None):
+    def update(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss= None) -> np.ndarray:
         """
         Compute the AdaGrad update for a given parameter.
 
@@ -261,8 +267,8 @@ class AdaGrad(OptimizerBase):
 
 class RMSProp(OptimizerBase):
     def __init__(
-        self, lr=0.001, decay=0.9, eps=1e-7, clip_norm=None, lr_scheduler=None, **kwargs
-    ):
+        self, lr: float = 0.001, decay: float = 0.9, eps: float = 1e-7, clip_norm = None, lr_scheduler=None, **kwargs
+    ) -> None:
         """
         RMSProp optimizer.
 
@@ -311,7 +317,7 @@ class RMSProp(OptimizerBase):
             "lr_scheduler": str(self.lr_scheduler),
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         H = self.hyperparameters
         sc = H["lr_scheduler"]
         lr, eps, dc, cn = H["lr"], H["eps"], H["decay"], H["clip_norm"]
@@ -319,7 +325,7 @@ class RMSProp(OptimizerBase):
             lr, eps, dc, cn, sc
         )
 
-    def update(self, param, param_grad, param_name, cur_loss=None):
+    def update(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss = None) -> np.ndarray:
         """
         Compute the RMSProp update for a given parameter.
 
@@ -364,14 +370,14 @@ class RMSProp(OptimizerBase):
 class Adam(OptimizerBase):
     def __init__(
         self,
-        lr=0.001,
-        decay1=0.9,
-        decay2=0.999,
-        eps=1e-7,
-        clip_norm=None,
+        lr: float = 0.001,
+        decay1: float = 0.9,
+        decay2: float = 0.999,
+        eps: float = 1e-7,
+        clip_norm = None,
         lr_scheduler=None,
         **kwargs
-    ):
+    ) -> None:
         """
         Adam (adaptive moment estimation) optimization algorithm.
 
@@ -416,7 +422,7 @@ class Adam(OptimizerBase):
             "lr_scheduler": str(self.lr_scheduler),
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         H = self.hyperparameters
         lr, d1, d2 = H["lr"], H["decay1"], H["decay2"]
         eps, cn, sc = H["eps"], H["clip_norm"], H["lr_scheduler"]
@@ -424,7 +430,7 @@ class Adam(OptimizerBase):
             lr, d1, d2, eps, cn, sc
         )
 
-    def update(self, param, param_grad, param_name, cur_loss=None):
+    def update(self, param: np.ndarray, param_grad: np.ndarray, param_name: str, cur_loss = None) -> np.ndarray:
         """
         Compute the Adam update for a given parameter.
 

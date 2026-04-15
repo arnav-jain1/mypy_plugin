@@ -2,3 +2,6 @@
 .mypy_cache/
 .gemini/
 ./lean_proofs/.lake/
+./lean_proofs_unbounded/.lake/
+outputs/
+tensor_plugin/__pycache__/

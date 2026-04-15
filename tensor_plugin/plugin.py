@@ -3,14 +3,15 @@ from mypy.plugin import (
     CheckerPluginInterface, DynamicClassDefContext, SemanticAnalyzerPluginInterface
 )
 from mypy.types import Instance, Type , TupleType, TypeVarType, AnyType, TypeOfAny, get_proper_type, LiteralType, NoneType, UnionType, EllipsisType
-from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr
-from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, ArgKind
-from mypy.errorcodes import ErrorCode, OVERRIDE
+from mypy.nodes import TypeInfo, ARG_POS, Var, SYMBOL_FUNCBASE_TYPES, SymbolTableNode, IntExpr, ListExpr, UnaryExpr, TupleExpr, NameExpr, MemberExpr
+from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, EllipsisExpr, SymbolTableNode, GDEF, IndexExpr
+from mypy.errorcodes import ErrorCode, OVERRIDE, MISC
 
 from z3_solver import NumpySolver, UnboundedType, Unbounded
 from slicing import slice_output
 from typing import *
 import numpy as np
+from copy import deepcopy
 
 ERROR_TYPE = NoneType()
 
@@ -54,28 +55,36 @@ class CustomPlugin(Plugin):
             "numpy._core.multiarray.dot": self.dot_prod,
             "numpy._core.fromnumeric.transpose": self.transpose,
             "numpy.lib._type_check_impl.nan_to_num": self.nan_to_none,
+            "numpy.lib._shape_base_impl.expand_dims": self.expand_dims,
             }
 
         self.method_hooks = {
             "numpy.ndarray.__mul__": self.broadcast, 
-            "numpy.ndarray.__rmul__": self.fail,
+            "numpy.ndarray.__rmul__": self.broadcast,
             "numpy.ndarray.__add__": self.broadcast,
-            "numpy.ndarray.__radd__": self.fail,
+            "numpy.ndarray.__radd__": self.broadcast,
             "numpy.ndarray.__sub__": self.broadcast,
-            "numpy.ndarray.__rsub__": self.fail,
+            "numpy.ndarray.__rsub__": self.broadcast,
             "numpy._core.multiarray._ConstructorEmpty.__call__": self.constructor,
             "numpy.ndarray.__matmul__": self.matmul,
             "numpy.ndarray.__rmatmul__": self.fail,
             "numpy.ndarray.reshape": self.reshape,
             "numpy.ndarray.__truediv__": self.broadcast,
-            "numpy.ndarray.__rtruediv__": self.fail,
+            "numpy.ndarray.__rtruediv__": self.broadcast,
             "numpy.ndarray.argmax": self.argmax_method,
             'numpy.ndarray.__getitem__': self.slicing,
+            "numpy.ndarray.swapaxes": self.swapaxes,
+            "numpy.ndarray.mean": self.method_mean,
+            "numpy.ndarray.var": self.method_mean,
+            "numpy.ndarray.sum": self.method_mean,
+            "numpy.ndarray.transpose": self.method_transpose,
             }
 
         self.dynamic_class_hooks = {
             "numpy.maximum": self.maximum,
             "numpy.exp": self.exp,
+            "numpy.log": self.exp,
+            "numpy.sqrt": self.exp,
         }
 
 
@@ -163,8 +172,6 @@ class CustomPlugin(Plugin):
         
         return return_val
             
-
-    
     def arange(self, ctx):
         output = [int]
         final_type = self.type_creator(ctx, output, False)
@@ -172,11 +179,11 @@ class CustomPlugin(Plugin):
         return final_type
 
     def repeat(self, ctx):
-        print(f"DEBUG repeat: arg_types={ctx.arg_types}")
+        # print(f"DEBUG repeat: arg_types={ctx.arg_types}")
         # Simple case for 1D array and int repeats
         input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
         repeats_type = ctx.arg_types[1][0]
-        print(f"DEBUG repeat: input_shape={input_shape}, repeats_type={repeats_type}")
+        # print(f"DEBUG repeat: input_shape={input_shape}, repeats_type={repeats_type}")
 
         if len(input_shape) == 1 and isinstance(repeats_type, (LiteralType, Instance)):
             input_len = input_shape[0]
@@ -196,11 +203,11 @@ class CustomPlugin(Plugin):
         return final_type
 
     def fromnumeric_repeat(self, ctx):
-        print(f"DEBUG fromnumeric_repeat: arg_types={ctx.arg_types}")
+        # print(f"DEBUG fromnumeric_repeat: arg_types={ctx.arg_types}")
         # Simple case for 1D array and int repeats
         input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
         repeats_type = ctx.arg_types[1][0]
-        print(f"DEBUG fromnumeric_repeat: input_shape={input_shape}, repeats_type={repeats_type}")
+        # print(f"DEBUG fromnumeric_repeat: input_shape={input_shape}, repeats_type={repeats_type}")
 
         if len(input_shape) == 1 and isinstance(repeats_type, (LiteralType, Instance)):
             input_len = input_shape[0]
@@ -220,11 +227,11 @@ class CustomPlugin(Plugin):
         return final_type
 
     def numpy_tile(self, ctx):
-        print(f"DEBUG tile: arg_types={ctx.arg_types}")
+        # print(f"DEBUG tile: arg_types={ctx.arg_types}")
         # Simple case for 1D array and int reps
         input_shape = self.get_shape(ctx.arg_types[0][0].args[0])
         reps_type = ctx.arg_types[1][0]
-        print(f"DEBUG tile: input_shape={input_shape}, reps_type={reps_type}")
+        # print(f"DEBUG tile: input_shape={input_shape}, reps_type={reps_type}")
 
         if len(input_shape) == 1 and isinstance(reps_type, (LiteralType, Instance)):
             input_len = input_shape[0]
@@ -242,7 +249,6 @@ class CustomPlugin(Plugin):
         output = [int]
         final_type = self.type_creator(ctx, output, False)
         return final_type
-
     
     def insert(self, ctx):
         arg = ctx.args
@@ -312,11 +318,27 @@ class CustomPlugin(Plugin):
         if isinstance(param, IntExpr):
             literal = LiteralType(value=param.value, fallback=ctx.api.named_generic_type('builtins.int', []))
             literal_dims.append(literal)
+        elif isinstance(param, NameExpr):
+            literal_dims.append(ctx.api.named_generic_type("builtins.int", []))
         else:
-            for elem in param.items:
-                if isinstance(elem, IntExpr):
-                    literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+            # If param is a member expr then it is a var
+            if isinstance(param, MemberExpr):
+                arg_type = ctx.arg_types[index][0]
+                if isinstance(arg_type, AnyType):
+                    output = [Unbounded]
+                    final_type = self.type_creator(ctx, output, False)
+                    return final_type
+                elif isinstance(arg_type, IntExpr):
+                    literal = LiteralType(value=arg_type.value, fallback=ctx.api.named_generic_type('builtins.int', []))
                     literal_dims.append(literal)
+                #TODO Tuple
+                else:
+                    raise NotImplementedError
+            else:
+                for elem in param.items:
+                    if isinstance(elem, IntExpr):
+                        literal = LiteralType(value=elem.value, fallback=ctx.api.named_generic_type('builtins.int', []))
+                        literal_dims.append(literal)
 
         final_type = self.type_creator(ctx, literal_dims)
         # print(f"Type: {final_type}")
@@ -326,6 +348,8 @@ class CustomPlugin(Plugin):
     # For rand, randn
     def rand(self, ctx):
         # print("rand2")
+        if not ctx.args:
+            return ctx.default_return_type
         params = ctx.args[0]
         param_types = ctx.arg_types[0]
         # print(params)
@@ -338,9 +362,9 @@ class CustomPlugin(Plugin):
                 literal_dims.append(literal)
             elif isinstance(param, NameExpr):
                 # print(param_types[i])
-                if param_types[i].type.fullname == 'builtins.float':
+                if isinstance(param_types[i], AnyType):
                     literal_dims.append(ctx.api.named_generic_type("builtins.int", []))
-                elif param_types[i].type.fullname == 'builtins.int':
+                elif param_types[i].type.fullname in ('builtins.float', 'builtins.int'):
                     literal_dims.append(ctx.api.named_generic_type("builtins.int", []))
                 else:
                     return param_types[i]
@@ -359,6 +383,7 @@ class CustomPlugin(Plugin):
 
         literal_dims = []
 
+
         if isinstance(param, IntExpr):
             literal_dims.append(param.value)
         elif isinstance(param, NameExpr):
@@ -376,7 +401,12 @@ class CustomPlugin(Plugin):
 
         else:
             typ = ctx.arg_types[0][0]
-            if isinstance(typ, AnyType):
+            if str(typ) == 'builtins.int':
+                literal_dims.append(int)
+            elif isinstance(typ, (AnyType, UnionType)):
+                literal_dims.append(int)
+            # For whatever reason typ is None wont work???? 
+            elif str(typ) == "None":
                 literal_dims.append(int)
             else:
                 typ = ctx.arg_types[0][0].items
@@ -399,8 +429,16 @@ class CustomPlugin(Plugin):
     def base_array(self, ctx):
         # print(f"DEBUG: array() called: {ctx}")
         if ctx.args and ctx.args[0] and ctx.args[0][0]:
+            # TODO, probably need to check this
+            
+            # this checks to see if the input is a unknown list
+            if str(ctx.arg_types[0][0]).startswith("builtins.list") and isinstance(ctx.arg_types[0][0].args[0], AnyType):
+                shape = [Any]
+            # This is a check for the input to be an unknown singular val
+            elif isinstance(ctx.arg_types[0][0], AnyType):
+                shape = [int]
             # Get the info and then return the final tyep
-            if isinstance(ctx.args[0][0], NameExpr):
+            elif isinstance(ctx.args[0][0], NameExpr):
                 shape = self.get_shape(ctx.arg_types[0][0].args[0])
             else:
                 shape, ranks = self.infer_shape(ctx.args[0][0])
@@ -412,6 +450,76 @@ class CustomPlugin(Plugin):
 # endregion
 
 # region method_callbacks
+    # TODO add support for unbounded and keep_dim
+    def method_mean(self, ctx):
+        lhs = ctx.type
+        if ctx.arg_names[0] and ctx.arg_names[0][0] == 'axis':
+            dims = str(ctx.arg_types[0][0]).replace("tuple[", "").rstrip("]").split(",")
+            axis = []
+            for dim in dims:
+                # Clean the var and check what it is
+                cleaned_dim = dim.replace('Literal[', '').rstrip('?').rstrip(']').strip()
+                
+                # If its any, then we dont know what we are deleting so we just have to return any
+                if cleaned_dim == "Any":
+                    lhs_shape = [Unbounded]
+                    final_type = self.type_creator(ctx, lhs_shape, False)
+                    return final_type
+                # Otherwise its an int and we good
+                else:
+                    axis.append(int(cleaned_dim))
+        else:
+            int_type = ctx.api.named_generic_type("builtins.int", [])
+            float_type = ctx.api.named_generic_type("builtins.float", [])
+            # TODO change this to union but requires a lot of work
+            # return UnionType.make_union([int_type, float_type])
+            return int_type
+        
+        if isinstance(lhs, AnyType):
+            return ctx.default_return_type
+        
+        lhs_shape = self.get_shape(lhs.args[0])
+
+        if lhs_shape[0] == Unbounded and len(lhs_shape)-1 < len(axis):
+            lhs_shape = [Unbounded]
+        elif lhs_shape[0] == Unbounded:
+            lhs_shape.pop(0)
+            for elim_axis in axis[::-1]:
+                lhs_shape.pop(elim_axis)
+            lhs_shape.insert(0, Unbounded)
+        else:
+            for elim_axis in axis[::-1]:
+                lhs_shape.pop(elim_axis)
+
+        final_type = self.type_creator(ctx, lhs_shape, False)
+        # print(f"Final output: {final_type}")
+        return final_type
+
+    def swapaxes(self, ctx):    
+        lhs = ctx.type
+        rhs = ctx.args
+        lhs_shape= self.get_shape(lhs.args[0])
+        is_unbounded = False
+        if lhs_shape[0] == Unbounded:
+            is_unbounded = True
+            lhs_shape.pop(0)
+
+        arguments = []
+        for arg in rhs:
+            elem = arg[0]
+            if isinstance(elem, UnaryExpr):
+                arguments.append(-elem.expr.value)
+            elif isinstance(elem, IntExpr):
+                arguments.append(elem.value)
+
+        lhs_shape[arguments[0]], lhs_shape[arguments[1]] = lhs_shape[arguments[1]], lhs_shape[arguments[0]]
+
+        if is_unbounded:
+            lhs_shape.insert(0, Unbounded)
+        
+        output = self.type_creator(ctx, lhs_shape, False)
+        return output
+            
     def matmul(self, ctx):
         func_name = self.get_func_name(ctx)
         
@@ -444,12 +552,17 @@ class CustomPlugin(Plugin):
         else:
             rhs_shape = self.get_shape(rhs.args[0])
 
-        solver = NumpySolver(lhs_shape, rhs_shape)
-        lhs_new, rhs_new, output = solver.solve_matmul()
+        if (all(elem == Unbounded for elem in lhs_shape) or not lhs_shape) and (all(elem == Unbounded for elem in rhs_shape) or not rhs_shape):
+            output = [Any]
+            lhs_new = [Any]
+            rhs_new = [Any]
+        else:
+            solver = NumpySolver(lhs_shape, rhs_shape)
+            lhs_new, rhs_new, output = solver.solve_matmul()
 
-        if output == None:
-            ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
-            return ctx.default_return_type
+            if output == None:
+                ctx.api.fail("Mismatch", ctx.context, code=MISC)
+                return ctx.default_return_type
 
         # This sets the context for the lhs and rhs
         lhs_new_type = self.type_creator(ctx, lhs_new, False)
@@ -493,7 +606,7 @@ class CustomPlugin(Plugin):
                     rhs= item
 
         # If one or the other is just a constant, then it is just the opposite one
-        if (rhs.type.fullname == 'builtins.int' or rhs.type.fullname == 'builtins.float'):
+        if isinstance(rhs, UnionType) or (rhs.type.fullname in ['builtins.int', 'builtins.float', 'numpy.floating', "numpy.float64"]):
             return lhs
         elif (lhs.type.fullname == 'builtins.int' or lhs.type.fullname == 'builtins.float'):
             return rhs
@@ -513,7 +626,7 @@ class CustomPlugin(Plugin):
         lhs_new, rhs_new, output = solver.solve_broadcast()
 
         if output == None:
-            ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
+            ctx.api.fail("Mismatch", ctx.context, code=MISC)
             return ctx.default_return_type
 
         # This sets the context for the lhs and rhs
@@ -544,12 +657,17 @@ class CustomPlugin(Plugin):
         lhs = ctx.type
         if isinstance(ctx.context.base, CallExpr) or self.is_default(lhs):
             return ctx.default_return_type
+        if isinstance(ctx.context.base, IndexExpr):
+            #TODO implement
+            # print(ctx.context.base)
+            pass
         lhs_name = ctx.context.base.name
 
         if lhs_name in self.context[func_name]:
             lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
         else:
             lhs_shape = self.get_shape(lhs.args[0])
+
 
         slicing = []
         slicing_raw = slicing_raw.items if isinstance(slicing_raw, TupleExpr) else [slicing_raw]
@@ -582,17 +700,17 @@ class CustomPlugin(Plugin):
         # try:
         #     output = slice_output(lhs_shape, tuple(slicing))
         # except TabError:
-        #     ctx.api.fail("Ellipses Error or too many slices", ctx.context, code=OVERRIDE)
+        #     ctx.api.fail("Ellipses Error or too many slices", ctx.context, code=MISC)
         #     return ctx.default_return_type
         # except IndexError:
-        #     ctx.api.fail("Slicing Error", ctx.context, code=OVERRIDE)
+        #     ctx.api.fail("Slicing Error", ctx.context, code=MISC)
         #     return ctx.default_return_type
         solver = NumpySolver(lhs=lhs_shape, rhs=None)
         output = solver.solve_slicing(tuple(slicing))
 
         # If None, Z3 proved an IndexError or invalid syntax
         if output is None:
-            ctx.api.fail("Slicing Error or Index out of bounds", ctx.context, code=OVERRIDE)
+            ctx.api.fail("Slicing Error or Index out of bounds", ctx.context, code=MISC)
             return ERROR_TYPE
 
         if not output:
@@ -607,8 +725,19 @@ class CustomPlugin(Plugin):
         if func_name not in self.context:
             self.context[func_name] = dict()
 
-        rhs = ctx.args[0][0]
+        rhs = []
+        arg_types = []
+        for i, item in enumerate(ctx.args):
+            if item:
+                rhs.append(item[0])
+                arg_types.append(ctx.arg_types[i][0].items if isinstance(ctx.arg_types[i][0], TupleType) else ctx.arg_types[i][0])
+
         lhs = ctx.type
+        if isinstance(ctx.context.callee.expr, CallExpr):
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+
         lhs_name = ctx.context.callee.expr.name
     
 
@@ -618,9 +747,8 @@ class CustomPlugin(Plugin):
             lhs_shape = self.get_shape(lhs.args[0])
         
         rhs_shape = []
-        arg_types = ctx.arg_types[0][0].items if isinstance(ctx.arg_types[0][0], TupleType) else [ctx.arg_types[0][0]]
         minus_1 = False
-        rhs_items = rhs.items if hasattr(rhs, 'items') else [rhs]
+        rhs_items = rhs.items if hasattr(rhs, 'items') else rhs
         for i, item in enumerate(rhs_items):
             if isinstance(item, IntExpr):
                 rhs_shape.append(item.value)
@@ -632,10 +760,15 @@ class CustomPlugin(Plugin):
                     rhs_shape.append(int)
             elif isinstance(item, UnaryExpr):
                 if minus_1:
-                    ctx.api.fail("2 -1s when reshaping", ctx.context, code=OVERRIDE)
+                    ctx.api.fail("2 -1s when reshaping", ctx.context, code=MISC)
                     return ctx.default_return_type
                 minus_1 = True
                 rhs_shape.append(int)
+            elif isinstance(item, IndexExpr):
+                rhs_shape.append(int)
+            elif isinstance(item, MemberExpr):
+                rhs_shape = [Unbounded]
+                break
             else:
                 print("ERROR reshape for loop")
                 print(item)
@@ -644,7 +777,7 @@ class CustomPlugin(Plugin):
         lhs_new, rhs_new = solver.solve_reshape()
         
         if rhs_new == None:
-            ctx.api.fail("Invalid reshape", ctx.context, code=OVERRIDE)
+            ctx.api.fail("Invalid reshape", ctx.context, code=MISC)
             return ctx.default_return_type
         
         lhs_new_type = self.type_creator(ctx, lhs_new, False)
@@ -663,7 +796,14 @@ class CustomPlugin(Plugin):
         return ctx.default_return_type
 
     def custom_method(self, ctx):
-        func_def_node = ctx.type.type.get(ctx.context.callee.name).node
+        if isinstance(ctx.context.callee, CallExpr):
+            return ctx.default_return_type
+
+        func_def_node = ctx.type.type.get(ctx.context.callee.name)
+        if func_def_node is None:
+            return ctx.default_return_type
+
+        func_def_node = func_def_node.node
         if not isinstance(func_def_node, FuncDef):
             return ctx.default_return_type
         var_node = None
@@ -692,9 +832,94 @@ class CustomPlugin(Plugin):
         # print("SIG: ", new_sig)
         return new_sig
 
+    def method_transpose(self, ctx):
+        func_name = self.get_func_name(ctx)
+        if func_name not in self.context:
+            self.context[func_name] = dict()
+
+        arg_types = []
+        for i, item in enumerate(ctx.args[0]):
+            if item:
+                if isinstance(item, TupleType):
+                    arg_types.append(item.items)
+                elif isinstance(item, IntExpr):
+                    arg_types.append(item.value)
+                elif isinstance(item, UnaryExpr):
+                    arg_types.append(-item.expr.value)
+                else:
+                    # TODO if it is an int or smth
+                    raise NotImplementedError
+
+        lhs = ctx.type
+        if isinstance(ctx.context.callee.expr, CallExpr):
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+
+        lhs_name = ctx.context.callee.expr.name
+    
+
+        if lhs_name in self.context[func_name]:
+            lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
+        else:
+            lhs_shape = self.get_shape(lhs.args[0])
+
+        if lhs_shape[0] == Unbounded:
+            if arg_types:
+                max_elem = len(arg_types)
+                output = [int] * max_elem
+                output.insert(0, Unbounded)
+                final_type = self.type_creator(ctx, output, False)
+            else:
+                #TODO just invert the list
+                raise NotImplementedError
+            return final_type
+        
+        output = deepcopy(lhs_shape)
+
+        if arg_types:
+            for j, i in enumerate(arg_types):
+                output[j] = lhs_shape[i]
+        else:
+            output = output[::-1]
+    
+        final_type = self.type_creator(ctx, output, False)
+        return final_type
+
 # endregion
     
 # region function_callbacks
+    def expand_dims(self, ctx):
+        lhs = ctx.arg_types[0][0]
+        dim = str(ctx.arg_types[1][0])
+        if "Literal" in dim:
+            axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
+        elif "UnaryExpr" in dim:
+            axis = -1
+        elif "Any" in dim:
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+            
+        if isinstance(lhs, AnyType):
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+
+        lhs_shape = self.get_shape(lhs.args[0])
+        ub = False
+        if lhs_shape[0] == Unbounded:
+            ub = True
+            lhs_shape.pop(0)
+
+        lhs_shape.insert(axis, 1)
+
+        if ub:
+            lhs_shape.insert(0, Unbounded)
+        final_type = self.type_creator(ctx, lhs_shape, False)
+        # print(f"Final output: {final_type}")
+        return final_type
+
     def maximum_func(self, ctx):
         lhs = ctx.arg_types[0][0]
         if ctx.arg_names[1] and ctx.arg_names[1][0] == 'axis':
@@ -703,6 +928,10 @@ class CustomPlugin(Plugin):
                 axis = int(dim.replace('Literal[', '').rstrip('?').rstrip(']'))
             elif "UnaryExpr" in dim:
                 axis = -1
+            elif "Any" in dim:
+                output = [Unbounded]
+                final_type = self.type_creator(ctx, output, False)
+                return final_type
         else:
             int_type = ctx.api.named_generic_type("builtins.int", [])
             float_type = ctx.api.named_generic_type("builtins.float", [])
@@ -755,12 +984,6 @@ class CustomPlugin(Plugin):
         if isinstance(lhs, AnyType):
             return ctx.default_return_type
         
-        lhs_shape = self.get_shape(lhs.args[0])
-        output = lhs_shape[0:axis] + lhs_shape[axis+1:]
-
-        lhs_shape = self.get_shape(lhs.args[0])
-        output = list(lhs_shape)
-
         # This is the keepdims part
         keep_dim = False
         # print(ctx.arg_names)
@@ -768,12 +991,21 @@ class CustomPlugin(Plugin):
             keep_dim = str(ctx.arg_types[4][0])
             keep_dim = bool(keep_dim.replace('Literal[', '').rstrip('?').rstrip(']'))
 
-        if keep_dim:
-            output[axis] = 1
-        else:
-            output.pop(axis)
+        lhs_shape = self.get_shape(lhs.args[0])
+        ub = False
+        if lhs_shape[0] == Unbounded:
+            lhs_shape.pop(0)
+            ub = True
 
-        final_type = self.type_creator(ctx, output, False)
+        if keep_dim:
+            lhs_shape[axis] = 1
+        else:
+            lhs_shape.pop(axis)
+
+
+        if ub:
+            lhs_shape.insert(0, Unbounded)
+        final_type = self.type_creator(ctx, lhs_shape, False)
         # print(f"Final output: {final_type}")
         return final_type
 
@@ -809,7 +1041,7 @@ class CustomPlugin(Plugin):
         lhs_new, rhs_new, output = solver.solve_matmul()
 
         if output == None:
-            ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
+            ctx.api.fail("Mismatch", ctx.context, code=MISC)
             return ctx.default_return_type
 
         # This sets the context for the lhs and rhs
@@ -834,10 +1066,13 @@ class CustomPlugin(Plugin):
                 if item.type.fullname == "numpy.ndarray":
                     lhs = item
                     break
-
+        elif isinstance(lhs, AnyType):
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
                 
         if (lhs.type.fullname == 'builtins.int'):
-            ctx.api.fail("Transposing an int", ctx.context, code=OVERRIDE)
+            ctx.api.fail("Transposing an int", ctx.context, code=MISC)
             return ctx.default_return_type
 
         lhs_name = ctx.args[0][0].name
@@ -846,6 +1081,12 @@ class CustomPlugin(Plugin):
             lhs_shape = self.get_shape(self.context[func_name][lhs_name].args[0])
         else:
             lhs_shape = self.get_shape(lhs.args[0])
+        
+        if isinstance(lhs_shape[0], UnboundedType) and len(lhs_shape) == 1:
+            output = [Unbounded]
+            final_type = self.type_creator(ctx, output, False)
+            return final_type
+            
 
         if isinstance(lhs_shape[0], UnboundedType):
             lhs_shape = lhs_shape[1:]
@@ -904,8 +1145,8 @@ class CustomPlugin(Plugin):
             return lhs
 
         # TODO when it is just ints
-        raise NotImplementedError
-        return ctx.default_return_type
+        # raise NotImplementedError
+        # return ctx.default_return_type
 # endregion
 
 # region tools
@@ -937,7 +1178,7 @@ class CustomPlugin(Plugin):
         return output
 
     def fail(self, ctx):
-        ctx.api.fail("Mismatch", ctx.context, code=OVERRIDE)
+        ctx.api.fail("Mismatch", ctx.context, code=MISC)
         return ctx.default_return_type
 
     def type_creator(self, ctx, shape, is_literal=True):
@@ -1000,6 +1241,7 @@ class CustomPlugin(Plugin):
 
     def get_shape(self, shape):
         # If no input, use unbounded type
+        shape = get_proper_type(shape)
         if isinstance(shape, AnyType) or isinstance(shape, Instance):
             return [Unbounded]
         shape = shape.items
@@ -1019,11 +1261,19 @@ class CustomPlugin(Plugin):
         return shape_output
     
     def get_func_name(self, ctx):
-        func = ctx.api.scope.current_function()
-        if func:
-            return func.name
+        class_obj = ctx.api.scope.enclosing_class()
+        func_obj = ctx.api.scope.current_function()
+        if class_obj:
+            class_name = class_obj.name
         else:
-            return "global"
+            class_name = "global"
+
+        if func_obj:
+            func_name = func_obj.name
+        else:
+            func_name = "global"
+        
+        return f"{class_name}_{func_name}"
 # endregion
 
 def plugin(version):

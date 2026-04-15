@@ -5,6 +5,7 @@ import numpy as np
 
 from math import erf
 
+from typing_extensions import reveal_type
 
 def gaussian_cdf(x, mean, var):
     """
@@ -22,7 +23,7 @@ class SchedulerBase(ABC):
         self.hyperparameters = {}
 
     def __call__(self, step=None, cur_loss=None):
-        return self.learning_rate(step=step, cur_loss=cur_loss)
+        return self.learning_rate(step=step, cur_loss=cur_loss) 
 
     def copy(self):
         """Return a copy of the current object."""
@@ -57,7 +58,7 @@ class ConstantScheduler(SchedulerBase):
     def __str__(self):
         return "ConstantScheduler(lr={})".format(self.lr)
 
-    def learning_rate(self, **kwargs):
+    def learning_rate(self, **kwargs): # type: ignore[override]
         """
         Return the current learning rate.
 
@@ -121,7 +122,7 @@ class ExponentialScheduler(SchedulerBase):
             self.initial_lr, self.stage_length, self.staircase, self.decay
         )
 
-    def learning_rate(self, step, **kwargs):
+    def learning_rate(self, step, **kwargs): # type: ignore[override]
         """
         Return the current learning rate as a function of `step`.
 
@@ -189,7 +190,7 @@ class NoamScheduler(SchedulerBase):
             self.model_dim, self.scale_factor, self.warmup_steps
         )
 
-    def learning_rate(self, step, **kwargs):
+    def learning_rate(self, step, **kwargs): # type: ignore[override]
         warmup, d_model = self.warmup_steps, self.model_dim
         new_lr = d_model ** (-0.5) * min(step ** (-0.5), step * warmup ** (-1.5))
         return self.scale_factor * new_lr
@@ -268,6 +269,7 @@ class KingScheduler(SchedulerBase):
             is decreasing) < 0.51.
         """
         lh = np.array(self.loss_history)
+        reveal_type(lh)
 
         # drop top 10% of loss values to filter out large loss spikes
         if robust:
@@ -286,7 +288,7 @@ class KingScheduler(SchedulerBase):
                 steps_without_decrease = N - i
         return steps_without_decrease
 
-    def _p_decreasing(self, loss_history, i):
+    def _p_decreasing(self, loss_history: np.ndarray[tuple[int]], i):
         """
         Compute the probability that the slope of the OLS fit to the loss
         history is negative.
@@ -307,6 +309,8 @@ class KingScheduler(SchedulerBase):
         loss = loss_history[i:]
         N = len(loss)
 
+        reveal_type(loss)
+
         # perform OLS on the loss entries to calc the slope mean
         X = np.c_[np.ones(N), np.arange(i, len(loss_history))]
         intercept, s_mean = np.linalg.inv(X.T @ X) @ X.T @ loss
@@ -322,7 +326,7 @@ class KingScheduler(SchedulerBase):
         p_decreasing = gaussian_cdf(0, s_mean, s_var)
         return p_decreasing
 
-    def learning_rate(self, step, cur_loss):
+    def learning_rate(self, step, cur_loss): # type: ignore[override]
         """
         Compute the updated learning rate for the current step and loss.
 

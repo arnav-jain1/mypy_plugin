@@ -466,7 +466,13 @@ class NumpySolver:
         if self.solver.check() == sat:
             lhs = self._reshape_sols(self.lhs_vars)
             rhs = self._reshape_sols(self.rhs_vars)
-            
+
+            if self.lhs_unbounded or self.rhs_unbounded:
+                if self.lhs_unbounded:
+                    lhs.insert(0, Unbounded)
+                if self.rhs_unbounded:
+                    rhs.insert(0, Unbounded)
+
             return lhs, rhs
         else:
             return None, None
@@ -627,6 +633,13 @@ class NumpySolver:
                 self.solver.add(s >= -dim_var)
                 self.solver.add(s < dim_var)
                 # Dimension drops, do not append to output_vars
+
+            elif s == int:
+                # symbolic unknown integer index
+                idx_var = Int(f"slice_idx_{i}")
+                self.solver.add(idx_var >= -dim_var)
+                self.solver.add(idx_var < dim_var)
+                # dimension also drops
                 
             elif isinstance(s, slice):
                 # If parameters are completely unknown 

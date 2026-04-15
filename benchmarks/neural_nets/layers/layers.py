@@ -1,4 +1,5 @@
 """A collection of composable layer objects for building neural networks"""
+# mypy: disable-error-code="attr-defined,assignment,union-attr,arg-type,call-overload,call-arg,no-redef,override"
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -23,6 +24,8 @@ from ..utils import (
     calc_pad_dims_2D,
 )
 
+from typing_extensions import reveal_type
+from typing import Any, Literal
 
 class LayerBase(ABC):
     def __init__(self, optimizer=None):
@@ -191,7 +194,7 @@ class DotProductAttention(LayerBase):
         self.dropout_p = dropout_p
         self._init_params()
 
-    def _init_params(self):
+    def _init_params(self): # type: ignore [override]
         self.softmax = Dropout(Softmax(), self.dropout_p)
         smdv = self.softmax.derived_variables
 
@@ -229,7 +232,7 @@ class DotProductAttention(LayerBase):
         self.trainable = True
         self.softmax.unfreeze()
 
-    def forward(self, Q, K, V, retain_derived=True):
+    def forward(self, Q: np.ndarray[tuple[Any, int, int]], K: np.ndarray[tuple[Any, int, int]], V: np.ndarray[tuple[Any, int, int]], retain_derived: bool = True) -> tuple[np.ndarray, np.ndarray]: # type: ignore [override]
         r"""
         Compute the attention-weighted output of a collection of keys, values,
         and queries.
@@ -302,15 +305,19 @@ class DotProductAttention(LayerBase):
 
         return Y
 
-    def _fwd(self, Q, K, V):
+    def _fwd(self, Q: np.ndarray[tuple[Any, int, int]], K: np.ndarray[tuple[Any, int, int]], V: np.ndarray[tuple[Any, int, int]]):
         """Actual computation of forward pass"""
         scale = 1 / np.sqrt(Q.shape[-1]) if self.scale else 1
-        scores = Q @ K.swapaxes(-2, -1) * scale  # attention scores
+        reveal_type(scale)
+        K = K.swapaxes(-2, -1)
+        K_scale = K * scale
+        scores = Q @  K_scale  # attention scores
+        reveal_type(scores)
         weights = self.softmax.forward(scores)  # attention weights
         Y = weights @ V
         return Y, weights
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[Any, int, int]], retain_grads: bool = True): # type: ignore [override]
         r"""
         Backprop from layer outputs to inputs.
 
@@ -349,21 +356,30 @@ class DotProductAttention(LayerBase):
 
         return dQ, dK, dV
 
-    def _bwd(self, dy, q, k, v, weights):
+    def _bwd(self, dy: np.ndarray[tuple[Any, int, int]], q: np.ndarray[tuple[Any, int, int]], k: np.ndarray[tuple[Any, int, int]], v: np.ndarray[tuple[Any, int, int]], weights: np.ndarray[tuple[Any, int, int]]) -> tuple[np.ndarray[tuple[Any, int, int]], np.ndarray[tuple[Any, int, int]], np.ndarray[tuple[Any, int, int]]]:
         """Actual computation of the gradient of the loss wrt. q, k, and v"""
         d_k = k.shape[-1]
         scale = 1 / np.sqrt(d_k) if self.scale else 1
 
-        dV = weights.swapaxes(-2, -1) @ dy
-        dWeights = dy @ v.swapaxes(-2, -1)
-        dScores = self.softmax.backward(dWeights)
-        dQ = dScores @ k * scale
+        weights_temp = weights.swapaxes(-2, -1)
+        dV =  weights_temp @ dy
+        reveal_type(dV)
+        v_temp = v.swapaxes(-2, -1)
+        dWeights =  dy @ v_temp
+        reveal_type(dWeights)
+        dScores : np.ndarray[tuple[Any, int, int]] = self.softmax.backward(dWeights)
+        k_scaled = k * scale
+        reveal_type(k_scaled)
+        dQ = dScores @ k_scaled
+        reveal_type(dQ)
+
         dK = dScores.swapaxes(-2, -1) @ q * scale
+        reveal_type(dK)
         return dQ, dK, dV
 
 
 class RBM(LayerBase):
-    def __init__(self, n_out, K=1, init="glorot_uniform", optimizer=None):
+    def __init__(self, n_out, K=1, init="glorot_uniform", optimizer=None): # type: ignore [override]
         """
         A Restricted Boltzmann machine with Bernoulli visible and hidden units.
 
@@ -414,7 +430,10 @@ class RBM(LayerBase):
 
         b_in = np.zeros((1, self.n_in))
         b_out = np.zeros((1, self.n_out))
-        W = init_weights((self.n_in, self.n_out))
+        W: np.ndarray[tuple[int, int]] = init_weights((self.n_in, self.n_out))
+        reveal_type(b_in)
+        reveal_type(b_out)
+        reveal_type(W)
 
         self.parameters = {"W": W, "b_in": b_in, "b_out": b_out}
 
@@ -465,7 +484,7 @@ class RBM(LayerBase):
         self.forward(X)
         self.backward()
 
-    def forward(self, V, K=None, retain_derived=True):
+    def forward(self, V: np.ndarray[tuple[int,int]], K=None, retain_derived=True):
         """
         Perform the CD-`k` "forward pass" of visible inputs into hidden units
         and back.
@@ -512,36 +531,44 @@ class RBM(LayerBase):
         # override self.K if necessary
         K = self.K if K is None else K
 
-        W = self.parameters["W"]
-        b_in = self.parameters["b_in"]
-        b_out = self.parameters["b_out"]
+        W : np.ndarray = self.parameters["W"]
+        b_in : np.ndarray = self.parameters["b_in"]
+        b_out : np.ndarray = self.parameters["b_out"]
 
         # compute hidden unit probabilities
         Z_H = V @ W + b_out
-        p_H = self.act_fn_H.fn(Z_H)
+        reveal_type(Z_H)
+        p_H: np.ndarray = self.act_fn_H.fn(Z_H)
 
         # sample hidden states (stochastic binary values)
         H = np.random.rand(*p_H.shape) <= p_H
         H = H.astype(float)
 
         # always use probabilities when computing gradients
-        positive_grad = V.T @ p_H
+
+        V_T = np.transpose(V)
+        positive_grad = V_T @ p_H
+        reveal_type(positive_grad) # works as long as np.ndarray is declared
 
         # perform CD-k
         # TODO: use persistent CD-k
         # https://www.cs.toronto.edu/~tijmen/pcd/pcd.pdf
-        H_prime = H.copy()
+        H_prime : np.ndarray = H.copy()
         for k in range(K):
             # resample v' given h (H_prime is binary for all but final step)
-            Z_V_prime = H_prime @ W.T + b_in
-            p_V_prime = self.act_fn_V.fn(Z_V_prime)
+            W_T = np.transpose(W)
+            temp = W_T + b_in
+            Z_V_prime = H_prime @ temp
+            reveal_type(Z_V_prime)
+            p_V_prime : np.ndarray = self.act_fn_V.fn(Z_V_prime)
 
             # don't resample visual units - always use raw probabilities!
             V_prime = p_V_prime
 
             # compute p(h' | v')
             Z_H_prime = V_prime @ W + b_out
-            p_H_prime = self.act_fn_H.fn(Z_H_prime)
+            reveal_type(Z_H_prime)
+            p_H_prime : np.ndarray = self.act_fn_H.fn(Z_H_prime)
 
             # if this is the final iteration of CD, keep hidden state
             # probabilities (don't sample)
@@ -550,7 +577,9 @@ class RBM(LayerBase):
                 H_prime = np.random.rand(*p_H_prime.shape) <= p_H_prime
                 H_prime = H_prime.astype(float)
 
-        negative_grad = p_V_prime.T @ p_H_prime
+        p_V_prime_T = np.transpose(p_V_prime)
+        negative_grad = p_V_prime_T @ p_H_prime
+        reveal_type(negative_grad)
 
         if retain_derived:
             self.derived_variables["V"] = V
@@ -584,7 +613,7 @@ class RBM(LayerBase):
             self.gradients["b_out"] = p_H - p_H_prime
             self.gradients["W"] = positive_grad - negative_grad
 
-    def reconstruct(self, X, n_steps=10, return_prob=False):
+    def reconstruct(self, X: np.ndarray, n_steps=10, return_prob=False):
         """
         Reconstruct an input `X` by running the trained Gibbs sampler for
         `n_steps`-worth of CD-`k`.
@@ -710,7 +739,7 @@ class Add(LayerBase):
             self.derived_variables["sum"].append(out)
         return self.act_fn(out)
 
-    def backward(self, dLdY, retain_grads=True):
+    def backward(self, dLdY: np.ndarray, retain_grads=True):
         r"""
         Backprop from layer outputs to inputs.
 
@@ -909,7 +938,7 @@ class Flatten(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray, retain_derived=True):
         r"""
         Compute the layer output on a single minibatch.
 
@@ -932,9 +961,13 @@ class Flatten(LayerBase):
         if retain_derived:
             self.derived_variables["in_dims"].append(X.shape)
         if self.keep_dim == -1:
-            return X.flatten().reshape(1, -1)
+            y = X.reshape(1, -1)
+            reveal_type(y)
+            return y
         rs = (X.shape[0], -1) if self.keep_dim == "first" else (-1, X.shape[-1])
-        return X.reshape(*rs)
+        output = X.reshape(*rs)
+        reveal_type(output)
+        return output
 
     def backward(self, dLdy, retain_grads=True):
         r"""
@@ -1092,7 +1125,7 @@ class BatchNorm2D(LayerBase):
         self.parameters["running_mean"] = np.zeros(self.in_ch)
         self.parameters["running_var"] = np.ones(self.in_ch)
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int, int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -1144,18 +1177,27 @@ class BatchNorm2D(LayerBase):
         X_var = self.parameters["running_var"]
 
         if self.trainable and retain_derived:
-            X_mean, X_var = X.mean(axis=(0, 1, 2)), X.var(axis=(0, 1, 2))  # , ddof=1)
+            X_mean = X.mean(axis=(0, 1, 2))
+            X_var  = X.var(axis=(0, 1, 2))  # , ddof=1)
+            reveal_type(X_mean)
+            reveal_type(X_var)
+            X_var = X_var + ep
             self.parameters["running_mean"] = mm * rm + (1.0 - mm) * X_mean
             self.parameters["running_var"] = mm * rv + (1.0 - mm) * X_var
 
         if retain_derived:
             self.X.append(X)
 
-        N = (X - X_mean) / np.sqrt(X_var + ep)
+        # Because these depend on the if statement, they will be Any
+        X_temp = (X - X_mean)
+        X_var_temp = np.sqrt(X_var)
+        N = X_temp / X_var_temp
         y = scaler * N + intercept
+        reveal_type(N)
+        reveal_type(y)
         return y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int, int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -1189,31 +1231,65 @@ class BatchNorm2D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int, int, int]], X: np.ndarray):
         """Computation of gradient of loss wrt. X, scaler, and intercept"""
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
 
         # reshape to 2D, retaining channel dim
         X_shape = X.shape
-        X = np.reshape(X, (-1, X.shape[3]))
-        dLdy = np.reshape(dLdy, (-1, dLdy.shape[3]))
+        X = X.reshape(-1, X.shape[3])
+        dLdy = dLdy.reshape(-1, dLdy.shape[3])
+        reveal_type(X)
+        reveal_type(dLdy)
 
         # apply 1D batchnorm backward pass on reshaped array
         n_ex, in_ch = X.shape
-        X_mean, X_var = X.mean(axis=0), X.var(axis=0)  # , ddof=1)
 
-        N = (X - X_mean) / np.sqrt(X_var + ep)
+        X_mean = X.mean(axis=0)
+        reveal_type(X_mean)
+
+        X_var = X.var(axis=0)
+        reveal_type(X_var)
+
+        X_minus_mean = X - X_mean
+        reveal_type(X_minus_mean)
+
+        var_plus_ep = X_var + ep
+        reveal_type(var_plus_ep)
+        sqrt_var_plus_ep: np.ndarray[tuple[int]] = np.sqrt(var_plus_ep) 
+        # Note, np.sqrt triggers a dynamic class hook not a function hook. Class hooks are triggered before
+        # funciton hooks so they can't be type checked properly
+        
+        N = X_minus_mean / sqrt_var_plus_ep
+        reveal_type(N)
+
         dIntercept = dLdy.sum(axis=0)
-        dScaler = np.sum(dLdy * N, axis=0)
+        reveal_type(dIntercept)
+
+        dLdy_times_N = dLdy * N
+        reveal_type(dLdy_times_N)
+        dScaler = np.sum(dLdy_times_N, axis=0)
+        reveal_type(dScaler)
 
         dN = dLdy * scaler
-        dX = (n_ex * dN - dN.sum(axis=0) - N * (dN * N).sum(axis=0)) / (
-            n_ex * np.sqrt(X_var + ep)
-        )
+        reveal_type(dN)
+
+        n_ex_times_dN = n_ex * dN
+        dN_sum = dN.sum(axis=0)
+        dN_times_N = dN * N
+        dN_times_N_sum = dN_times_N.sum(axis=0)
+        reveal_type(dN_times_N_sum)
+
+        N_times_dN_times_N_sum = N * dN_times_N_sum
+        num_part1 = n_ex_times_dN - dN_sum
+        numerator = num_part1 - N_times_dN_times_N_sum
+        denominator = n_ex * sqrt_var_plus_ep
+        dX = numerator / denominator
+        reveal_type(dX)
+
 
         return np.reshape(dX, X_shape), dScaler, dIntercept
-
 
 class BatchNorm1D(LayerBase):
     def __init__(self, momentum=0.9, epsilon=1e-5, optimizer=None):
@@ -1339,7 +1415,7 @@ class BatchNorm1D(LayerBase):
         self.parameters["running_mean"] = np.zeros(self.n_in)
         self.parameters["running_var"] = np.ones(self.n_in)
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -1376,18 +1452,27 @@ class BatchNorm1D(LayerBase):
         X_var = self.parameters["running_var"]
 
         if self.trainable and retain_derived:
-            X_mean, X_var = X.mean(axis=0), X.var(axis=0)  # , ddof=1)
+            X_mean = X.mean(axis=0)
+            X_var  = X.var(axis=0)  # , ddof=1)
+            reveal_type(X_mean)
+            reveal_type(X_var)
+            X_var = X_var + ep
             self.parameters["running_mean"] = mm * rm + (1.0 - mm) * X_mean
             self.parameters["running_var"] = mm * rv + (1.0 - mm) * X_var
 
         if retain_derived:
             self.X.append(X)
 
-        N = (X - X_mean) / np.sqrt(X_var + ep)
+        # Because of the np.sqrt, these will be Any
+        X_temp = (X - X_mean)
+        X_var_temp = np.sqrt(X_var)
+        N = X_temp / X_var_temp
         y = scaler * N + intercept
+        reveal_type(N)
+        reveal_type(y)
         return y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -1421,24 +1506,58 @@ class BatchNorm1D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int]], X: np.ndarray):
         """Computation of gradient of loss wrt X, scaler, and intercept"""
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
 
-        n_ex, n_in = X.shape
-        X_mean, X_var = X.mean(axis=0), X.var(axis=0)  # , ddof=1)
+        n_ex : int= X.shape[0]
+        n_in : int= X.shape[1]
+        
+        X_mean = X.mean(axis=0)
+        reveal_type(X_mean)
 
-        N = (X - X_mean) / np.sqrt(X_var + ep)
+        X_var = X.var(axis=0)
+        reveal_type(X_var)
+
+        X_minus_mean = X - X_mean
+        reveal_type(X_minus_mean)
+
+        var_plus_ep = X_var + ep
+        reveal_type(var_plus_ep)
+        sqrt_var_plus_ep: np.ndarray[tuple[int]] = np.sqrt(var_plus_ep) 
+        # Note, np.sqrt triggers a dynamic class hook not a function hook. Class hooks are triggered before
+        # funciton hooks so they can't be type checked properly
+        
+        N = X_minus_mean / sqrt_var_plus_ep
+        reveal_type(N)
+
         dIntercept = dLdy.sum(axis=0)
-        dScaler = np.sum(dLdy * N, axis=0)
+        reveal_type(dIntercept)
+
+        dLdy_times_N = dLdy * N
+        reveal_type(dLdy_times_N)
+        dScaler = np.sum(dLdy_times_N, axis=0)
+        reveal_type(dScaler)
 
         dN = dLdy * scaler
-        dX = (n_ex * dN - dN.sum(axis=0) - N * (dN * N).sum(axis=0)) / (
-            n_ex * np.sqrt(X_var + ep)
-        )
+        reveal_type(dN)
+
+        n_ex_times_dN = n_ex * dN
+        dN_sum = dN.sum(axis=0)
+        dN_times_N = dN * N
+        dN_times_N_sum = dN_times_N.sum(axis=0)
+        reveal_type(dN_times_N_sum)
+
+        N_times_dN_times_N_sum = N * dN_times_N_sum
+        num_part1 = n_ex_times_dN - dN_sum
+        numerator = num_part1 - N_times_dN_times_N_sum
+        denominator = n_ex * sqrt_var_plus_ep
+        dX = numerator / denominator
+        reveal_type(dX)
 
         return dX, dScaler, dIntercept
+
 
 
 class LayerNorm2D(LayerBase):
@@ -1525,7 +1644,7 @@ class LayerNorm2D(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int, int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -1556,20 +1675,31 @@ class LayerNorm2D(LayerBase):
             self.in_ch = self.out_ch = X.shape[3]
             self._init_params(X.shape)
 
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
-        intercept = self.parameters["intercept"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
+        intercept : int = self.parameters["intercept"]
 
         if retain_derived:
             self.X.append(X)
 
-        X_var = X.var(axis=(1, 2, 3), keepdims=True)
         X_mean = X.mean(axis=(1, 2, 3), keepdims=True)
-        lnorm = (X - X_mean) / np.sqrt(X_var + ep)
+        X_var = X.var(axis=(1, 2, 3), keepdims=True)
+        reveal_type(X_mean)
+        reveal_type(X_var)
+
+        X_minus_mean = X - X_mean
+        reveal_type(X_minus_mean)
+        var_plus_ep = X_var + ep
+        sqrt_var_plus_ep: np.ndarray  = np.sqrt(var_plus_ep)
+        
+        lnorm = X_minus_mean / sqrt_var_plus_ep
+        reveal_type(lnorm)
+        
         y = scaler * lnorm + intercept
+        reveal_type(y)
         return y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int, int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -1603,29 +1733,62 @@ class LayerNorm2D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dy, X):
+    def _bwd(self, dy: np.ndarray[tuple[int, int, int, int]], X: np.ndarray):
         """Computation of gradient of the loss wrt X, scaler, intercept"""
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
 
         X_mean = X.mean(axis=(1, 2, 3), keepdims=True)
         X_var = X.var(axis=(1, 2, 3), keepdims=True)
-        lnorm = (X - X_mean) / np.sqrt(X_var + ep)
 
+        X_minus_mean = X - X_mean
+        var_plus_ep = X_var + ep
+        
+        sqrt_var_plus_ep: np.ndarray = np.sqrt(var_plus_ep)
+        # Note, np.sqrt triggers a dynamic class hook not a function hook. Class hooks are triggered before
+        # funciton hooks so they can't be type checked properly
+
+        lnorm = X_minus_mean / sqrt_var_plus_ep
         dLnorm = dy * scaler
+        reveal_type(dLnorm)
+        
         dIntercept = dy.sum(axis=0)
-        dScaler = np.sum(dy * lnorm, axis=0)
+        reveal_type(dIntercept)
+        
+        dy_times_lnorm = dy * lnorm
+        dScaler = np.sum(dy_times_lnorm, axis=0)
+        reveal_type(dScaler)
 
         n_in = np.prod(X.shape[1:])
-        lnorm = lnorm.reshape(-1, n_in)
-        dLnorm = dLnorm.reshape(lnorm.shape)
-        X_var = X_var.reshape(X_var.shape[:2])
+        reveal_type(n_in)
+        
+        lnorm_reshaped = lnorm.reshape(-1, n_in)
+        reveal_type(lnorm_reshaped)
+        
+        dLnorm_reshaped = dLnorm.reshape(lnorm_reshaped.shape)
+        reveal_type(dLnorm_reshaped) # Since MyPy isnt aware of the .shape attribute, this will just default
+        
+        X_var_reshaped = X_var.reshape(X_var.shape[:2])
+        reveal_type(X_var_reshaped)
 
-        dX = (
-            n_in * dLnorm
-            - dLnorm.sum(axis=1, keepdims=True)
-            - lnorm * (dLnorm * lnorm).sum(axis=1, keepdims=True)
-        ) / (n_in * np.sqrt(X_var + ep))
+        n_in_times_dLnorm = n_in * dLnorm_reshaped
+        dLnorm_sum = dLnorm_reshaped.sum(axis=1, keepdims=True)
+        
+        dLnorm_times_lnorm = dLnorm_reshaped * lnorm_reshaped # Since we are using the default for DLnorm_reshaped, we know this will have at minimum rank 2 
+        dLnorm_times_lnorm_sum = dLnorm_times_lnorm.sum(axis=1, keepdims=True) # This collapses 1 rank
+        reveal_type(dLnorm_times_lnorm_sum) # This has at minimum 1 rank
+
+        lnorm_times_sum = lnorm_reshaped * dLnorm_times_lnorm_sum
+        
+        num_part1 = n_in_times_dLnorm - dLnorm_sum
+        numerator = num_part1 - lnorm_times_sum
+        
+        var_plus_ep_reshaped = X_var_reshaped + ep
+        sqrt_var_plus_ep_reshaped : np.ndarray[tuple[int]] = np.sqrt(var_plus_ep_reshaped)
+        denominator = n_in * sqrt_var_plus_ep_reshaped
+        
+        dX = numerator / denominator
+        reveal_type(dX) # this has at minimum rank 2
 
         # reshape X gradients back to proper dimensions
         return np.reshape(dX, X.shape), dScaler, dIntercept
@@ -1711,7 +1874,7 @@ class LayerNorm1D(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -1735,19 +1898,31 @@ class LayerNorm1D(LayerBase):
             self.n_in = self.n_out = X.shape[1]
             self._init_params()
 
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
-        intercept = self.parameters["intercept"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
+        intercept : int = self.parameters["intercept"]
 
         if retain_derived:
             self.X.append(X)
 
-        X_mean, X_var = X.mean(axis=1, keepdims=True), X.var(axis=1, keepdims=True)
-        lnorm = (X - X_mean) / np.sqrt(X_var + ep)
+        X_mean = X.mean(axis=1, keepdims=True)
+        X_var = X.var(axis=1, keepdims=True)
+        reveal_type(X_mean)
+        reveal_type(X_var)
+
+        X_minus_mean = X - X_mean
+        reveal_type(X_minus_mean)
+        var_plus_ep = X_var + ep
+        sqrt_var_plus_ep: np.ndarray = np.sqrt(var_plus_ep)
+        
+        lnorm = X_minus_mean / sqrt_var_plus_ep
+        reveal_type(lnorm)
+        
         y = scaler * lnorm + intercept
+        reveal_type(y)
         return y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -1781,24 +1956,52 @@ class LayerNorm1D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int]], X: np.ndarray):
         """Computation of gradient of the loss wrt X, scaler, intercept"""
-        scaler = self.parameters["scaler"]
-        ep = self.hyperparameters["epsilon"]
+        scaler : int = self.parameters["scaler"]
+        ep : int = self.hyperparameters["epsilon"]
 
-        n_ex, n_in = X.shape
-        X_mean, X_var = X.mean(axis=1, keepdims=True), X.var(axis=1, keepdims=True)
+        n_in: int = X.shape[1]
+        X_mean = X.mean(axis=1, keepdims=True)
+        X_var = X.var(axis=1, keepdims=True)
 
-        lnorm = (X - X_mean) / np.sqrt(X_var + ep)
-        dIntercept = dLdy.sum(axis=0)
-        dScaler = np.sum(dLdy * lnorm, axis=0)
+        X_minus_mean = X - X_mean
+        var_plus_ep = X_var + ep
+        
+        sqrt_var_plus_ep: np.ndarray = np.sqrt(var_plus_ep)
+        # Note, np.sqrt triggers a dynamic class hook not a function hook. Class hooks are triggered before
+        # funciton hooks so they can't be type checked properly
 
+        lnorm = X_minus_mean / sqrt_var_plus_ep
         dLnorm = dLdy * scaler
-        dX = (
-            n_in * dLnorm
-            - dLnorm.sum(axis=1, keepdims=True)
-            - lnorm * (dLnorm * lnorm).sum(axis=1, keepdims=True)
-        ) / (n_in * np.sqrt(X_var + ep))
+        reveal_type(dLnorm)
+        
+        dIntercept = dLdy.sum(axis=0)
+        reveal_type(dIntercept)
+        
+        dLdy_times_lnorm = dLdy * lnorm
+        dScaler = np.sum(dLdy_times_lnorm, axis=0)
+        reveal_type(dScaler)
+
+        
+        n_in_times_dLnorm = n_in * dLnorm
+        dLnorm_sum = dLnorm.sum(axis=1, keepdims=True)
+        
+        dLnorm_times_lnorm = dLnorm * lnorm 
+        dLnorm_times_lnorm_sum = dLnorm_times_lnorm.sum(axis=1, keepdims=True) # This collapses 1 rank
+        reveal_type(dLnorm_times_lnorm_sum) # This has at minimum 1 rank
+
+        lnorm_times_sum = lnorm * dLnorm_times_lnorm_sum
+        
+        num_part1 = n_in_times_dLnorm - dLnorm_sum
+        numerator = num_part1 - lnorm_times_sum
+        
+        var_plus_ep_reshaped = X_var + ep
+        sqrt_var_plus_ep_reshaped : np.ndarray[tuple[int]] = np.sqrt(var_plus_ep_reshaped)
+        denominator = n_in * sqrt_var_plus_ep_reshaped
+        
+        dX = numerator / denominator
+        reveal_type(dX) # this has at minimum rank 2
 
         return dX, dScaler, dIntercept
 
@@ -1871,7 +2074,7 @@ class Embedding(LayerBase):
 
     def _init_params(self):
         init_weights = WeightInitializer("Affine(slope=1, intercept=0)", mode=self.init)
-        W = init_weights((self.vocab_size, self.n_out))
+        W: np.ndarray = init_weights((self.vocab_size, self.n_out))
 
         self.parameters = {"W": W}
         self.derived_variables = {}
@@ -1893,7 +2096,7 @@ class Embedding(LayerBase):
             },
         }
 
-    def lookup(self, ids):
+    def lookup(self, ids: np.ndarray[tuple[int]]):
         """
         Return the embeddings associated with the IDs in `ids`.
 
@@ -1907,9 +2110,14 @@ class Embedding(LayerBase):
         embeddings : :py:class:`ndarray <numpy.ndarray>` of shape (`M`, `n_out`)
             The embedding vectors for each of the `M` IDs.
         """
-        return self.parameters["W"][ids]
+        W: np.ndarray = self.parameters["W"]
+        reveal_type(W)
+        
+        embeddings = W[ids]
+        reveal_type(embeddings)
+        return embeddings
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray | list, retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -1946,23 +2154,35 @@ class Embedding(LayerBase):
             fstr = "Input to Embedding layer must be an array of integers, got '{}'"
             raise TypeError(fstr.format(X.dtype.type))
 
-        Y = self._fwd(X)
+        Y: np.ndarray = self._fwd(X)
+        reveal_type(Y)
+        
         if retain_derived:
             self.X.append(X)
         return Y
 
-    def _fwd(self, X):
+    def _fwd(self, X: np.ndarray | list):
         """Actual computation of forward pass"""
-        W = self.parameters["W"]
+        W: np.ndarray = self.parameters["W"]
+        reveal_type(W)
+
         if self.pool is None:
             emb = W[X]
         elif self.pool == "sum":
-            emb = np.array([W[x].sum(axis=0) for x in X])[:, None, :]
+            sum_list = [W[x].sum(axis=0) for x in X]
+            
+            sum_array = np.array(sum_list)
+            
+            emb = sum_array[:, None, :]
         elif self.pool == "mean":
-            emb = np.array([W[x].mean(axis=0) for x in X])[:, None, :]
+            mean_list = [W[x].mean(axis=0) for x in X]
+            
+            mean_array = np.array(mean_list)
+            
+            emb = mean_array[:, None, :]
         return emb
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray | list, retain_grads=True):
         """
         Backprop from layer outputs to embedding weights.
 
@@ -1985,27 +2205,44 @@ class Embedding(LayerBase):
             dLdy = [dLdy]
 
         for dy, x in zip(dLdy, self.X):
-            dw = self._bwd(dy, x)
+            dw: np.ndarray = self._bwd(dy, x)
 
             if retain_grads:
                 self.gradients["W"] += dw
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray, X: np.ndarray | list):
         """Actual computation of gradient of the loss wrt. W"""
-        dW = np.zeros_like(self.parameters["W"])
-        dLdy = dLdy.reshape(-1, self.n_out)
+        W: np.ndarray = self.parameters["W"]
+        dW: np.ndarray = np.zeros_like(W)
+        reveal_type(dW)
+        
+        n_out: int = self.n_out
+        
+        dLdy_reshaped = dLdy.reshape(-1, n_out)
+        reveal_type(dLdy_reshaped)
 
         if self.pool is None:
-            for ix, v_id in enumerate(X.flatten()):
-                dW[v_id] += dLdy[ix]
+            X_flattened = X.flatten()
+            reveal_type(X_flattened)
+            
+            for ix, v_id in enumerate(X_flattened):
+                dLdy_val = dLdy_reshaped[ix]
+                dW[v_id] += dLdy_val
+                
         elif self.pool == "sum":
             for ix, v_ids in enumerate(X):
-                dW[v_ids] += dLdy[ix]
+                dLdy_val = dLdy_reshaped[ix]
+                dW[v_ids] += dLdy_val
+                
         elif self.pool == "mean":
             for ix, v_ids in enumerate(X):
-                dW[v_ids] += dLdy[ix] / len(v_ids)
+                dLdy_val = dLdy_reshaped[ix]
+                len_v_ids: int = len(v_ids)
+                
+                dLdy_scaled = dLdy_val / len_v_ids
+                dW[v_ids] += dLdy_scaled
+                
         return dW
-
 
 class FullyConnected(LayerBase):
     def __init__(self, n_out, act_fn=None, init="glorot_uniform", optimizer=None):
@@ -2087,7 +2324,7 @@ class FullyConnected(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -2119,16 +2356,18 @@ class FullyConnected(LayerBase):
 
         return Y
 
-    def _fwd(self, X):
+    def _fwd(self, X: np.ndarray[tuple[int,int]]):
         """Actual computation of forward pass"""
-        W = self.parameters["W"]
-        b = self.parameters["b"]
+        W: np.ndarray = self.parameters["W"]
+        b: np.ndarray = self.parameters["b"]
+
 
         Z = X @ W + b
+        reveal_type(Z)
         Y = self.act_fn(Z)
         return Y, Z
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int,int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -2162,30 +2401,39 @@ class FullyConnected(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int,int]], X: np.ndarray[tuple[int,int]]):
         """Actual computation of gradient of the loss wrt. X, W, and b"""
-        W = self.parameters["W"]
-        b = self.parameters["b"]
+        W: np.ndarray[tuple[int, int]] = self.parameters["W"]
+        b: np.ndarray = self.parameters["b"]
 
         Z = X @ W + b
-        dZ = dLdy * self.act_fn.grad(Z)
+        dZ: np.ndarray = dLdy * self.act_fn.grad(Z)
 
-        dX = dZ @ W.T
-        dW = X.T @ dZ
+        W_transpose = np.transpose(W)
+        dX = dZ @ W_transpose
+        reveal_type(dX)
+        X_T = np.transpose(X)
+        dW = X_T @ dZ
+        reveal_type(dW)
         dB = dZ.sum(axis=0, keepdims=True)
+        reveal_type(dB)
         return dX, dW, dB
 
-    def _bwd2(self, dLdy, X, dLdy_bwd):
+    def _bwd2(self, dLdy: np.ndarray[tuple[int,int]], X: np.ndarray[tuple[int,int]], dLdy_bwd: np.ndarray[tuple[int,int]]):
         """Compute second derivatives / deriv. of loss wrt. dX, dW, and db"""
-        W = self.parameters["W"]
+        W: np.ndarray[tuple[int,int]]= self.parameters["W"]
         b = self.parameters["b"]
 
-        dZ = self.act_fn.grad(X @ W + b)
+        dZ: np.ndarray = self.act_fn.grad(X @ W + b)
         ddZ = self.act_fn.grad2(X @ W + b)
 
         ddX = dLdy @ W * dZ
-        ddW = dLdy.T @ (dLdy_bwd * dZ)
+        dLdy_T = np.transpose(dLdy)
+        ddW = dLdy_T @ (dLdy_bwd * dZ)
         ddB = np.sum(dLdy @ W * dLdy_bwd * ddZ, axis=0, keepdims=True)
+        reveal_type(ddX)
+        reveal_type(ddW)
+        reveal_type(ddB)
         return ddX, ddW, ddB
 
 
@@ -2260,7 +2508,7 @@ class Softmax(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -2291,13 +2539,13 @@ class Softmax(LayerBase):
 
         return Y
 
-    def _fwd(self, X):
+    def _fwd(self, X: np.ndarray[tuple[int, int]]):
         """Actual computation of softmax forward pass"""
         # center data to avoid overflow
         e_X = np.exp(X - np.max(X, axis=self.dim, keepdims=True))
         return e_X / e_X.sum(axis=self.dim, keepdims=True)
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs.
 
@@ -2327,7 +2575,7 @@ class Softmax(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int]], X: np.ndarray[tuple[int, int]]):
         """
         Actual computation of the gradient of the loss wrt. the input X.
 
@@ -2451,7 +2699,7 @@ class SparseEvolution(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int]], retain_derived=True):
         """
         Compute the layer output on a single minibatch.
 
@@ -2483,17 +2731,19 @@ class SparseEvolution(LayerBase):
 
         return Y
 
-    def _fwd(self, X):
+    def _fwd(self, X: np.ndarray[tuple[int, int]]):
         """Actual computation of forward pass"""
-        W = self.parameters["W"]
-        b = self.parameters["b"]
-        W_mask = self.parameters["W_mask"]
+        W: np.ndarray = self.parameters["W"]
+        b: np.ndarray = self.parameters["b"]
+        W_mask: np.ndarray = self.parameters["W_mask"]
 
-        Z = X @ (W * W_mask) + b
+        W_W_mask = (W * W_mask)
+        Z = X @ W_W_mask + b
+        reveal_type(Z)
         Y = self.act_fn(Z)
         return Y, Z
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int]], retain_grads=True):
         """
         Backprop from layer outputs to inputs
 
@@ -2527,18 +2777,26 @@ class SparseEvolution(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int]], X: np.ndarray[tuple[int, int]]):
         """Actual computation of gradient of the loss wrt. X, W, and b"""
-        W = self.parameters["W"]
-        b = self.parameters["b"]
-        W_sparse = W * self.parameters["W_mask"]
+        W: np.ndarray[tuple[int, int]] = self.parameters["W"]
+        b: np.ndarray[tuple[int]] = self.parameters["b"]
+        W_mask: np.ndarray[tuple[int, int]] = self.parameters["W_mask"]
+
+        W_sparse = W * W_mask 
 
         Z = X @ W_sparse + b
-        dZ = dLdy * self.act_fn.grad(Z)
+        dZ: np.ndarray = dLdy * self.act_fn.grad(Z)
+        reveal_type(Z)
 
-        dX = dZ @ W_sparse.T
-        dW = X.T @ dZ
+        W_sparse_T = np.transpose(W_sparse)
+        dX = dZ @ W_sparse_T
+        X_T = np.transpose(X)
+        dW = X_T @ dZ
         dB = dZ.sum(axis=0, keepdims=True)
+        reveal_type(dX)
+        reveal_type(dW)
+        reveal_type(dB)
         return dX, dW, dB
 
     def _bwd2(self, dLdy, X, dLdy_bwd):
@@ -2711,7 +2969,7 @@ class Conv1D(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int, int]], retain_derived=True):
         """
         Compute the layer output given input volume `X`.
 
@@ -2753,7 +3011,7 @@ class Conv1D(LayerBase):
 
         return Y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int, int]], retain_grads=True):
         """
         Compute the gradient of the loss with respect to the layer parameters.
 
@@ -2796,14 +3054,17 @@ class Conv1D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X, Z):
+    def _bwd(self, dLdy: np.ndarray[tuple[int, int, int]], X: np.ndarray[tuple[int, int, int]], Z):
         """Actual computation of gradient of the loss wrt. X, W, and b"""
-        W = self.parameters["W"]
+        W: np.ndarray[tuple[int, int, int]] = self.parameters["W"]
 
         # add a row dimension to X, W, and dZ to permit us to use im2col/col2im
         X2D = np.expand_dims(X, axis=1)
         W2D = np.expand_dims(W, axis=0)
         dLdZ = np.expand_dims(dLdy * self.act_fn.grad(Z), axis=1)
+        reveal_type(X2D)
+        reveal_type(W2D)
+        reveal_type(dLdZ)
 
         d = self.dilation
         fr, fc, in_ch, out_ch = W2D.shape
@@ -2816,21 +3077,36 @@ class Conv1D(LayerBase):
         p2D = (0, 0, p[0], p[1])
 
         # columnize W, X, and dLdy
-        dLdZ_col = dLdZ.transpose(3, 1, 2, 0).reshape(out_ch, -1)
-        W_col = W2D.transpose(3, 2, 0, 1).reshape(out_ch, -1).T
+        dLdZ_transposed = dLdZ.transpose(3, 1, 2, 0)
+        reveal_type(dLdZ_transposed)
+        dLdZ_col = dLdZ_transposed.reshape(out_ch, -1)
+        reveal_type(dLdZ_col)
+        W2D_transpose = W2D.transpose(3, 2, 0, 1)
+        W2D_transpose_reshape = W2D_transpose.reshape(out_ch, -1)
+        W_col = np.transpose(W2D_transpose_reshape)
+        reveal_type(W_col)
         X_col, _ = im2col(X2D, W2D.shape, p2D, s, d)
 
         # compute gradients via matrix multiplication and reshape
-        dB = dLdZ_col.sum(axis=1).reshape(1, 1, -1)
-        dW = (dLdZ_col @ X_col.T).reshape(out_ch, in_ch, fr, fc).transpose(2, 3, 1, 0)
+        dB_temp = dLdZ_col.sum(axis=1)
+        reveal_type(dB_temp)
+        dB = dB_temp.reshape(1, 1, -1)
+        reveal_type(dB)
+
+        X_col_T = np.transpose(X_col)
+        dW_mul = (dLdZ_col @ X_col_T)
+        dW_reshape = dW_mul.reshape(out_ch, in_ch, fr, fc)
+        dW = dW_reshape.transpose(2, 3, 1, 0)
+        reveal_type(dW)
 
         # reshape columnized dX back into the same format as the input volume
         dX_col = W_col @ dLdZ_col
+        reveal_type(dX_col)
         dX = col2im(dX_col, X2D.shape, W2D.shape, p2D, s, d).transpose(0, 2, 3, 1)
 
         return np.squeeze(dX, axis=1), np.squeeze(dW, axis=0), dB
 
-    def _backward_naive(self, dLdy, retain_grads=True):
+    def _backward_naive(self, dLdy: np.ndarray[tuple[int, int, int]], retain_grads=True):
         """
         A slower (ie., non-vectorized) but more straightforward implementation
         of the gradient computations for a 2D conv layer.
@@ -2853,8 +3129,8 @@ class Conv1D(LayerBase):
         if not isinstance(dLdy, list):
             dLdy = [dLdy]
 
-        W = self.parameters["W"]
-        b = self.parameters["b"]
+        W: np.ndarray[tuple[int, int, int]] = self.parameters["W"]
+        b: np.ndarray[tuple[Literal[1], Literal[1], int]] = self.parameters["b"]
         Zs = self.derived_variables["Z"]
 
         Xs, d = self.X, self.dilation
@@ -2864,9 +3140,10 @@ class Conv1D(LayerBase):
         for X, Z, dy in zip(Xs, Zs, dLdy):
             n_ex, l_out, out_ch = dy.shape
             X_pad, (pr1, pr2) = pad1D(X, p, self.kernel_width, s, d)
+            X_pad : np.ndarray
 
             dX = np.zeros_like(X_pad)
-            dZ = dy * self.act_fn.grad(Z)
+            dZ: np.ndarray[tuple[int, int, int]] = dy * self.act_fn.grad(Z)
 
             dW, dB = np.zeros_like(W), np.zeros_like(b)
             for m in range(n_ex):
@@ -2876,8 +3153,11 @@ class Conv1D(LayerBase):
                         i0, i1 = i * s, (i * s) + fw * (d + 1) - d
 
                         wc = W[:, :, c]
+                        reveal_type(wc)
                         kernel = dZ[m, i, c]
+                        reveal_type(kernel)
                         window = X_pad[m, i0 : i1 : (d + 1), :]
+                        reveal_type(window) # Default because slicing has an expr
 
                         dB[:, :, c] += kernel
                         dW[:, :, c] += window * kernel
@@ -3003,7 +3283,7 @@ class Conv2D(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int, int, int]], retain_derived=True):
         """
         Compute the layer output given input volume `X`.
 
@@ -3045,7 +3325,7 @@ class Conv2D(LayerBase):
 
         return Y
 
-    def backward(self, dLdy, retain_grads=True):
+    def backward(self, dLdy: np.ndarray[tuple[int, int, int, int]], retain_grads=True):
         """
         Compute the gradient of the loss with respect to the layer parameters.
 
@@ -3090,9 +3370,9 @@ class Conv2D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdy, X, Z):
+    def _bwd(self,dLdy: np.ndarray[tuple[int, int, int, int]],X: np.ndarray[tuple[int, int, int, int]],Z,):
         """Actual computation of gradient of the loss wrt. X, W, and b"""
-        W = self.parameters["W"]
+        W: np.ndarray[tuple[int, int, int, int]] = self.parameters["W"]
 
         d = self.dilation
         fr, fc, in_ch, out_ch = W.shape
@@ -3100,22 +3380,40 @@ class Conv2D(LayerBase):
         (fr, fc), s, p = self.kernel_shape, self.stride, self.pad
 
         # columnize W, X, and dLdy
-        dLdZ = dLdy * self.act_fn.grad(Z)
-        dLdZ_col = dLdZ.transpose(3, 1, 2, 0).reshape(out_ch, -1)
-        W_col = W.transpose(3, 2, 0, 1).reshape(out_ch, -1).T
+        dLdZ: np.ndarray = dLdy * self.act_fn.grad(Z)
+        reveal_type(dLdZ)
+        dLdZ_transposed = dLdZ.transpose(3, 1, 2, 0)
+        reveal_type(dLdZ_transposed)
+        dLdZ_col = dLdZ_transposed.reshape(out_ch, -1)
+        reveal_type(dLdZ_col)
+
+        W_transpose = W.transpose(3, 2, 0, 1)
+        W_transpose_reshape = W_transpose.reshape(out_ch, -1)
+        W_col = np.transpose(W_transpose_reshape)
+        reveal_type(W_col)
+
         X_col, p = im2col(X, W.shape, p, s, d)
 
         # compute gradients via matrix multiplication and reshape
-        dB = dLdZ_col.sum(axis=1).reshape(1, 1, 1, -1)
-        dW = (dLdZ_col @ X_col.T).reshape(out_ch, in_ch, fr, fc).transpose(2, 3, 1, 0)
+        dB_temp = dLdZ_col.sum(axis=1)
+        reveal_type(dB_temp)
+        dB = dB_temp.reshape(1, 1, 1, -1)
+        reveal_type(dB)
+
+        X_col_T = np.transpose(X_col)
+        dW_mul = dLdZ_col @ X_col_T
+        dW_reshape = dW_mul.reshape(out_ch, in_ch, fr, fc)
+        dW = dW_reshape.transpose(2, 3, 1, 0)
+        reveal_type(dW)
 
         # reshape columnized dX back into the same format as the input volume
         dX_col = W_col @ dLdZ_col
+        reveal_type(dX_col)
         dX = col2im(dX_col, X.shape, W.shape, p, s, d).transpose(0, 2, 3, 1)
 
         return dX, dW, dB
 
-    def _backward_naive(self, dLdy, retain_grads=True):
+    def _backward_naive(self, dLdy: np.ndarray[tuple[int, int, int, int]], retain_grads=True):
         """
         A slower (ie., non-vectorized) but more straightforward implementation
         of the gradient computations for a 2D conv layer.
@@ -3134,8 +3432,8 @@ class Conv2D(LayerBase):
         if not isinstance(dLdy, list):
             dLdy = [dLdy]
 
-        W = self.parameters["W"]
-        b = self.parameters["b"]
+        W: np.ndarray[tuple[int, int, int, int]] = self.parameters["W"]
+        b: np.ndarray[tuple[Literal[1], Literal[1], Literal[1], int]] = self.parameters["b"]
         Zs = self.derived_variables["Z"]
 
         Xs, d = self.X, self.dilation
@@ -3145,8 +3443,9 @@ class Conv2D(LayerBase):
         for X, Z, dy in zip(Xs, Zs, dLdy):
             n_ex, out_rows, out_cols, out_ch = dy.shape
             X_pad, (pr1, pr2, pc1, pc2) = pad2D(X, p, self.kernel_shape, s, d)
+            X_pad: np.ndarray
 
-            dZ = dLdy * self.act_fn.grad(Z)
+            dZ: np.ndarray[tuple[int, int, int, int]] = dLdy * self.act_fn.grad(Z)
 
             dX = np.zeros_like(X_pad)
             dW, dB = np.zeros_like(W), np.zeros_like(b)
@@ -3159,8 +3458,11 @@ class Conv2D(LayerBase):
                             j0, j1 = j * s, (j * s) + fc * (d + 1) - d
 
                             wc = W[:, :, :, c]
+                            reveal_type(wc)
                             kernel = dZ[m, i, j, c]
+                            reveal_type(kernel)
                             window = X_pad[m, i0 : i1 : (d + 1), j0 : j1 : (d + 1), :]
+                            reveal_type(window)
 
                             dB[:, :, :, c] += kernel
                             dW[:, :, :, c] += window * kernel
@@ -3435,7 +3737,7 @@ class Deconv2D(LayerBase):
             },
         }
 
-    def forward(self, X, retain_derived=True):
+    def forward(self, X: np.ndarray[tuple[int, int, int, int]], retain_derived=True):
         """
         Compute the layer output given input volume `X`.
 
@@ -3477,7 +3779,7 @@ class Deconv2D(LayerBase):
 
         return Y
 
-    def backward(self, dLdY, retain_grads=True):
+    def backward(self, dLdY: np.ndarray[tuple[int, int, int, int]], retain_grads=True):
         """
         Compute the gradient of the loss with respect to the layer parameters.
 
@@ -3518,9 +3820,9 @@ class Deconv2D(LayerBase):
 
         return dX[0] if len(X) == 1 else dX
 
-    def _bwd(self, dLdY, X, Z):
+    def _bwd(self, dLdY: np.ndarray[tuple[int, int, int, int]], X: np.ndarray[tuple[int, int, int, int]], Z):
         """Actual computation of gradient of the loss wrt. X, W, and b"""
-        W = np.rot90(self.parameters["W"], 2)
+        W: np.ndarray[tuple[int, int, int, int]] = np.rot90(self.parameters["W"], 2)
 
         s = self.stride
         if self.stride > 1:
@@ -3546,32 +3848,47 @@ class Deconv2D(LayerBase):
         X_pad, _ = pad2D(X_pad, _p, W.shape[:2], s)
 
         # columnize W, X, and dLdY
-        dLdZ = dLdY * self.act_fn.grad(Z)
+        temp: np.ndarray = self.act_fn.grad(Z)
+        dLdZ = dLdY * temp
+        reveal_type(dLdZ)
         dLdZ, _ = pad2D(dLdZ, p, W.shape[:2], s)
+        dLdZ: np.ndarray
 
-        dLdZ_col = dLdZ.transpose(3, 1, 2, 0).reshape(out_ch, -1)
-        W_col = W.transpose(3, 2, 0, 1).reshape(out_ch, -1)
+        dLdZ_transposed = dLdZ.transpose(3, 1, 2, 0)
+        reveal_type(dLdZ_transposed)
+        dLdZ_col = dLdZ_transposed.reshape(out_ch, -1)
+        reveal_type(dLdZ_col)
+
+        W_transpose = W.transpose(3, 2, 0, 1)
+        W_col = W_transpose.reshape(out_ch, -1)
+        reveal_type(W_col)
+
         X_col, _ = im2col(X_pad, W.shape, 0, s, 0)
 
         # compute gradients via matrix multiplication and reshape
-        dB = dLdZ_col.sum(axis=1).reshape(1, 1, 1, -1)
-        dW = (dLdZ_col @ X_col.T).reshape(out_ch, in_ch, fr, fc).transpose(2, 3, 1, 0)
+        dB_temp = dLdZ_col.sum(axis=1)
+        reveal_type(dB_temp)
+        dB = dB_temp.reshape(1, 1, 1, -1)
+        reveal_type(dB)
+
+        X_col_T = np.transpose(X_col)
+        dW_mul = dLdZ_col @ X_col_T
+        dW_reshape = dW_mul.reshape(out_ch, in_ch, fr, fc)
+        dW = dW_reshape.transpose(2, 3, 1, 0)
+        reveal_type(dW)
         dW = np.rot90(dW, 2)
 
         # reshape columnized dX back into the same format as the input volume
-        dX_col = W_col.T @ dLdZ_col
+        W_col_T = np.transpose(W_col)
+        dX_col = W_col_T @ dLdZ_col
+        reveal_type(dX_col)
 
         total_pad = tuple(i + j for i, j in zip(p, _p))
-        dX = col2im(dX_col, X.shape, W.shape, total_pad, s, 0).transpose(0, 2, 3, 1)
+        dX: np.ndarray[tuple[int, int, int, int]] = col2im(dX_col, X.shape, W.shape, total_pad, s, 0).transpose(0, 2, 3, 1)
         dX = dX[:, :: self.stride, :: self.stride, :]
+        reveal_type(dX)
 
         return dX, dW, dB
-
-
-#######################################################################
-#                          Recurrent Layers                           #
-#######################################################################
-
 
 class RNNCell(LayerBase):
     def __init__(self, n_out, act_fn="Tanh", init="glorot_uniform", optimizer=None):
@@ -3666,7 +3983,7 @@ class RNNCell(LayerBase):
             },
         }
 
-    def forward(self, Xt):
+    def forward(self, Xt: np.ndarray[tuple[int, int]]):
         """
         Compute the network output for a single timestep.
 
@@ -3691,10 +4008,10 @@ class RNNCell(LayerBase):
         self.derived_variables["current_step"] += 1
 
         # Retrieve parameters
-        ba = self.parameters["ba"]
-        bx = self.parameters["bx"]
-        Wax = self.parameters["Wax"]
-        Waa = self.parameters["Waa"]
+        ba: np.ndarray[tuple[int, Literal[1]]] = self.parameters["ba"]
+        bx: np.ndarray[tuple[int, Literal[1]]] = self.parameters["bx"]
+        Wax: np.ndarray[tuple[int, int]] = self.parameters["Wax"]
+        Waa: np.ndarray[tuple[int, int]] = self.parameters["Waa"]
 
         # initialize the hidden state to zero
         As = self.derived_variables["A"]
@@ -3704,7 +4021,16 @@ class RNNCell(LayerBase):
             As.append(A0)
 
         # compute next hidden state
-        Zt = As[-1] @ Waa + ba.T + Xt @ Wax + bx.T
+        ba_T = np.transpose(ba)
+        Xt_Wax = Xt @ Wax
+        reveal_type(Xt_Wax)
+        bx_T = np.transpose(bx)
+        As_end: np.ndarray = As[-1]
+
+        As_Waa = As_end @ Waa
+        temp = ba_T + Xt_Wax + bx_T
+        Zt = As_Waa + temp
+        reveal_type(Zt)
         At = self.act_fn(Zt)
 
         self.derived_variables["Z"].append(Zt)
@@ -3714,7 +4040,7 @@ class RNNCell(LayerBase):
         self.X.append(Xt)
         return At
 
-    def backward(self, dLdAt):
+    def backward(self, dLdAt: np.ndarray[tuple[int, int]]):
         """
         Backprop for a single timestep.
 
@@ -3738,29 +4064,42 @@ class RNNCell(LayerBase):
         Zs = self.derived_variables["Z"]
         As = self.derived_variables["A"]
         t = self.derived_variables["current_step"]
-        dA_acc = self.derived_variables["dLdA_accumulator"]
+        dA_acc: np.ndarray = self.derived_variables["dLdA_accumulator"]
 
         # initialize accumulator
         if dA_acc is None:
-            dA_acc = np.zeros_like(As[0])
+            dA_acc: np.ndarray = np.zeros_like(As[0])
 
         # get network weights for gradient calcs
-        Wax = self.parameters["Wax"]
-        Waa = self.parameters["Waa"]
+        Wax: np.ndarray[tuple[int, int]] = self.parameters["Wax"]
+        Waa: np.ndarray[tuple[int, int]] = self.parameters["Waa"]
 
         # compute gradient components at timestep t
         dA = dLdAt + dA_acc
-        dZ = self.act_fn.grad(Zs[t]) * dA
-        dXt = dZ @ Wax.T
+        act_grad: np.ndarray = self.act_fn.grad(Zs[t])
+        dZ = act_grad * dA
+        reveal_type(dZ)
+        Wax_T = np.transpose(Wax)
+        dXt = dZ @ Wax_T
+        reveal_type(dXt)
 
         # update parameter gradients with signal from current step
-        self.gradients["Waa"] += As[t].T @ dZ
-        self.gradients["Wax"] += self.X[t].T @ dZ
-        self.gradients["ba"] += dZ.sum(axis=0, keepdims=True).T
-        self.gradients["bx"] += dZ.sum(axis=0, keepdims=True).T
+        As_t_T = np.transpose(As[t])
+        self.gradients["Waa"] += As_t_T @ dZ
+
+        X_t_T = np.transpose(self.X[t])
+        self.gradients["Wax"] += X_t_T @ dZ
+
+        dZ_sum = dZ.sum(axis=0, keepdims=True)
+        reveal_type(dZ_sum)
+        dZ_sum_T = np.transpose(dZ_sum)
+        reveal_type(dZ_sum_T)
+        self.gradients["ba"] += dZ_sum_T
+        self.gradients["bx"] += dZ_sum_T
 
         # update accumulator variable for hidden state
-        self.derived_variables["dLdA_accumulator"] = dZ @ Waa.T
+        Waa_T = np.transpose(Waa)
+        self.derived_variables["dLdA_accumulator"] = dZ @ Waa_T
         return dXt
 
     def flush_gradients(self):
@@ -3780,14 +4119,7 @@ class RNNCell(LayerBase):
 
 
 class LSTMCell(LayerBase):
-    def __init__(
-        self,
-        n_out,
-        act_fn="Tanh",
-        gate_fn="Sigmoid",
-        init="glorot_uniform",
-        optimizer=None,
-    ):
+    def __init__(self, n_out, act_fn="Tanh", gate_fn="Sigmoid", init="glorot_uniform", optimizer=None):
         """
         A single step of a long short-term memory (LSTM) RNN.
 
@@ -3934,7 +4266,7 @@ class LSTMCell(LayerBase):
             },
         }
 
-    def forward(self, Xt):
+    def forward(self, Xt: np.ndarray[tuple[int, int]]):
         """
         Compute the layer output for a single timestep.
 
@@ -3958,6 +4290,14 @@ class LSTMCell(LayerBase):
             self._init_params()
 
         Wf, Wu, Wc, Wo, bf, bu, bc, bo = self._get_params()
+        Wf: np.ndarray[tuple[int, int]]
+        Wu: np.ndarray[tuple[int, int]]
+        Wc: np.ndarray[tuple[int, int]]
+        Wo: np.ndarray[tuple[int, int]]
+        bf: np.ndarray[tuple[Literal[1], int]]
+        bu: np.ndarray[tuple[Literal[1], int]]
+        bc: np.ndarray[tuple[Literal[1], int]]
+        bo: np.ndarray[tuple[Literal[1], int]]
 
         self.derived_variables["n_timesteps"] += 1
         self.derived_variables["current_step"] += 1
@@ -3969,17 +4309,38 @@ class LSTMCell(LayerBase):
             self.derived_variables["C"].append(init)
 
         A_prev = self.derived_variables["A"][-1]
-        C_prev = self.derived_variables["C"][-1]
+        C_prev:np.ndarray = self.derived_variables["C"][-1]
 
         # concatenate A_prev and Xt to create Zt
-        Zt = np.hstack([A_prev, Xt])
+        Zt: np.ndarray = np.hstack([A_prev, Xt]) # Hstack not yet implemented
 
-        Gft = self.gate_fn(Zt @ Wf + bf)
-        Gut = self.gate_fn(Zt @ Wu + bu)
-        Got = self.gate_fn(Zt @ Wo + bo)
-        Cct = self.act_fn(Zt @ Wc + bc)
+        Zt_Wf = Zt @ Wf
+        Gft_in = Zt_Wf + bf
+        Gft: np.ndarray = self.gate_fn(Gft_in)
+        reveal_type(Gft_in)
+
+        Zt_Wu = Zt @ Wu
+        Gut_in = Zt_Wu + bu
+        Gut: np.ndarray = self.gate_fn(Gut_in)
+        reveal_type(Gut_in)
+
+        Zt_Wo = Zt @ Wo
+        reveal_type(Zt_Wo)
+        Got_in = Zt_Wo + bo
+        reveal_type(Got_in)
+        Got = self.gate_fn(Got_in)
+        reveal_type(Got)
+
+        Zt_Wc = Zt @ Wc
+        Cct_in = Zt_Wc + bc
+        Cct: np.ndarray = self.act_fn(Cct_in)
+        reveal_type(Cct_in)
+
         Ct = Gft * C_prev + Gut * Cct
-        At = Got * self.act_fn(Ct)
+        reveal_type(Ct)
+        act_Ct: np.ndarray = self.act_fn(Ct)
+        At = Got * act_Ct
+        reveal_type(At)
 
         # bookkeeping
         self.X.append(Xt)
@@ -3991,7 +4352,7 @@ class LSTMCell(LayerBase):
         self.derived_variables["Cc"].append(Cct)
         return At, Ct
 
-    def backward(self, dLdAt):
+    def backward(self, dLdAt: np.ndarray[tuple[int, int]]):
         """
         Backprop for a single timestep.
 
@@ -4009,24 +4370,32 @@ class LSTMCell(LayerBase):
         assert self.trainable, "Layer is frozen"
 
         Wf, Wu, Wc, Wo, bf, bu, bc, bo = self._get_params()
+        Wf: np.ndarray[tuple[int, int]]
+        Wu: np.ndarray[tuple[int, int]]
+        Wc: np.ndarray[tuple[int, int]]
+        Wo: np.ndarray[tuple[int, int]]
+        bf: np.ndarray[tuple[Literal[1], int]]
+        bu: np.ndarray[tuple[Literal[1], int]]
+        bc: np.ndarray[tuple[Literal[1], int]]
+        bo: np.ndarray[tuple[Literal[1], int]]
 
         self.derived_variables["current_step"] -= 1
         t = self.derived_variables["current_step"]
 
-        Got = self.derived_variables["Go"][t]
-        Gft = self.derived_variables["Gf"][t]
-        Gut = self.derived_variables["Gu"][t]
-        Cct = self.derived_variables["Cc"][t]
-        At = self.derived_variables["A"][t + 1]
-        Ct = self.derived_variables["C"][t + 1]
-        C_prev = self.derived_variables["C"][t]
-        A_prev = self.derived_variables["A"][t]
+        Got: np.ndarray  = self.derived_variables["Go"][t]
+        Gft: np.ndarray  = self.derived_variables["Gf"][t]
+        Gut: np.ndarray  = self.derived_variables["Gu"][t]
+        Cct: np.ndarray  = self.derived_variables["Cc"][t]
+        At: np.ndarray  = self.derived_variables["A"][t + 1]
+        Ct: np.ndarray  = self.derived_variables["C"][t + 1]
+        C_prev: np.ndarray  = self.derived_variables["C"][t]
+        A_prev: np.ndarray  = self.derived_variables["A"][t]
 
         Xt = self.X[t]
-        Zt = np.hstack([A_prev, Xt])
+        Zt: np.ndarray = np.hstack([A_prev, Xt])
 
-        dA_acc = self.derived_variables["dLdA_accumulator"]
-        dC_acc = self.derived_variables["dLdC_accumulator"]
+        dA_acc: np.ndarray = self.derived_variables["dLdA_accumulator"]
+        dC_acc: np.ndarray = self.derived_variables["dLdC_accumulator"]
 
         # initialize accumulators
         if dA_acc is None:
@@ -4039,35 +4408,82 @@ class LSTMCell(LayerBase):
         # ---------------------
 
         dA = dLdAt + dA_acc
-        dC = dC_acc + dA * Got * self.act_fn.grad(Ct)
+        reveal_type(dA)
+        act_grad_Ct: np.ndarray = self.act_fn.grad(Ct)
+        dC = dC_acc + dA * Got * act_grad_Ct
+        reveal_type(dC)
 
         # compute the input to the gate functions at timestep t
-        _Go = Zt @ Wo + bo
-        _Gf = Zt @ Wf + bf
-        _Gu = Zt @ Wu + bu
-        _Gc = Zt @ Wc + bc
+        Zt_Wo = Zt @ Wo
+        _Go = Zt_Wo + bo
+        reveal_type(_Go)
+
+        Zt_Wf = Zt @ Wf
+        _Gf = Zt_Wf + bf
+        reveal_type(_Gf)
+
+        Zt_Wu = Zt @ Wu
+        _Gu = Zt_Wu + bu
+        reveal_type(_Gu)
+
+        Zt_Wc = Zt @ Wc
+        _Gc = Zt_Wc + bc
+        reveal_type(_Gc)
 
         # compute gradients wrt the *input* to each gate
-        dGot = dA * self.act_fn(Ct) * self.gate_fn.grad(_Go)
-        dCct = dC * Gut * self.act_fn.grad(_Gc)
-        dGut = dC * Cct * self.gate_fn.grad(_Gu)
-        dGft = dC * C_prev * self.gate_fn.grad(_Gf)
+        act_Ct: np.ndarray = self.act_fn(Ct)
+        gate_grad_Go: np.ndarray = self.gate_fn.grad(_Go)
+        dGot = dA * act_Ct * gate_grad_Go
+        reveal_type(dGot)
 
-        dZ = dGft @ Wf.T + dGut @ Wu.T + dCct @ Wc.T + dGot @ Wo.T
-        dXt = dZ[:, self.n_out :]
+        act_grad_Gc: np.ndarray = self.act_fn.grad(_Gc)
+        dCct = dC * Gut * act_grad_Gc
+        reveal_type(dCct)
 
-        self.gradients["Wc"] += Zt.T @ dCct
-        self.gradients["Wu"] += Zt.T @ dGut
-        self.gradients["Wf"] += Zt.T @ dGft
-        self.gradients["Wo"] += Zt.T @ dGot
-        self.gradients["bo"] += dGot.sum(axis=0, keepdims=True)
-        self.gradients["bu"] += dGut.sum(axis=0, keepdims=True)
-        self.gradients["bf"] += dGft.sum(axis=0, keepdims=True)
-        self.gradients["bc"] += dCct.sum(axis=0, keepdims=True)
+        gate_grad_Gu: np.ndarray = self.gate_fn.grad(_Gu)
+        dGut = dC * Cct * gate_grad_Gu
+        reveal_type(dGut)
 
-        self.derived_variables["dLdA_accumulator"] = dZ[:, : self.n_out]
-        self.derived_variables["dLdC_accumulator"] = Gft * dC
-        return dXt
+        gate_grad_Gf: np.ndarray = self.gate_fn.grad(_Gf)
+        dGft = dC * C_prev * gate_grad_Gf
+        reveal_type(dGft)
+
+        Wf_T = np.transpose(Wf)
+        Wu_T = np.transpose(Wu)
+        Wc_T = np.transpose(Wc)
+        Wo_T = np.transpose(Wo)
+
+        dZ = dGft @ Wf_T + dGut @ Wu_T + dCct @ Wc_T + dGot @ Wo_T
+        reveal_type(dZ)
+        dXt = dZ[:, self.n_out :] # TODO: Slicing is not implemented with Any YET
+        reveal_type(dXt)
+
+        Zt_T = np.transpose(Zt)
+        reveal_type(Zt_T)
+        self.gradients["Wc"] += Zt_T @ dCct
+        self.gradients["Wu"] += Zt_T @ dGut
+        self.gradients["Wf"] += Zt_T @ dGft
+        self.gradients["Wo"] += Zt_T @ dGot
+
+        dGot_sum = dGot.sum(axis=0, keepdims=True)
+        reveal_type(dGot_sum)
+        self.gradients["bo"] += dGot_sum
+
+        dGut_sum = dGut.sum(axis=0, keepdims=True)
+        reveal_type(dGut_sum)
+        self.gradients["bu"] += dGut_sum
+
+        dGft_sum = dGft.sum(axis=0, keepdims=True)
+        reveal_type(dGft_sum)
+        self.gradients["bf"] += dGft_sum
+
+        dCct_sum = dCct.sum(axis=0, keepdims=True)
+        reveal_type(dCct_sum)
+        self.gradients["bc"] += dCct_sum
+
+        # self.derived_variables["dLdA_accumulator"] = dZ[:, : self.n_out]
+        # self.derived_variables["dLdC_accumulator"] = Gft * dC
+        # return dXt
 
     def flush_gradients(self):
         """Erase all the layer's derived variables and gradients."""
@@ -4083,7 +4499,6 @@ class LSTMCell(LayerBase):
         # reset parameter gradients to 0
         for k, v in self.parameters.items():
             self.gradients[k] = np.zeros_like(v)
-
 
 class RNN(LayerBase):
     def __init__(self, n_out, act_fn="Tanh", init="glorot_uniform", optimizer=None):
@@ -4137,7 +4552,7 @@ class RNN(LayerBase):
             "optimizer": self.cell.hyperparameters["optimizer"],
         }
 
-    def forward(self, X):
+    def forward(self, X: np.ndarray[tuple[int,int,int]]):
         """
         Run a forward pass across all timesteps in the input.
 
@@ -4164,7 +4579,7 @@ class RNN(LayerBase):
             Y.append(yt)
         return np.dstack(Y)
 
-    def backward(self, dLdA):
+    def backward(self, dLdA: np.ndarray[tuple[int,int,int]]):
         """
         Run a backward pass across all timesteps in the input.
 
@@ -4255,14 +4670,7 @@ class RNN(LayerBase):
 
 
 class LSTM(LayerBase):
-    def __init__(
-        self,
-        n_out,
-        act_fn="Tanh",
-        gate_fn="Sigmoid",
-        init="glorot_uniform",
-        optimizer=None,
-    ):
+    def __init__(self, n_out, act_fn="Tanh", gate_fn="Sigmoid", init="glorot_uniform", optimizer=None):
         """
         A single long short-term memory (LSTM) RNN layer.
 
@@ -4294,7 +4702,7 @@ class LSTM(LayerBase):
         self.is_initialized = False
 
     def _init_params(self):
-        self.cell = LSTMCell(
+        self.cell: LSTMCell = LSTMCell(
             n_in=self.n_in,
             n_out=self.n_out,
             act_fn=self.act_fn,
@@ -4316,7 +4724,7 @@ class LSTM(LayerBase):
             "optimizer": self.cell.hyperparameters["optimizer"],
         }
 
-    def forward(self, X):
+    def forward(self, X: np.ndarray[tuple[int, int, int]]):
         """
         Run a forward pass across all timesteps in the input.
 
@@ -4336,14 +4744,17 @@ class LSTM(LayerBase):
             self.n_in = X.shape[1]
             self._init_params()
 
-        Y = []
+        Y: list[np.ndarray] = []
         n_ex, n_in, n_t = X.shape
         for t in range(n_t):
-            yt, _ = self.cell.forward(X[:, :, t])
+            Xt: np.ndarray = X[:, :, t]
+            yt, _ = self.cell.forward(Xt)
             Y.append(yt)
-        return np.dstack(Y)
 
-    def backward(self, dLdA):
+        Y = np.dstack(Y)
+        return Y
+
+    def backward(self, dLdA: np.ndarray[tuple[int, int, int]]):
         """
         Run a backward pass across all timesteps in the input.
 
@@ -4360,11 +4771,13 @@ class LSTM(LayerBase):
             across each of the `n_t` timesteps.
         """  # noqa: E501
         assert self.cell.trainable, "Layer is frozen"
-        dLdX = []
+        dLdX: list[np.ndarray] = []
         n_ex, n_out, n_t = dLdA.shape
         for t in reversed(range(n_t)):
-            dLdXt, _ = self.cell.backward(dLdA[:, :, t])
+            dLdAt_t: np.ndarray = dLdA[:, :, t]
+            dLdXt, _ = self.cell.backward(dLdAt_t)
             dLdX.insert(0, dLdXt)
+
         dLdX = np.dstack(dLdX)
         return dLdX
 
