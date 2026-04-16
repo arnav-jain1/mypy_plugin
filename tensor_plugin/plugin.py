@@ -8,7 +8,6 @@ from mypy.nodes import FuncDef, ReturnStmt, NameExpr, CallExpr, SliceExpr, Ellip
 from mypy.errorcodes import ErrorCode, OVERRIDE, MISC
 
 from z3_solver import NumpySolver, UnboundedType, Unbounded
-from slicing import slice_output
 from typing import *
 import numpy as np
 from copy import deepcopy
@@ -694,8 +693,10 @@ class CustomPlugin(Plugin):
                 arg = arg_types[i]
                 if isinstance(arg, LiteralType):
                     slicing.append(arg.value)
-                else:
+                elif str(arg) == "builtins.int":
                     slicing.append(int)
+                else:
+                    slicing.append(slice(None, None, None))
 
         # try:
         #     output = slice_output(lhs_shape, tuple(slicing))
@@ -707,6 +708,7 @@ class CustomPlugin(Plugin):
         #     return ctx.default_return_type
         solver = NumpySolver(lhs=lhs_shape, rhs=None)
         output = solver.solve_slicing(tuple(slicing))
+        # print(f"{ctx.api.path}:{ctx.context.line}: LHS {lhs_shape}, slice: {slicing}, output: {output}")
 
         # If None, Z3 proved an IndexError or invalid syntax
         if output is None:
