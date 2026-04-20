@@ -42,19 +42,16 @@ benchmarks\neural_nets\losses\losses.py:112: note: Revealed type is "numpy.ndarr
 benchmarks\neural_nets\losses\losses.py:173: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int]]"
 benchmarks\neural_nets\losses\losses.py:175: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], numpy.dtype[Any]]"
 benchmarks\neural_nets\losses\losses.py:178: note: Revealed type is "builtins.int"
-benchmarks\neural_nets\losses\losses.py:796: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:798: note: Revealed type is "builtins.int"
-benchmarks\neural_nets\losses\losses.py:800: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:802: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:807: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:809: note: Revealed type is "builtins.int"
-benchmarks\neural_nets\losses\losses.py:811: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:813: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\losses\losses.py:823: error: Need more than 2 values to unpack (3 expected)  [misc]
-benchmarks\neural_nets\losses\losses.py:824: error: Slicing Error or Index out of bounds  [misc]
-benchmarks\neural_nets\losses\losses.py:825: note: Revealed type is "None"
-benchmarks\neural_nets\losses\losses.py:826: error: Value of type "None" is not indexable  [index]
-benchmarks\neural_nets\losses\losses.py:827: note: Revealed type is "Any"
+benchmarks\neural_nets\losses\losses.py:796: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:798: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:800: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:802: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:807: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:809: note: Revealed type is "numpy.ndarray[tuple[builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:811: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:813: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:825: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\losses\losses.py:827: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\losses\losses.py:833: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, Literal[1]]]"
 benchmarks\neural_nets\losses\losses.py:834: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int]]"
 benchmarks\neural_nets\losses\losses.py:842: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, Literal[1]]]"
@@ -167,8 +164,8 @@ benchmarks\neural_nets\layers\layers.py:3092: note: Revealed type is "numpy.ndar
 benchmarks\neural_nets\layers\layers.py:3094: note: Revealed type is "numpy.ndarray[tuple[Literal[1], Literal[1], builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3100: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3104: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\layers\layers.py:3156: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\layers\layers.py:3158: note: Revealed type is "builtins.int"
+benchmarks\neural_nets\layers\layers.py:3156: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\layers\layers.py:3158: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3160: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], _DTypeT_co`2 = numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3318: error: "None" not callable  [misc]
 benchmarks\neural_nets\layers\layers.py:3384: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...]]"
@@ -179,8 +176,8 @@ benchmarks\neural_nets\layers\layers.py:3399: note: Revealed type is "numpy.ndar
 benchmarks\neural_nets\layers\layers.py:3401: note: Revealed type is "numpy.ndarray[tuple[Literal[1], Literal[1], Literal[1], builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3407: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3411: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\layers\layers.py:3461: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
-benchmarks\neural_nets\layers\layers.py:3463: note: Revealed type is "builtins.int"
+benchmarks\neural_nets\layers\layers.py:3461: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
+benchmarks\neural_nets\layers\layers.py:3463: note: Revealed type is "numpy.ndarray[tuple[builtins.int, builtins.int, builtins.int, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3465: note: Revealed type is "numpy.ndarray[builtins.tuple[Any, ...], _DTypeT_co`2 = numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:3573: error: Value of type variable "_AnyShapeT" of "__call__" of "_ConstructorEmpty" cannot be "tuple[Any, Any, Any, Any | None]"  [type-var]
 benchmarks\neural_nets\layers\layers.py:3772: error: "None" not callable  [misc]
@@ -229,4 +226,4 @@ benchmarks\neural_nets\layers\layers.py:4473: note: Revealed type is "numpy.ndar
 benchmarks\neural_nets\layers\layers.py:4477: note: Revealed type is "numpy.ndarray[tuple[Any, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\layers\layers.py:4481: note: Revealed type is "numpy.ndarray[tuple[Any, builtins.int], numpy.dtype[Any]]"
 benchmarks\neural_nets\models\w2v.py:303: error: Cannot determine type of "smooth_loss"  [has-type]
-Found 19 errors in 4 files (checked 23 source files)
+Found 16 errors in 3 files (checked 23 source files)

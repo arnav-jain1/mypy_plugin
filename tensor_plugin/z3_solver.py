@@ -634,13 +634,6 @@ class NumpySolver:
                 self.solver.add(s < dim_var)
                 # Dimension drops, do not append to output_vars
 
-            elif s == int:
-                # symbolic unknown integer index
-                idx_var = Int(f"slice_idx_{i}")
-                self.solver.add(idx_var >= -dim_var)
-                self.solver.add(idx_var < dim_var)
-                # dimension also drops
-                
             elif isinstance(s, slice):
                 # If parameters are completely unknown 
                 if s.start is int or s.stop is int or s.step is int:
